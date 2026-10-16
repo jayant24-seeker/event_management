@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% block title %}Attendees · {{ row.data.title }} · {{ site_name }}{% endblock %}
+{% block head %}<meta name="robots" content="noindex">{% endblock %}
+{% block content %}
+<div class="container-site py-10">
+  <a href="{{ url_for('org.dashboard') }}" class="text-sm font-semibold text-rani hover:underline">← Dashboard</a>
+  <div class="mt-2 flex flex-wrap items-end justify-between gap-4">
+    <div>
+      <h1 class="text-3xl font-extrabold sm:text-4xl">{{ row.data.title }}</h1>
+      <p class="mt-1 text-ink-soft">{{ e.start.strftime('%a, %d %b %Y · %-I:%M %p') if e else row.data.start }} · {{ row.data.city }}</p>
+    </div>
+    <div class="flex flex-wrap gap-2">
+      {% if row.status == 'published' %}<a href="{{ url_for('main.event', slug=row.slug) }}" class="btn-outline">View page</a>{% endif %}
+      <a href="{{ url_for('org.edit_event', slug=row.slug) }}" class="btn-outline">Edit event</a>
+      <a href="{{ url_for('org.attendees_csv', slug=row.slug) }}" class="btn-dark">Download CSV</a>
+    </div>
+  </div>
+
+  {# Per-tier sales #}
+  {% if e %}
+  <div class="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+    <div class="rounded-card bg-ink p-5 text-paper">
+      <p class="text-xs uppercase tracking-wider text-paper/60">Revenue on {{ site_name }}</p>
+      <p class="mt-1 font-display text-3xl font-extrabold">{{ sales[1]|inr }}</p>
+      <p class="mt-1 text-sm text-paper/70">{{ sales[0] }} tickets · {{ sales[2] }} checked in</p>
+    </div>
+    {% for t in e.tickets %}
+    {% set pct = (t.sold / t.capacity * 100)|round|int if t.capacity else 0 %}
+    <div class="rounded-card border border-line bg-paper-raised p-5">
+      <p class="font-semibold">{{ t.name }} <span class="text-sm font-normal text-ink-soft">· {{ 'Free' if t.price == 0 else t.price|inr }}</span></p>
+      <p class="mt-1 font-display text-2xl font-extrabold">{{ t.sold }} <span class="text-base font-semibold text-ink-soft">/ {{ t.capacity }}</span></p>
+      <div class="mt-2 h-2 overflow-hidden rounded-full bg-line" role="img" aria-label="{{ pct }}% sold"><div class="h-full rounded-full {{ 'bg-ink' if pct >= 100 else 'bg-rani' }}" style="width: {{ [pct, 100]|min }}%"></div></div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {# Attendees #}
+  <section class="mt-10" data-results>
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <h2 class="text-xl font-bold">Attendees ({{ attendees|length }})</h2>
+      <input type="search" class="input max-w-xs py-2" placeholder="Search name, code or phone" data-results-search aria-label="Search attendees">
+    </div>
+    {% if attendees %}
+    <div class="mt-4 overflow-x-auto rounded-card border border-line bg-paper-raised">
+      <table class="w-full min-w-[720px] text-left text-sm">
+        <thead class="border-b border-line text-xs uppercase tracking-wider text-ink-soft">
+          <tr>
+            <th class="p-3 font-semibold">Code</th><th class="p-3 font-semibold">Ticket</th>
+            {% for k in keys if k in fields %}<th class="p-3 font-semibold">{{ fields[k].label }}</th>{% endfor %}
+            <th class="p-3 font-semibold">Booked by</th><th class="p-3 font-semibold">Check-in</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-line">
+          {% for a in attendees %}
+          <tr data-results-row="{{ (a.code ~ ' ' ~ a.name ~ ' ' ~ a.booking.user.phone)|lower }}">
+            <td class="p-3 font-mono text-xs">{{ a.code }}</td>
+            <td class="p-3">{{ a.ticket_name }}</td>
+            {% for k in keys if k in fields %}<td class="p-3 {{ 'font-semibold' if k == 'name' }}">{{ a.details.get(k) or '—' }}</td>{% endfor %}
+            <td class="p-3 text-ink-soft">{{ a.booking.user.phone }}</td>
+            <td class="p-3">
+              {% if a.checked_in_at %}<span class="badge badge-free">{{ a.checked_in_at|ist('%-I:%M %p') }}</span>
+              {% else %}
+              <form method="post" action="{{ url_for('org.check_in') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="code" value="{{ a.code }}">
+                <button class="rounded-full border border-line px-3 py-1 text-xs font-semibold hover:border-ink">Check in</button>
+              </form>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <p class="hidden p-6 text-center text-sm text-ink-soft" data-results-empty>No attendee matches.</p>
+    </div>
+    {% else %}
+    <p class="mt-4 rounded-card border border-dashed border-line p-8 text-center text-ink-soft">No bookings yet. Share your event page to get the first ones!</p>
+    {% endif %}
+  </section>
+
+  <div class="mt-10 grid gap-6 lg:grid-cols-2">
+    {# Coupons #}
+    <section id="coupons" class="rounded-card border border-line bg-paper-raised p-5">
+      <h2 class="text-xl font-bold">Discount codes</h2>
+      <ul class="mt-4 divide-y divide-line text-sm">
+        {% for c in coupons %}
+        <li class="flex flex-wrap items-center justify-between gap-2 py-3">
+          <span><strong class="font-mono">{{ c.code }}</strong> · {{ c.percent_off }}% off · used {{ used.get(c.code, 0) }}{{ (' / ' ~ c.max_uses) if c.max_uses }}{% if c.valid_until %} · until {{ c.valid_until.strftime('%d %b') }}{% endif %}</span>
+          <form method="post" action="{{ url_for('org.coupons', slug=row.slug) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button name="delete" value="{{ c.id }}" class="text-xs font-semibold text-rani hover:underline">Delete</button>
+          </form>
+        </li>
+        {% else %}<li class="py-3 text-ink-soft">No codes yet. Early-bird and group codes help sell faster.</li>{% endfor %}
+      </ul>
+      <form method="post" action="{{ url_for('org.coupons', slug=row.slug) }}" class="mt-4 grid gap-2 sm:grid-cols-2">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input name="code" class="input py-2 uppercase" placeholder="CODE" required aria-label="Code">
+        <input name="percent_off" type="number" min="1" max="100" class="input py-2" placeholder="% off" required aria-label="Percent off">
+        <input name="max_uses" type="number" min="1" class="input py-2" placeholder="Max uses (optional)" aria-label="Max uses">
+        <input name="valid_until" type="datetime-local" class="input py-2" aria-label="Valid until">
+        <button class="btn-dark sm:col-span-2">Add code</button>
+      </form>
+    </section>
+
+    {# Waitlist #}
+    <section class="rounded-card border border-line bg-paper-raised p-5">
+      <h2 class="text-xl font-bold">Waitlist ({{ waitlist|length }})</h2>
+      <p class="mt-1 text-sm text-ink-soft">People who asked to hear if seats open up. Add seats in Edit event, then message them.</p>
+      <ul class="mt-4 max-h-72 divide-y divide-line overflow-y-auto text-sm">
+        {% for w in waitlist %}<li class="flex justify-between gap-3 py-2"><span>{{ w.name or '—' }}</span><span class="font-mono text-ink-soft">{{ w.phone }}</span></li>
+        {% else %}<li class="py-3 text-ink-soft">Nobody yet.</li>{% endfor %}
+      </ul>
+    </section>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+  // Search attendees by name, code or phone.
+  (function () {
+    const box = document.querySelector("[data-results]");
+    const input = box.querySelector("[data-results-search]");
+    const rows = [...box.querySelectorAll("[data-results-row]")];
+    const empty = box.querySelector("[data-results-empty]");
+    input.addEventListener("input", () => {
+      const q = input.value.trim().toLowerCase();
+      let shown = 0;
+      rows.forEach((r) => { const hit = r.dataset.resultsRow.includes(q); r.hidden = !hit; shown += hit; });
+      empty?.classList.toggle("hidden", shown > 0);
+    });
+  })();
+</script>
+{% endblock %}

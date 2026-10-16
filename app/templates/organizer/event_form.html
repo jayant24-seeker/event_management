@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Edit ' ~ raw.title if row else 'Create event' }} · {{ site_name }}{% endblock %}
+{% block head %}<meta name="robots" content="noindex">{% endblock %}
+
+{% macro field(name, label, value='', type='text', hint='', required=False, attrs='') -%}
+<label class="block">
+  <span class="mb-1.5 block text-sm font-semibold">{{ label }}{% if not required %} <span class="font-normal text-ink-soft">(optional)</span>{% endif %}</span>
+  <input name="{{ name }}" type="{{ type }}" value="{{ value if value is not none else '' }}" class="input" {{ attrs|safe }}>
+  {% if hint %}<span class="mt-1 block text-xs text-ink-soft">{{ hint }}</span>{% endif %}
+</label>
+{%- endmacro %}
+{% macro area(name, label, value='', hint='', rows=4, required=False, placeholder='') -%}
+<label class="block">
+  <span class="mb-1.5 block text-sm font-semibold">{{ label }}{% if not required %} <span class="font-normal text-ink-soft">(optional)</span>{% endif %}</span>
+  <textarea name="{{ name }}" rows="{{ rows }}" class="input rounded-2xl leading-relaxed" placeholder="{{ placeholder }}">{{ value }}</textarea>
+  {% if hint %}<span class="mt-1 block text-xs text-ink-soft">{{ hint }}</span>{% endif %}
+</label>
+{%- endmacro %}
+
+{% block content %}
+{% set route = raw.route or {} %}
+{% set venue = raw.venue or {} %}
+<div class="container-site max-w-4xl py-10">
+  <a href="{{ url_for('org.dashboard') }}" class="text-sm font-semibold text-rani hover:underline">← Dashboard</a>
+  <div class="mt-2 flex flex-wrap items-center gap-3">
+    <h1 class="text-3xl font-extrabold sm:text-4xl">{{ 'Edit event' if row else 'Create an event' }}</h1>
+    {% if row %}<span class="badge {{ 'badge-free' if row.status == 'published' else 'badge-muted' }}">{{ 'Published' if row.status == 'published' else 'Draft' }}</span>{% endif %}
+  </div>
+
+  {% if issues %}
+  <div class="mt-6 rounded-card border border-rani/40 bg-rani/5 p-5" role="alert">
+    <p class="font-bold text-rani">{{ 'Not saved. ' if row and row.status == 'published' else '' }}Fix these before {{ 'saving your live event' if row and row.status == 'published' else 'publishing' }}:</p>
+    <ul class="mt-2 list-inside list-disc space-y-1 text-sm">{% for i in issues %}<li>{{ i[:1]|upper }}{{ i[1:] }}</li>{% endfor %}</ul>
+    <p class="mt-3 text-xs text-ink-soft">We block blank fields and placeholder text like "TBD" or "Lorem ipsum", so attendees never see an unfinished page.</p>
+  </div>
+  {% endif %}
+
+  <form method="post" enctype="multipart/form-data" class="mt-8 space-y-8" data-event-form>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+    <section class="space-y-4 rounded-card border border-line bg-paper-raised p-5 sm:p-6">
+      <h2 class="text-xl font-bold">Basics</h2>
+      {{ field('title', 'Event title', raw.title, required=True, attrs='required maxlength=120 placeholder="e.g. Kota Monsoon 10K"') }}
+      {{ field('tagline', 'One-line tagline', raw.tagline, required=True, hint='Shown under the title and on social shares.', attrs='maxlength=160 placeholder="e.g. A flat, fast 10K along the Chambal"') }}
+      <div class="grid gap-4 sm:grid-cols-2">
+        <label class="block"><span class="mb-1.5 block text-sm font-semibold">Category</span>
+          <select name="category" class="select" data-other-toggle>
+            {% for c in categories %}<option {{ 'selected' if raw.category == c }}>{{ c }}</option>{% endfor %}
+            <option value="Other" {{ 'selected' if raw.category and raw.category not in categories }}>Other</option>
+          </select>
+        </label>
+        <label class="block {{ '' if raw.category and raw.category not in categories else 'hidden' }}" data-other>
+          <span class="mb-1.5 block text-sm font-semibold">Your category</span>
+          <input name="category_other" value="{{ raw.category if raw.category not in categories else '' }}" class="input" maxlength="40">
+        </label>
+        {{ field('language', 'Language', raw.language, attrs='placeholder="e.g. Hindi & English"') }}
+        {{ field('age_min', 'Minimum age', raw.age_min, type='number', attrs='min=1 max=99 inputmode=numeric') }}
+      </div>
+    </section>
+
+    <section class="space-y-4 rounded-card border border-line bg-paper-raised p-5 sm:p-6">
+      <h2 class="text-xl font-bold">When and where</h2>
+      <div class="grid gap-4 sm:grid-cols-3">
+        {{ field('start', 'Starts', raw.start, type='datetime-local', required=True) }}
+        {{ field('end', 'Ends', raw.end, type='datetime-local', required=True) }}
+        {{ field('reg_closes', 'Registration closes', raw.reg_closes, type='datetime-local', hint='Default: when the event starts.') }}
+      </div>
+      <div class="flex gap-6 text-sm font-semibold">
+        <label class="flex items-center gap-2"><input type="radio" name="mode" value="venue" {{ 'checked' if raw.mode != 'online' }} data-mode> At a venue</label>
+        <label class="flex items-center gap-2"><input type="radio" name="mode" value="online" {{ 'checked' if raw.mode == 'online' }} data-mode> Online</label>
+      </div>
+      <div class="grid gap-4 sm:grid-cols-2">
+        <div data-venue-only>{{ field('city', 'City', raw.city if raw.city != 'Online' else '', required=True) }}</div>
+        {{ field('venue_name', 'Venue name', venue.name, required=True, attrs='placeholder="e.g. Chambal Garden, or Zoom"') }}
+      </div>
+      {{ field('venue_address', 'Full address', venue.address, required=True, hint='Online events: say how people join, e.g. "Zoom link on your ticket".') }}
+    </section>
+
+    <section class="space-y-4 rounded-card border border-line bg-paper-raised p-5 sm:p-6">
+      <div class="flex flex-wrap items-center justify-between gap-2">
+        <h2 class="text-xl font-bold">Tickets</h2>
+        <button type="button" class="btn-outline py-2" data-add-ticket>+ Add ticket type</button>
+      </div>
+      <p class="text-sm text-ink-soft">Price 0 makes a ticket free. Seats already sold can't be removed.</p>
+      <div class="space-y-3" data-tickets>
+        {% set rows = raw.tickets or [] %}
+        {% for t in rows + [{}] * (1 if rows else 2) %}
+        <div class="grid gap-3 rounded-2xl border border-line p-3 sm:grid-cols-[2fr_1fr_1fr]" data-ticket-row>
+          <input name="ticket_name" value="{{ t.name }}" class="input" placeholder="Ticket name, e.g. 10K Timed" aria-label="Ticket name">
+          <input name="ticket_price" value="{{ t.price if t.price is defined and t.price >= 0 else '' }}" type="number" min="0" class="input" placeholder="Price ₹" aria-label="Price in rupees">
+          <input name="ticket_capacity" value="{{ t.capacity or '' }}" type="number" min="{{ t.sold or 1 }}" class="input" placeholder="Seats" aria-label="Number of seats">
+          <input name="ticket_note" value="{{ t.note }}" class="input sm:col-span-3" placeholder="Note (optional), e.g. Cut-off 90 minutes. Minimum age 16." aria-label="Ticket note">
+          {% if t.sold %}<p class="text-xs text-ink-soft sm:col-span-3">{{ t.sold }} sold</p>{% endif %}
+        </div>
+        {% endfor %}
+      </div>
+    </section>
+
+    <section class="space-y-4 rounded-card border border-line bg-paper-raised p-5 sm:p-6">
+      <h2 class="text-xl font-bold">The story</h2>
+      {{ area('about', 'About the event', raw.about, rows=6, required=True, placeholder='What is it, who is it for, and why should people come?') }}
+      {{ area('highlights', 'Highlights', (raw.highlights or [])|join('\n'), hint='One per line, up to 8.', placeholder='Chip timing\nMedal for every finisher') }}
+      {{ area('schedule', 'Schedule', schedule_text(raw), hint='One per line: time | what happens', placeholder='05:00 | 21K flag-off\n06:00 | 10K flag-off') }}
+      <div class="grid gap-4 sm:grid-cols-2">
+        {{ field('route_start', 'Route start point', route.start, hint='For runs, rides and walks.') }}
+        {{ field('route_finish', 'Route finish point', route.finish) }}
+      </div>
+      {{ area('route_note', 'Route notes', route.note, rows=2, placeholder='Terrain, climbs, aid stations, cut-offs') }}
+      <div class="grid gap-4 sm:grid-cols-2">
+        {{ area('kit', 'What attendees get', (raw.kit or [])|join('\n'), hint='One per line.', placeholder='T-shirt\nMedal\nBreakfast') }}
+        {{ area('prizes', 'Prizes', (raw.prizes or [])|join('\n'), hint='One per line.') }}
+      </div>
+      {{ area('faqs', 'FAQs', faq_text(raw), hint='One per line: question | answer', placeholder='Is there parking? | Yes, free parking at Gate 2.') }}
+      {{ area('refund_policy', 'Refund policy', raw.refund_policy, rows=2, required=True, placeholder='e.g. Full refund up to 7 days before the event.') }}
+    </section>
+
+    <section class="space-y-4 rounded-card border border-line bg-paper-raised p-5 sm:p-6">
+      <h2 class="text-xl font-bold">Attendee details to collect</h2>
+      <p class="text-sm text-ink-soft">Asked for every ticket at checkout. You get them in the attendee list and CSV.</p>
+      <div class="grid gap-2 sm:grid-cols-2">
+        {% for key, spec in fields.items() %}
+        <label class="flex items-center gap-3 rounded-xl border border-line px-4 py-3 text-sm font-semibold">
+          <input type="checkbox" name="field_{{ key }}" value="1" {{ 'checked' if key in (raw.attendee_fields or []) or key == 'name' }} {{ 'disabled' if key == 'name' }} class="h-4 w-4 accent-rani">
+          {{ spec.label }}{% if key == 'name' %} <span class="font-normal text-ink-soft">(always)</span>{% endif %}
+        </label>
+        {% endfor %}
+      </div>
+    </section>
+
+    <section class="space-y-4 rounded-card border border-line bg-paper-raised p-5 sm:p-6">
+      <h2 class="text-xl font-bold">Poster</h2>
+      <div class="flex flex-wrap items-start gap-5">
+        {% if raw.poster %}<img src="{{ url_for('static', filename=raw.poster) }}" alt="Current poster" class="h-40 w-[120px] rounded-xl object-cover shadow-poster">{% endif %}
+        <label class="block flex-1">
+          <span class="mb-1.5 block text-sm font-semibold">Upload a portrait poster <span class="font-normal text-ink-soft">(optional)</span></span>
+          <input type="file" name="poster" accept="image/jpeg,image/png,image/webp" class="block w-full text-sm file:mr-4 file:rounded-full file:border-0 file:bg-ink file:px-4 file:py-2 file:font-semibold file:text-paper">
+          <span class="mt-1 block text-xs text-ink-soft">JPG, PNG or WebP, under 5 MB, ideally 3:4 (e.g. 900 × 1200). Without one, we make an original poster from your title, date and city.</span>
+        </label>
+      </div>
+    </section>
+
+    <div class="sticky bottom-0 z-20 -mx-4 flex flex-wrap items-center gap-3 border-t border-line bg-paper/95 px-4 py-4 backdrop-blur sm:mx-0 sm:rounded-card sm:border sm:px-5">
+      {% if row and row.status == 'published' %}
+      <button name="action" value="save" class="btn-primary btn-lg">Save changes</button>
+      <button name="action" value="unpublish" class="btn-ghost" formnovalidate>Unpublish</button>
+      <a href="{{ url_for('main.event', slug=row.slug) }}" class="btn-outline ml-auto">View live page</a>
+      {% else %}
+      <button name="action" value="publish" class="btn-primary btn-lg">Publish</button>
+      <button name="action" value="draft" class="btn-outline btn-lg" formnovalidate>Save draft</button>
+      {% endif %}
+    </div>
+  </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // Add ticket rows, show "Your category" for Other, hide city for online events.
+  (function () {
+    const form = document.querySelector("[data-event-form]");
+    form.querySelector("[data-add-ticket]").addEventListener("click", () => {
+      const rows = form.querySelector("[data-tickets]");
+      const row = rows.querySelector("[data-ticket-row]").cloneNode(true);
+      row.querySelectorAll("input").forEach((i) => { i.value = ""; i.min = i.name === "ticket_capacity" ? 1 : i.min; });
+      row.querySelector("p")?.remove();
+      rows.appendChild(row);
+      row.querySelector("input").focus();
+    });
+    const cat = form.querySelector("[data-other-toggle]");
+    const other = form.querySelector("[data-other]");
+    cat.addEventListener("change", () => other.classList.toggle("hidden", cat.value !== "Other"));
+    const venueOnly = form.querySelector("[data-venue-only]");
+    const sync = () => venueOnly.classList.toggle("hidden", form.querySelector("[data-mode]:checked").value === "online");
+    form.querySelectorAll("[data-mode]").forEach((r) => r.addEventListener("change", sync));
+    sync();
+  })();
+</script>
+{% endblock %}

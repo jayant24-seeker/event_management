@@ -36,9 +36,14 @@ DEFAULT_FIELDS = ["name", "gender", "age"]
 _booking_lock = threading.Lock()
 
 
+def field_keys(raw):
+    """Attendee details asked for this event: the organizer's choice, else a default by category."""
+    keys = raw.get("attendee_fields") or (SPORT_FIELDS if raw.get("category") in ("Running", "Cycling") else DEFAULT_FIELDS)
+    return [k for k in keys if k in FIELDS]
+
+
 def fields_for(e):
-    keys = e.raw.get("attendee_fields") or (SPORT_FIELDS if e.category in ("Running", "Cycling") else DEFAULT_FIELDS)
-    return [(k, FIELDS[k]) for k in keys if k in FIELDS]
+    return [(k, FIELDS[k]) for k in field_keys(e.raw)]
 
 
 def get_event_or_404(slug):

@@ -6,6 +6,8 @@ node_modules/
 .pytest_cache/
 .DS_Store
 instance/
+# Organizer uploads and generated art (stored outside git; S3 or similar in production)
+app/static/uploads/
 
 # Local tool output (screenshots, browser logs, editor config)
 shots/

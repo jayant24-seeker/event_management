@@ -9,6 +9,20 @@
   <p class="mt-2 text-lg">{{ a.name.split(' ')[0] }} · {{ a.ticket_name }}</p>
   <p class="text-ink-soft">{{ e.title }}, {{ e.start.strftime('%d %b %Y') }}</p>
   {% if a.checked_in_at %}<p class="mt-4 rounded-xl bg-marigold/20 p-3 text-sm font-semibold">Already checked in at {{ a.checked_in_at|ist('%-I:%M %p, %d %b') }}</p>{% endif %}
+  {% if can_check_in(a) %}
+  <div class="mt-6 rounded-card border border-line bg-paper-raised p-5 text-left">
+    <p class="text-xs font-bold uppercase tracking-wider text-ink-soft">Organizer view</p>
+    <p class="mt-1 font-semibold">{{ a.name }}</p>
+    <ul class="mt-2 space-y-1 text-sm">{% for k, v in a.details.items() if v and k != 'name' %}<li><span class="text-ink-soft">{{ k|replace('_', ' ')|capitalize }}:</span> {{ v }}</li>{% endfor %}</ul>
+    {% if not a.checked_in_at %}
+    <form method="post" action="{{ url_for('org.check_in') }}" class="mt-4">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <input type="hidden" name="code" value="{{ a.code }}">
+      <button class="btn-primary btn-lg w-full">Check in</button>
+    </form>
+    {% endif %}
+  </div>
+  {% endif %}
   {% else %}
   <div class="mx-auto grid h-20 w-20 place-items-center rounded-full bg-rani text-4xl text-white">✕</div>
   <h1 class="mt-4 text-3xl font-extrabold">Not a valid ticket</h1>

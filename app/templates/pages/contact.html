@@ -1,2 +1,42 @@
-{% extends "pages/_page.html" %}
-{% block body %}<p>This page is built in phase 6.</p>{% endblock %}
+{% extends "base.html" %}
+{% block title %}Contact · {{ site_name }}{% endblock %}
+{% block description %}Questions about a booking or hosting an event? Contact the {{ site_name }} team in Jaipur.{% endblock %}
+{% block content %}
+<div class="container-site grid gap-10 py-12 lg:grid-cols-[1fr_1.2fr]">
+  <div>
+    <p class="eyebrow">Contact</p>
+    <h1 class="mt-1 text-4xl font-extrabold">We're here to help</h1>
+    <p class="mt-3 text-ink-soft">For questions about a specific event (timings, route, kit), the organizer knows best: use the contact on the event page.</p>
+    <dl class="mt-8 space-y-5">
+      <div><dt class="text-xs font-bold uppercase tracking-wider text-ink-soft">Email</dt><dd class="mt-1 font-semibold"><a href="mailto:contact@eventouse.com" class="hover:text-rani">contact@eventouse.com</a></dd></div>
+      <div><dt class="text-xs font-bold uppercase tracking-wider text-ink-soft">Office</dt><dd class="mt-1 font-semibold">Jaipur, Rajasthan</dd></div>
+      <div><dt class="text-xs font-bold uppercase tracking-wider text-ink-soft">Hours</dt><dd class="mt-1 font-semibold">Mon to Sat, 10 am to 7 pm</dd></div>
+    </dl>
+  </div>
+  <div class="rounded-card border border-line bg-paper-raised p-6 sm:p-8">
+    {% if sent %}
+    <h2 class="text-2xl font-extrabold">Thanks, {{ form.name.split(' ')[0] }}!</h2>
+    <p class="mt-2 text-ink-soft">We got your message and usually reply within one working day.</p>
+    <a href="{{ url_for('main.explore') }}" class="btn-primary mt-6">Explore events</a>
+    {% else %}
+    <h2 class="text-2xl font-extrabold">Send us a message</h2>
+    {% if errors %}<div class="mt-4 rounded-xl border border-rani/40 bg-rani/5 p-3 text-sm" role="alert">{% for e in errors %}<p>{{ e }}</p>{% endfor %}</div>{% endif %}
+    <form method="post" class="mt-6 space-y-4">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="hidden" aria-hidden="true"><label>Website <input name="website" tabindex="-1" autocomplete="off"></label></div>
+      <div class="grid gap-4 sm:grid-cols-2">
+        <label class="block"><span class="mb-1.5 block text-sm font-semibold">Your name</span>
+          <input name="name" value="{{ form.name or (current_user.name if current_user else '') }}" class="input" required autocomplete="name"></label>
+        <label class="block"><span class="mb-1.5 block text-sm font-semibold">Phone or email</span>
+          <input name="reply_to" value="{{ form.reply_to or (current_user.phone if current_user else '') }}" class="input" required></label>
+      </div>
+      <label class="block"><span class="mb-1.5 block text-sm font-semibold">What's it about?</span>
+        <select name="topic" class="select">{% for k, label in topics.items() %}<option value="{{ k }}" {{ 'selected' if form.topic == k or (not form.topic and request.args.topic == k) }}>{{ label }}</option>{% endfor %}</select></label>
+      <label class="block"><span class="mb-1.5 block text-sm font-semibold">Message</span>
+        <textarea name="message" rows="5" class="input rounded-2xl" required placeholder="Include your booking reference if it's about a ticket.">{{ form.message }}</textarea></label>
+      <button class="btn-primary btn-lg w-full sm:w-auto">Send message</button>
+    </form>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
