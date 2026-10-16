@@ -2,7 +2,7 @@ import re
 from datetime import timezone
 from html import escape
 
-from flask import (Blueprint, Response, abort, current_app, g, jsonify, redirect, render_template, request,
+from flask import (Blueprint, Response, abort, current_app, flash, g, jsonify, redirect, render_template, request,
                    send_from_directory, url_for)
 
 from .events import DATE_FILTERS, PRICE_FILTERS, SORTS, EventStore, now_ist
@@ -22,8 +22,10 @@ def store():
 def home():
     s = store()
     upcoming = s.upcoming()
+    followed = set(followed_slugs())
     return render_template(
         "home.html",
+        from_followed=[e for e in upcoming if e.organizer in followed][:4],
         featured=s.featured() or upcoming[:4],
         upcoming=upcoming,
         # Each city tile uses the banner of its next event as the background.
@@ -175,7 +177,45 @@ def organizer(slug):
     upcoming = sorted((e for e in events if not e.is_past()), key=lambda e: e.start)
     past = sorted((e for e in events if e.is_past()), key=lambda e: e.start, reverse=True)
     return render_template("organizer.html", org=org, upcoming=upcoming, past=past,
-                           registered=sum(e.registered for e in events))
+                           registered=sum(e.registered for e in events), followers=follower_count(slug))
+
+
+# ---------- Following organizers ----------
+@bp.app_template_global()
+def followed_slugs():
+    from .models import Follow
+
+    if g.get("user") is None:
+        return []
+    return [f.organizer_slug for f in Follow.query.filter_by(user_id=g.user.id)]
+
+
+def follower_count(slug):
+    from .models import Follow
+
+    return Follow.query.filter_by(organizer_slug=slug).count()
+
+
+@bp.route("/organizers/<slug>/follow", methods=["POST"])
+def follow(slug):
+    from .auth import safe_next
+    from .models import Follow, db
+
+    if slug not in store().organizers:
+        abort(404)
+    back = safe_next(request.form.get("next") or url_for("main.organizer", slug=slug))
+    if g.user is None:
+        return redirect(url_for("auth.login", next=back))
+    row = Follow.query.filter_by(user_id=g.user.id, organizer_slug=slug).first()
+    if request.form.get("follow") == "0":
+        if row:
+            db.session.delete(row)
+            db.session.commit()
+    elif row is None:
+        db.session.add(Follow(user_id=g.user.id, organizer_slug=slug))
+        db.session.commit()
+        flash(f"You're following {store().organizers[slug]['name']}. Their new events will show up on your homepage.")
+    return redirect(back)
 
 
 PAGES = {"about": "About us", "privacy": "Privacy policy", "terms": "Terms of use", "refunds": "Refund and cancellation policy"}

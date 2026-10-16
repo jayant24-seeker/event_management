@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "components/_macros.html" import badge, event_card, price_label %}
+{% from "components/_macros.html" import badge, event_card, follow_button, price_label %}
 {% set past = e.is_past() %}
 {% set open = e.registration_open() %}
 {% set page_url = url_for('main.event', slug=e.slug, _external=True) %}
@@ -296,7 +296,10 @@
           <p class="font-display text-xl font-extrabold">{{ e.org.name }}{% if e.org.verified %} <span class="ml-1 rounded-full bg-marigold px-2 py-0.5 align-middle font-sans text-[11px] font-bold uppercase tracking-wider text-ink">Verified</span>{% endif %}</p>
           <p class="text-sm text-paper/70">{{ e.org.city }} · hosting since {{ e.org.since }} · {{ org_events }} event{{ 's' if org_events != 1 }} on {{ site_name }}</p>
         </div>
-        <a href="{{ url_for('main.organizer', slug=e.organizer) }}" class="btn border border-paper/30 text-paper hover:bg-paper/10">{{ _('View profile') }}</a>
+        <div class="flex gap-2">
+          {{ follow_button(e.organizer) }}
+          <a href="{{ url_for('main.organizer', slug=e.organizer) }}" class="btn border border-paper/30 text-paper hover:bg-paper/10">{{ _('View profile') }}</a>
+        </div>
       </div>
       <p class="mt-4 text-paper/80">{{ e.org.about }}</p>
     </section>

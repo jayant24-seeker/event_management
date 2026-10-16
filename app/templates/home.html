@@ -143,6 +143,17 @@
   </div>
 </section>
 
+{# ---------- From organizers this person follows ---------- #}
+{% if from_followed %}
+<section class="container-site mt-16">
+  <p class="eyebrow">{{ _('For you') }}</p>
+  <h2 class="mt-1 text-3xl font-extrabold">{{ _('From organizers you follow') }}</h2>
+  <div class="mt-6 grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 md:grid-cols-3 lg:grid-cols-4">
+    {% for e in from_followed %}{{ event_card(e) }}{% endfor %}
+  </div>
+</section>
+{% endif %}
+
 {# ---------- Upcoming ---------- #}
 <section class="container-site mt-16">
   <div class="flex items-end justify-between gap-4">

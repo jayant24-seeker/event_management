@@ -55,3 +55,17 @@
        class="absolute inset-x-0 top-full z-50 mt-2 max-h-[70vh] overflow-y-auto rounded-2xl border border-line bg-paper-raised p-2 shadow-poster"></div>
 </form>
 {%- endmacro %}
+
+
+{# Follow / Following toggle for an organizer. Works without JS; guests are sent to sign in. #}
+{% macro follow_button(slug, dark=True) -%}
+{% set on = slug in followed_slugs() %}
+<form method="post" action="{{ url_for('main.follow', slug=slug) }}" class="inline">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <input type="hidden" name="next" value="{{ request.full_path.rstrip('?') }}">
+  <input type="hidden" name="follow" value="{{ '0' if on else '1' }}">
+  <button class="btn {{ ('border border-paper/30 text-paper hover:bg-paper/10' if on else 'bg-marigold text-ink hover:bg-marigold/90') if dark else ('btn-outline' if on else 'btn-dark') }}" aria-pressed="{{ 'true' if on else 'false' }}">
+    {{ _('Following') if on else _('Follow') }}
+  </button>
+</form>
+{%- endmacro %}

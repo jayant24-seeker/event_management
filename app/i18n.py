@@ -127,6 +127,11 @@ HI = {
     "Happening this weekend": "इस वीकेंड",
     "Everything coming up": "आने वाले सभी इवेंट",
     "Questions about events in": "इवेंट से जुड़े सवाल:",
+    # Following organizers
+    "Follow": "फ़ॉलो करें",
+    "Following": "फ़ॉलो कर रहे हैं",
+    "For you": "आपके लिए",
+    "From organizers you follow": "आपके फ़ॉलो किए आयोजकों से",
     # Offline page
     "No internet right now": "अभी इंटरनेट नहीं है",
     "Tickets you've opened on this phone before still work. Show the QR code at the gate.":

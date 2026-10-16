@@ -80,6 +80,8 @@ def create_app(config=None):
             session["csrf"] = secrets.token_urlsafe(32)
         return session["csrf"]
 
+    app.jinja_env.globals["csrf_token"] = csrf_token  # also reachable from imported macros
+
     @app.context_processor
     def globals_():
         return {"site_name": app.config["SITE_NAME"], "current_user": g.get("user"), "csrf_token": csrf_token}

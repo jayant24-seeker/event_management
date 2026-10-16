@@ -36,8 +36,8 @@
     </div>
   </div>
 
-  <dl class="mt-8 grid grid-cols-2 gap-3 lg:grid-cols-4">
-    {% for label, value in [('Tickets sold on ' ~ site_name, totals[0]|num), ('Revenue', totals[1]|inr), ('Checked in', totals[2]|num), ('On waitlists', waitlist|num)] %}
+  <dl class="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+    {% for label, value in [('Tickets sold on ' ~ site_name, totals[0]|num), ('Revenue', totals[1]|inr), ('Checked in', totals[2]|num), ('On waitlists', waitlist|num), ('Followers', followers|num)] %}
     <div class="rounded-card bg-ink p-5 text-paper">
       <dt class="text-xs uppercase tracking-wider text-paper/60">{{ label }}</dt>
       <dd class="mt-1 font-display text-3xl font-extrabold">{{ value }}</dd>

@@ -17,7 +17,7 @@ from .booking import FIELDS, field_keys
 from .events import EventStore, now_ist, problems
 from .models import Attendee, Booking, Coupon, EventRow, Organizer, User, WaitlistEntry, db, utcnow
 from .posters import write_art
-from .routes import store
+from .routes import follower_count, store
 
 bp = Blueprint("org", __name__, url_prefix="/organizer")
 
@@ -123,7 +123,7 @@ def dashboard():
     totals = [sum(v[i] for v in sales.values()) for i in range(3)]
     waitlist = WaitlistEntry.query.filter(WaitlistEntry.event_slug.in_([r.slug for r in rows])).count() if rows else 0
     return render_template("organizer/dashboard.html", upcoming=upcoming, past=past, sales=sales,
-                           totals=totals, waitlist=waitlist)
+                           totals=totals, waitlist=waitlist, followers=follower_count(g.org.slug))
 
 
 # ---------- Create and edit events ----------

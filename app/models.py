@@ -116,6 +116,15 @@ class SavedEvent(db.Model):
     __table_args__ = (UniqueConstraint("user_id", "event_slug"),)
 
 
+class Follow(db.Model):
+    """A person following an organizer, to see their new events first."""
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False, index=True)
+    organizer_slug = db.Column(db.String(80), db.ForeignKey("organizer.slug"), nullable=False, index=True)
+    created_at = db.Column(db.DateTime, nullable=False, default=utcnow)
+    __table_args__ = (UniqueConstraint("user_id", "organizer_slug"),)
+
+
 class ContactMessage(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), nullable=False)
