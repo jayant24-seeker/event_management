@@ -52,6 +52,12 @@
   }
   .select-active { @apply border-ink font-semibold; }
 
+  /* Long-form text pages (privacy, terms, about). */
+  .prose-site { @apply space-y-4 leading-relaxed text-ink/90; }
+  .prose-site h2 { @apply pt-4 text-2xl font-extrabold text-ink; }
+  .prose-site ul { @apply list-disc space-y-1.5 pl-5; }
+  .prose-site a { @apply font-semibold text-rani underline-offset-2 hover:underline; }
+
   .eyebrow { @apply text-xs font-bold uppercase tracking-[0.18em] text-rani; }
 }
 

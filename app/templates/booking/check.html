@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Ticket check · {{ site_name }}{% endblock %}
+{% block head %}<meta name="robots" content="noindex">{% endblock %}
+{% block content %}
+<div class="container-site max-w-md py-16 text-center">
+  {% if valid %}
+  <div class="mx-auto grid h-20 w-20 place-items-center rounded-full bg-leaf text-4xl text-white">✓</div>
+  <h1 class="mt-4 text-3xl font-extrabold">Valid ticket</h1>
+  <p class="mt-2 text-lg">{{ a.name.split(' ')[0] }} · {{ a.ticket_name }}</p>
+  <p class="text-ink-soft">{{ e.title }}, {{ e.start.strftime('%d %b %Y') }}</p>
+  {% if a.checked_in_at %}<p class="mt-4 rounded-xl bg-marigold/20 p-3 text-sm font-semibold">Already checked in at {{ a.checked_in_at|ist('%-I:%M %p, %d %b') }}</p>{% endif %}
+  {% else %}
+  <div class="mx-auto grid h-20 w-20 place-items-center rounded-full bg-rani text-4xl text-white">✕</div>
+  <h1 class="mt-4 text-3xl font-extrabold">Not a valid ticket</h1>
+  <p class="mt-2 text-ink-soft">{{ 'This booking was cancelled or is unpaid.' if a else 'We could not find this ticket.' }}</p>
+  {% endif %}
+</div>
+{% endblock %}

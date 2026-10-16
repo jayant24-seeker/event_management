@@ -17,6 +17,23 @@ pytest                      # run tests
 
 The built CSS (`app/static/css/app.css`) is committed, so the site runs without Node.
 
+The first run creates `instance/eventouse.db` (SQLite) and loads the demo events. To start fresh:
+
+```bash
+flask --app run seed --reset
+```
+
+**Signing in locally:** enter any 10-digit mobile number. No SMS is sent in development; the code is shown on the next screen (`SMS_PROVIDER=console`). Demo discount codes: `EARLYBIRD10` (Amer Hills Trail Ultra), `PINKCITY15` (Jaipur Night Run), `SIBLING20` (Little Legs Kids Run). Payments run in **test mode**.
+
+### Before launch
+| Setting | Why |
+| --- | --- |
+| `SECRET_KEY` | Signs the login cookie. Use a long random value. |
+| `DATABASE_URL` | Postgres in production (SQLite is fine for development). |
+| `SMS_PROVIDER` + key | Real OTP SMS (MSG91 or Twilio), wired in `app/sms.py`. |
+| Razorpay keys | Replace the test payment page (`/pay/<ref>`) with Razorpay Checkout + webhook. |
+| `SESSION_COOKIE_SECURE=1` | Cookies over HTTPS only. |
+
 ## Layout
 
 | Path | What |
@@ -26,6 +43,11 @@ The built CSS (`app/static/css/app.css`) is committed, so the site runs without 
 | `app/static/js/` | `hero.js` (homepage slider), `search.js` (live suggestions), `explore.js` (filter bar), `event.js` (ticket picker, countdown, save, share, results search) |
 | `app/data/events.json` | 16 dummy events (7 cities incl. Online, 3 past with results) |
 | `app/data/organizers.json` | 9 organizer profiles |
+| `app/models.py` | Database tables: organizers, events, users, OTP codes, bookings, attendees (tickets), coupons, saved events, waitlist |
+| `app/auth.py` | Phone + OTP sign-in, profile, sign out |
+| `app/booking.py` | Checkout with attendee details and coupons, test payment, QR tickets, My tickets, waitlist, saved events |
+| `app/sms.py` | SMS sending (console in development) |
+| `app/seed.py` | Loads `data/*.json` into an empty database; `flask seed --reset` |
 | `app/seo.py` | Event JSON-LD for Google, calendar helpers |
 | `app/templates/components/_macros.html` | Poster card, badge, date chip, price label |
 | `app/static/src/input.css` | Color tokens and component classes |
@@ -39,6 +61,6 @@ The built CSS (`app/static/css/app.css`) is committed, so the site runs without 
 2. ✅ Homepage
 3. ✅ Explore Events (search, filters, Upcoming/Past tabs)
 4. ✅ Event page
-5. Account and booking
+5. ✅ Account and booking
 6. For Organizers, About, Contact
 7. SEO, speed, mobile testing, launch

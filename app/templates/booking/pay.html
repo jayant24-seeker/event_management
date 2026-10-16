@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Payment · {{ e.title }} · {{ site_name }}{% endblock %}
+{% block head %}<meta name="robots" content="noindex">{% endblock %}
+{% block content %}
+<div class="container-site max-w-lg py-12">
+  {% if expired %}
+  <h1 class="text-3xl font-extrabold">This payment window closed</h1>
+  <p class="mt-2 text-ink-soft">Seats are held for 15 minutes. They've been released, but you can book again if tickets are still available.</p>
+  <a href="{{ url_for('main.event', slug=e.slug) }}#tickets" class="btn-primary mt-6">Back to {{ e.title }}</a>
+  {% else %}
+  <p class="eyebrow">Booking {{ b.ref }}</p>
+  <h1 class="mt-1 text-3xl font-extrabold">Pay {{ b.total|inr }}</h1>
+  <p class="mt-2 text-ink-soft">Your seats are held until <strong class="text-ink">{{ hold_ends|ist('%-I:%M %p') }}</strong>.</p>
+
+  <div class="mt-6 rounded-card border-2 border-dashed border-marigold bg-marigold/10 p-5">
+    <p class="font-bold">Test mode</p>
+    <p class="mt-1 text-sm">No real money moves. Before launch this page becomes Razorpay checkout (UPI, cards, net banking, wallets).</p>
+  </div>
+
+  <ul class="mt-6 divide-y divide-line rounded-card border border-line bg-paper-raised text-sm">
+    {% for a in b.attendees %}<li class="flex justify-between p-4"><span>{{ a.ticket_name }} · {{ a.name }}</span><span class="font-semibold">{{ a.price|inr }}</span></li>{% endfor %}
+    {% if b.discount %}<li class="flex justify-between p-4 text-leaf"><span>Code {{ b.coupon_code }}</span><span class="font-semibold">−{{ b.discount|inr }}</span></li>{% endif %}
+    <li class="flex justify-between p-4 text-base font-bold"><span>Total</span><span>{{ b.total|inr }}</span></li>
+  </ul>
+
+  <form method="post" class="mt-6 grid gap-3">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <button name="action" value="pay" class="btn-primary btn-lg w-full">Pay {{ b.total|inr }} (test)</button>
+    <button name="action" value="cancel" class="btn-ghost w-full">Cancel and release seats</button>
+  </form>
+  {% endif %}
+</div>
+{% endblock %}

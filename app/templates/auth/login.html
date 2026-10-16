@@ -1,0 +1,22 @@
+{% extends "auth/_shell.html" %}
+{% block title %}Sign in · {{ site_name }}{% endblock %}
+{% block card %}
+<h1 class="text-3xl font-extrabold">Sign in or sign up</h1>
+<p class="mt-2 text-ink-soft">Enter your mobile number. We'll text you a 6-digit code.</p>
+<form method="post" class="mt-6 space-y-4" novalidate>
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <input type="hidden" name="next" value="{{ next }}">
+  <label class="block">
+    <span class="mb-1.5 block text-sm font-semibold">Mobile number</span>
+    <span class="flex items-center rounded-full border border-line bg-paper-raised focus-within:border-ink/40 {{ 'border-rani' if error }}">
+      <span class="border-r border-line py-3 pl-5 pr-3 text-sm font-semibold text-ink-soft">+91</span>
+      <input name="phone" type="tel" inputmode="numeric" autocomplete="tel-national" maxlength="14" value="{{ phone }}" autofocus required
+             class="w-full border-0 bg-transparent px-3 py-3 text-base focus:outline-none focus:ring-0" placeholder="98765 43210"
+             {% if error %}aria-invalid="true" aria-describedby="phone-error"{% endif %}>
+    </span>
+  </label>
+  {% if error %}<p id="phone-error" class="text-sm font-semibold text-rani" role="alert">{{ error }}</p>{% endif %}
+  <button class="btn-primary btn-lg w-full">Send code</button>
+</form>
+<p class="mt-6 text-xs text-ink-soft">By continuing you agree to our <a href="{{ url_for('main.page', name='terms') }}" class="underline">Terms</a> and <a href="{{ url_for('main.page', name='privacy') }}" class="underline">Privacy policy</a>. Google sign-in is coming soon.</p>
+{% endblock %}

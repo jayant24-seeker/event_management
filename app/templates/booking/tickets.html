@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}My tickets · {{ site_name }}{% endblock %}
+{% block head %}<meta name="robots" content="noindex">{% endblock %}
+{% macro row(b, e) -%}
+<a href="{{ url_for('booking.show', ref=b.ref) }}" class="flex items-center gap-4 rounded-card border border-line bg-paper-raised p-3 transition hover:-translate-y-0.5 hover:shadow-poster">
+  <img src="{{ url_for('static', filename=e.poster) }}" alt="" class="h-24 w-[72px] shrink-0 rounded-xl object-cover {{ 'grayscale' if e.is_past() or b.status == 'cancelled' }}">
+  <div class="min-w-0 flex-1">
+    <p class="text-xs font-bold uppercase tracking-wider text-rani">{{ e.start.strftime('%a, %d %b %Y') }}</p>
+    <p class="font-display text-lg font-bold leading-snug">{{ e.title }}</p>
+    <p class="text-sm text-ink-soft">{{ b.attendees|length }} ticket{{ 's' if b.attendees|length != 1 }} · {{ e.venue.name }}</p>
+  </div>
+  <span class="badge {{ {'confirmed': 'badge-free', 'cancelled': 'badge-muted', 'pending': 'badge-hot'}[b.status] }} shrink-0">{{ b.status }}</span>
+</a>
+{%- endmacro %}
+{% block content %}
+<div class="container-site max-w-3xl py-10">
+  <h1 class="text-3xl font-extrabold sm:text-4xl">My tickets</h1>
+  {% for b, e in pending %}
+  <a href="{{ url_for('booking.pay', ref=b.ref) }}" class="mt-6 block rounded-card bg-marigold/20 p-4 font-semibold">Finish paying for {{ e.title }} ({{ b.total|inr }}) →</a>
+  {% endfor %}
+  <h2 class="mt-8 text-xl font-bold">Upcoming</h2>
+  <div class="mt-4 space-y-3">
+    {% for b, e in upcoming %}{{ row(b, e) }}{% else %}
+    <div class="rounded-card border border-dashed border-line p-8 text-center">
+      <p class="font-semibold">No upcoming tickets yet.</p>
+      <a href="{{ url_for('main.explore') }}" class="btn-primary mt-4">Find something to do</a>
+    </div>
+    {% endfor %}
+  </div>
+  {% if past %}
+  <h2 class="mt-10 text-xl font-bold">Past and cancelled</h2>
+  <div class="mt-4 space-y-3">{% for b, e in past %}{{ row(b, e) }}{% endfor %}</div>
+  {% endif %}
+</div>
+{% endblock %}

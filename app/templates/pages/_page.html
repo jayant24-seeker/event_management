@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}{{ title }} · {{ site_name }}{% endblock %}
+{% block content %}
+<div class="container-site max-w-3xl py-12">
+  <h1 class="text-4xl font-extrabold">{{ title }}</h1>
+  {% block meta %}{% endblock %}
+  <div class="prose-site mt-8">{% block body %}{% endblock %}</div>
+</div>
+{% endblock %}
