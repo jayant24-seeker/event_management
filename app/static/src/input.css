@@ -34,7 +34,7 @@
   .chip { @apply inline-flex items-center gap-1.5 rounded-full border border-line bg-paper-raised px-3.5 py-1.5 text-sm font-medium text-ink transition hover:border-ink/30; }
   .chip-active { @apply border-ink bg-ink text-paper hover:border-ink; }
 
-  .badge { @apply inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider shadow-sm; }
+  .badge { @apply inline-flex items-center gap-1 whitespace-nowrap rounded-full px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider shadow-sm; }
   .badge-hot { @apply bg-marigold text-ink; }
   .badge-soldout { @apply bg-ink text-paper; }
   .badge-free { @apply bg-leaf text-white; }
@@ -42,6 +42,15 @@
   .badge-muted { @apply bg-paper-raised/90 text-ink-soft; }
 
   .input { @apply w-full rounded-full border border-line bg-paper-raised px-5 py-3 text-sm text-ink placeholder:text-ink-soft/70 focus:border-ink/40 focus:outline-none focus:ring-0; }
+
+  .select {
+    @apply input cursor-pointer appearance-none py-2.5 pr-10;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235C5468' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-position: right 14px center;
+    background-repeat: no-repeat;
+    background-size: 16px;
+  }
+  .select-active { @apply border-ink font-semibold; }
 
   .eyebrow { @apply text-xs font-bold uppercase tracking-[0.18em] text-rani; }
 }

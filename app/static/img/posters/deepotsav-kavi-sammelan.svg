@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1200" width="900" height="1200">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0.3" y2="1">
+      <stop offset="0" stop-color="#2B0F05"/><stop offset="1" stop-color="#9A3412"/>
+    </linearGradient>
+    <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.08 0"/></filter>
+  </defs>
+  <rect width="900" height="1200" fill="url(#bg)"/>
+  <polygon points="558,456 1818,456 1806,631" fill="#FFF7ED" opacity="0.07"/>
+  <polygon points="558,456 1742,887 1671,1048" fill="#FFF7ED" opacity="0.07"/>
+  <polygon points="558,456 1523,1266 1401,1392" fill="#FFF7ED" opacity="0.07"/>
+  <polygon points="558,456 1188,1547 1030,1624" fill="#FFF7ED" opacity="0.07"/>
+  <polygon points="558,456 777,1697 602,1715" fill="#FFF7ED" opacity="0.07"/>
+  <polygon points="558,456 339,1697 169,1654" fill="#FFF7ED" opacity="0.07"/>
+  <polygon points="558,456 -72,1547 -218,1449" fill="#FFF7ED" opacity="0.07"/>
+  <polygon points="558,456 -407,1266 -511,1124" fill="#FFF7ED" opacity="0.07"/>
+  <polygon points="558,456 -626,887 -674,718" fill="#FFF7ED" opacity="0.07"/>
+  <polygon points="558,456 -702,456 -690,281" fill="#FFF7ED" opacity="0.07"/>
+  <polygon points="558,456 -626,25 -555,-136" fill="#FFF7ED" opacity="0.07"/>
+  <polygon points="558,456 -407,-354 -285,-480" fill="#FFF7ED" opacity="0.07"/>
+  <polygon points="558,456 -72,-635 86,-712" fill="#FFF7ED" opacity="0.07"/>
+  <polygon points="558,456 339,-785 514,-803" fill="#FFF7ED" opacity="0.07"/>
+  <polygon points="558,456 777,-785 947,-742" fill="#FFF7ED" opacity="0.07"/>
+  <polygon points="558,456 1188,-635 1334,-537" fill="#FFF7ED" opacity="0.07"/>
+  <polygon points="558,456 1523,-354 1627,-212" fill="#FFF7ED" opacity="0.07"/>
+  <polygon points="558,456 1742,25 1790,194" fill="#FFF7ED" opacity="0.07"/>
+  <circle cx="558" cy="456" r="198" fill="#FDBA4D"/>
+  <rect width="900" height="1200" filter="url(#grain)"/>
+  <text x="60" y="908" font-family="Bricolage Grotesque, Mukta, Kohinoor Devanagari, Arial Black, Helvetica, sans-serif" font-weight="800" font-size="92" fill="#FFF7ED" letter-spacing="-2">दीपोत्सव कवि</text><text x="60" y="1000" font-family="Bricolage Grotesque, Mukta, Kohinoor Devanagari, Arial Black, Helvetica, sans-serif" font-weight="800" font-size="92" fill="#FFF7ED" letter-spacing="-2">सम्मेलन</text><rect x="60" y="1050" width="780" height="3" fill="#FDBA4D"/><text x="60" y="1108" font-family="Bricolage Grotesque, Mukta, Kohinoor Devanagari, Arial Black, Helvetica, sans-serif" font-weight="700" font-size="40" fill="#FDBA4D">06 Nov 2026</text><text x="840" y="1108" text-anchor="end" font-family="Bricolage Grotesque, Mukta, Kohinoor Devanagari, Arial Black, Helvetica, sans-serif" font-weight="700" font-size="40" fill="#FFF7ED">AJMER</text><text x="62" y="810" font-family="Bricolage Grotesque, Mukta, Kohinoor Devanagari, Arial Black, Helvetica, sans-serif" font-weight="700" font-size="30" fill="#FDBA4D" letter-spacing="6">KAVI SAMMELAN</text>
+</svg>

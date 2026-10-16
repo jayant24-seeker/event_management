@@ -5,6 +5,7 @@ Real event artwork from organizers replaces these later.
 """
 import json
 import math
+from html import escape
 from datetime import datetime
 from pathlib import Path
 
@@ -22,6 +23,14 @@ STYLES = {
     "ajmer-sufi-evening": ("#1B1033", "#7C3AED", "#F7C873", "#FBF5FF", "arches"),
     "jaipur-blue-pottery-workshop": ("#0E2A5C", "#3D7BD9", "#F4F1E8", "#F4F1E8", "rings"),
     "kota-standup-night": ("#1A1A1A", "#E23B3B", "#FFE14D", "#FFFFFF", "rays"),
+    "amer-hills-trail-ultra": ("#2A1608", "#B4541A", "#FFD08A", "#FFF3E2", "waves"),
+    "sharad-purnima-garba-night": ("#1C0B33", "#C2185B", "#FFE9A8", "#FFF5FB", "rings"),
+    "deepotsav-kavi-sammelan": ("#2B0F05", "#9A3412", "#FDBA4D", "#FFF7ED", "rays"),
+    "little-legs-kids-run": ("#053B3A", "#14A39A", "#FFE066", "#F0FFFD", "grid"),
+    "marwar-rapid-chess-open": ("#111111", "#3F3F46", "#F5F5F4", "#FAFAF9", "grid"),
+    "pushkar-sunrise-yoga": ("#3B1D4A", "#F08A4B", "#FFE3A3", "#FFF8EE", "rays"),
+    "race-day-nutrition-masterclass": ("#0F2A1D", "#2E8B57", "#FFD15C", "#F2FFF7", "rings"),
+    "tricity-half-marathon-2026": ("#0A1F33", "#1D6FA3", "#FF7A59", "#EEF7FF", "waves"),
 }
 
 
@@ -89,7 +98,7 @@ def svg(w, h, style, text=""):
 
 def poster_text(e, w, h, accent, light):
     start = datetime.fromisoformat(e["start"])
-    words = e["title"].upper().split()
+    words = escape(e["title"].upper()).split()
     lines, cur = [], ""
     for word in words:
         if len(cur) + len(word) > 11 and cur:
@@ -100,7 +109,7 @@ def poster_text(e, w, h, accent, light):
     lines.append(cur)
     size = 108 if max(len(l) for l in lines) <= 9 else 92
     y0 = h - 200 - (len(lines) - 1) * size
-    font = "font-family=\"Bricolage Grotesque, Arial Black, Helvetica, sans-serif\""
+    font = "font-family=\"Bricolage Grotesque, Mukta, Kohinoor Devanagari, Arial Black, Helvetica, sans-serif\""
     title = "".join(
         f'<text x="60" y="{y0 + i * size:.0f}" {font} font-weight="800" font-size="{size}" fill="{light}" letter-spacing="-2">{l}</text>'
         for i, l in enumerate(lines)
@@ -108,8 +117,9 @@ def poster_text(e, w, h, accent, light):
     meta = (
         f'<rect x="60" y="{h - 150}" width="{w - 120}" height="3" fill="{accent}"/>'
         f'<text x="60" y="{h - 92}" {font} font-weight="700" font-size="40" fill="{accent}">{start:%d %b %Y}</text>'
-        f'<text x="{w - 60}" y="{h - 92}" text-anchor="end" {font} font-weight="700" font-size="40" fill="{light}">{e["city"].upper()}</text>'
-        f'<text x="60" y="110" {font} font-weight="700" font-size="30" fill="{light}" opacity="0.85" letter-spacing="6">{e["category"].upper()}</text>'
+        f'<text x="{w - 60}" y="{h - 92}" text-anchor="end" {font} font-weight="700" font-size="40" fill="{light}">{escape(e["city"].upper())}</text>'
+        # Category sits just above the title, clear of the date chip and badges cards put in the top corners.
+        f'<text x="62" y="{y0 - size - 6:.0f}" {font} font-weight="700" font-size="30" fill="{accent}" letter-spacing="6">{escape(e["category"].upper())}</text>'
     )
     return title + meta
 

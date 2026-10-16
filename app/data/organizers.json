@@ -1,0 +1,101 @@
+[
+  {
+    "slug": "pink-pace-runners",
+    "name": "Pink Pace Runners Club",
+    "city": "Jaipur",
+    "since": 2019,
+    "verified": true,
+    "about": "A community running club that organizes city runs, kids runs and training camps across Rajasthan and Punjab.",
+    "socials": {
+      "instagram": "https://instagram.com/",
+      "website": "https://example.com"
+    }
+  },
+  {
+    "slug": "desert-stride",
+    "name": "Desert Stride Events",
+    "city": "Jaipur",
+    "since": 2021,
+    "verified": true,
+    "about": "Trail and ultra races in the Aravallis, with fully marked routes and aid every 5 km.",
+    "socials": {
+      "instagram": "https://instagram.com/"
+    }
+  },
+  {
+    "slug": "campus-beats",
+    "name": "Campus Beats Collective",
+    "city": "Kota",
+    "since": 2022,
+    "verified": false,
+    "about": "Student-run music nights for Kota's coaching campuses.",
+    "socials": {}
+  },
+  {
+    "slug": "blue-city-sports",
+    "name": "Blue City Sports",
+    "city": "Jodhpur",
+    "since": 2018,
+    "verified": true,
+    "about": "Cyclothons, chess opens and sports days in Jodhpur.",
+    "socials": {
+      "website": "https://example.com"
+    }
+  },
+  {
+    "slug": "startup-chd",
+    "name": "Startup Chandigarh Circle",
+    "city": "Chandigarh",
+    "since": 2020,
+    "verified": false,
+    "about": "Monthly founder meetups and demo days in the Tricity.",
+    "socials": {
+      "linkedin": "https://linkedin.com/"
+    }
+  },
+  {
+    "slug": "rang-utsav",
+    "name": "Rang Utsav Events",
+    "city": "Surat",
+    "since": 2017,
+    "verified": true,
+    "about": "Food fests, garba nights and festival events in Surat.",
+    "socials": {
+      "instagram": "https://instagram.com/",
+      "facebook": "https://facebook.com/"
+    }
+  },
+  {
+    "slug": "sahitya-sangam",
+    "name": "Sahitya Sangam Ajmer",
+    "city": "Ajmer",
+    "since": 2015,
+    "verified": true,
+    "about": "Kavi sammelans, mushairas and community wellness mornings in Ajmer and Pushkar.",
+    "socials": {
+      "youtube": "https://youtube.com/"
+    }
+  },
+  {
+    "slug": "neel-kala",
+    "name": "Neel Kala Studio",
+    "city": "Jaipur",
+    "since": 2016,
+    "verified": false,
+    "about": "A blue pottery studio running weekend workshops for beginners.",
+    "socials": {
+      "instagram": "https://instagram.com/"
+    }
+  },
+  {
+    "slug": "laugh-local",
+    "name": "Laugh Local",
+    "city": "Kota",
+    "since": 2023,
+    "verified": false,
+    "about": "Stand-up nights in Kota and Jaipur.",
+    "socials": {
+      "instagram": "https://instagram.com/"
+    }
+  }
+]

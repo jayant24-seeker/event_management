@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1200" width="900" height="1200">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0.3" y2="1">
+      <stop offset="0" stop-color="#1C0B33"/><stop offset="1" stop-color="#C2185B"/>
+    </linearGradient>
+    <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.08 0"/></filter>
+  </defs>
+  <rect width="900" height="1200" fill="url(#bg)"/>
+  <circle cx="558" cy="456" r="486" fill="none" stroke="#FFE9A8" stroke-width="10" opacity="0.9"/>
+  <circle cx="558" cy="456" r="432" fill="none" stroke="#FFF5FB" stroke-width="3" opacity="0.25"/>
+  <circle cx="558" cy="456" r="378" fill="none" stroke="#FFF5FB" stroke-width="3" opacity="0.25"/>
+  <circle cx="558" cy="456" r="324" fill="none" stroke="#FFE9A8" stroke-width="10" opacity="0.9"/>
+  <circle cx="558" cy="456" r="270" fill="none" stroke="#FFF5FB" stroke-width="3" opacity="0.25"/>
+  <circle cx="558" cy="456" r="216" fill="none" stroke="#FFF5FB" stroke-width="3" opacity="0.25"/>
+  <circle cx="558" cy="456" r="162" fill="none" stroke="#FFE9A8" stroke-width="10" opacity="0.9"/>
+  <circle cx="558" cy="456" r="108" fill="none" stroke="#FFF5FB" stroke-width="3" opacity="0.25"/>
+  <circle cx="558" cy="456" r="54" fill="none" stroke="#FFF5FB" stroke-width="3" opacity="0.25"/>
+  <rect width="900" height="1200" filter="url(#grain)"/>
+  <text x="60" y="816" font-family="Bricolage Grotesque, Mukta, Kohinoor Devanagari, Arial Black, Helvetica, sans-serif" font-weight="800" font-size="92" fill="#FFF5FB" letter-spacing="-2">SHARAD</text><text x="60" y="908" font-family="Bricolage Grotesque, Mukta, Kohinoor Devanagari, Arial Black, Helvetica, sans-serif" font-weight="800" font-size="92" fill="#FFF5FB" letter-spacing="-2">PURNIMA</text><text x="60" y="1000" font-family="Bricolage Grotesque, Mukta, Kohinoor Devanagari, Arial Black, Helvetica, sans-serif" font-weight="800" font-size="92" fill="#FFF5FB" letter-spacing="-2">GARBA NIGHT</text><rect x="60" y="1050" width="780" height="3" fill="#FFE9A8"/><text x="60" y="1108" font-family="Bricolage Grotesque, Mukta, Kohinoor Devanagari, Arial Black, Helvetica, sans-serif" font-weight="700" font-size="40" fill="#FFE9A8">24 Oct 2026</text><text x="840" y="1108" text-anchor="end" font-family="Bricolage Grotesque, Mukta, Kohinoor Devanagari, Arial Black, Helvetica, sans-serif" font-weight="700" font-size="40" fill="#FFF5FB">SURAT</text><text x="62" y="718" font-family="Bricolage Grotesque, Mukta, Kohinoor Devanagari, Arial Black, Helvetica, sans-serif" font-weight="700" font-size="30" fill="#FFE9A8" letter-spacing="6">GARBA &amp; DANDIYA</text>
+</svg>

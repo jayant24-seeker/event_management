@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0.3" y2="1">
+      <stop offset="0" stop-color="#0A1F33"/><stop offset="1" stop-color="#1D6FA3"/>
+    </linearGradient>
+    <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.08 0"/></filter>
+  </defs>
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <path d="M0,90 Q100,63 200,90 Q300,117 400,90 Q500,63 600,90 Q700,117 800,90 Q900,63 1000,90 Q1100,117 1200,90 Q1300,63 1400,90 Q1500,117 1600,90" fill="none" stroke="#FF7A59" stroke-width="9" opacity="0.9"/>
+  <path d="M0,144 Q100,117 200,144 Q300,171 400,144 Q500,117 600,144 Q700,171 800,144 Q900,117 1000,144 Q1100,171 1200,144 Q1300,117 1400,144 Q1500,171 1600,144" fill="none" stroke="#EEF7FF" stroke-width="3" opacity="0.3"/>
+  <path d="M0,198 Q100,171 200,198 Q300,225 400,198 Q500,171 600,198 Q700,225 800,198 Q900,171 1000,198 Q1100,225 1200,198 Q1300,171 1400,198 Q1500,225 1600,198" fill="none" stroke="#EEF7FF" stroke-width="3" opacity="0.3"/>
+  <path d="M0,252 Q100,225 200,252 Q300,279 400,252 Q500,225 600,252 Q700,279 800,252 Q900,225 1000,252 Q1100,279 1200,252 Q1300,225 1400,252 Q1500,279 1600,252" fill="none" stroke="#FF7A59" stroke-width="9" opacity="0.9"/>
+  <path d="M0,306 Q100,279 200,306 Q300,333 400,306 Q500,279 600,306 Q700,333 800,306 Q900,279 1000,306 Q1100,333 1200,306 Q1300,279 1400,306 Q1500,333 1600,306" fill="none" stroke="#EEF7FF" stroke-width="3" opacity="0.3"/>
+  <path d="M0,360 Q100,333 200,360 Q300,387 400,360 Q500,333 600,360 Q700,387 800,360 Q900,333 1000,360 Q1100,387 1200,360 Q1300,333 1400,360 Q1500,387 1600,360" fill="none" stroke="#EEF7FF" stroke-width="3" opacity="0.3"/>
+  <path d="M0,414 Q100,387 200,414 Q300,441 400,414 Q500,387 600,414 Q700,441 800,414 Q900,387 1000,414 Q1100,441 1200,414 Q1300,387 1400,414 Q1500,441 1600,414" fill="none" stroke="#FF7A59" stroke-width="9" opacity="0.9"/>
+  <path d="M0,468 Q100,441 200,468 Q300,495 400,468 Q500,441 600,468 Q700,495 800,468 Q900,441 1000,468 Q1100,495 1200,468 Q1300,441 1400,468 Q1500,495 1600,468" fill="none" stroke="#EEF7FF" stroke-width="3" opacity="0.3"/>
+  <path d="M0,522 Q100,495 200,522 Q300,549 400,522 Q500,495 600,522 Q700,549 800,522 Q900,495 1000,522 Q1100,549 1200,522 Q1300,495 1400,522 Q1500,549 1600,522" fill="none" stroke="#EEF7FF" stroke-width="3" opacity="0.3"/>
+  <path d="M0,576 Q100,549 200,576 Q300,603 400,576 Q500,549 600,576 Q700,603 800,576 Q900,549 1000,576 Q1100,603 1200,576 Q1300,549 1400,576 Q1500,603 1600,576" fill="none" stroke="#FF7A59" stroke-width="9" opacity="0.9"/>
+  <rect width="1600" height="900" filter="url(#grain)"/>
+  
+</svg>

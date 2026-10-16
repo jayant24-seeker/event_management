@@ -1,5 +1,7 @@
 from flask import Blueprint, abort, current_app, jsonify, render_template, request, url_for
 
+from .events import DATE_FILTERS, PRICE_FILTERS, SORTS
+
 bp = Blueprint("main", __name__)
 
 
@@ -21,16 +23,69 @@ def home():
     )
 
 
+PER_PAGE = 12
+EXPLORE_DEFAULTS = {"when": "upcoming", "sort": "date", "page": 1}
+
+
+@bp.app_template_global()
+def explore_url(**changes):
+    """Explore link that keeps the current filters, with some changed. None removes one.
+    Any filter change sends you back to page 1."""
+    params = request.args.to_dict() if request.endpoint == "main.explore" else {}
+    params.pop("page", None)
+    params.update(changes)
+    clean = {k: v for k, v in params.items() if v not in (None, "") and EXPLORE_DEFAULTS.get(k) != v}
+    return url_for("main.explore", **clean)
+
+
 @bp.route("/events")
 def explore():
-    # Basic results list so homepage search and shortcuts work.
-    # Phase 3 turns this into the full Explore page with filters and tabs.
-    q = request.args.get("q", "")
-    city = request.args.get("city") or None
-    category = request.args.get("category") or None
-    when = "past" if request.args.get("when") == "past" else "upcoming"
-    results = store().search(q, city=city, category=category, when=when)
-    return render_template("explore_stub.html", results=results, q=q, city=city, category=category, when=when)
+    s = store()
+    args = request.args
+    when = "past" if args.get("when") == "past" else "upcoming"
+    f = {
+        "q": args.get("q", "").strip(),
+        "city": args.get("city") or None,
+        "category": args.get("category") or None,
+        "date": args.get("date") if args.get("date") in dict(DATE_FILTERS) else None,
+        "price": args.get("price") if args.get("price") in dict(PRICE_FILTERS) else None,
+        "sort": args.get("sort") if args.get("sort") in dict(SORTS) else "date",
+    }
+    base = {k: f[k] for k in ("q", "city", "category", "price")}
+    results = s.search(when=when, sort=f["sort"], date=f["date"], **base)
+    # Tab counts use the same search, city, category and price, but ignore the date filter.
+    tab_counts = {
+        "upcoming": len(s.search(when="upcoming", **base)),
+        "past": len(s.search(when="past", **base)),
+    }
+    page = max(args.get("page", 1, type=int), 1)
+    pages = max((len(results) + PER_PAGE - 1) // PER_PAGE, 1)
+    page = min(page, pages)
+    return render_template(
+        "explore.html",
+        results=results[(page - 1) * PER_PAGE: page * PER_PAGE],
+        total=len(results),
+        page=page,
+        pages=pages,
+        when=when,
+        f=f,
+        tab_counts=tab_counts,
+        city_options=[(c, c) for c in s.cities()],
+        category_options=[(c, c) for c in s.categories()],
+        # Chip counts follow the other filters, so a chip never leads to an empty page.
+        categories=_category_counts(s.search(when=when, date=f["date"], q=f["q"], city=f["city"], price=f["price"])),
+        date_filters=DATE_FILTERS,
+        price_filters=PRICE_FILTERS,
+        sorts=SORTS,
+        popular=s.search(sort="popular")[:4] if not results else [],
+    )
+
+
+def _category_counts(events):
+    totals = {}
+    for e in events:
+        totals[e.category] = totals.get(e.category, 0) + 1
+    return sorted(totals.items(), key=lambda kv: (-kv[1], kv[0]))
 
 
 @bp.route("/api/suggest")
