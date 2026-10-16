@@ -13,32 +13,94 @@
       "address": "Jawahar Circle, Malviya Nagar, Jaipur, Rajasthan 302017",
       "map_query": "Jawahar Circle Garden Jaipur"
     },
-    "organizer": {"name": "Pink Pace Runners Club", "slug": "pink-pace-runners"},
+    "organizer": "pink-pace-runners",
     "poster": "img/posters/jaipur-night-run-2026.svg",
     "banner": "img/banners/jaipur-night-run-2026.svg",
     "tickets": [
-      {"name": "5K Fun Run", "price": 799, "capacity": 800, "sold": 610},
-      {"name": "10K Timed", "price": 1199, "capacity": 600, "sold": 530},
-      {"name": "21K Half Marathon", "price": 1799, "capacity": 400, "sold": 372}
+      {
+        "name": "5K Fun Run",
+        "price": 799,
+        "capacity": 800,
+        "sold": 610
+      },
+      {
+        "name": "10K Timed",
+        "price": 1199,
+        "capacity": 600,
+        "sold": 530
+      },
+      {
+        "name": "21K Half Marathon",
+        "price": 1799,
+        "capacity": 400,
+        "sold": 372
+      }
     ],
     "about": "A night-time road race through the wide boulevards around Jawahar Circle. Choose 5K, 10K or a half marathon, with live music at every 2 km and a finish-line food court.",
-    "highlights": ["Chip timing for 10K and 21K", "Live DJ at the finish", "Medal for every finisher"],
-    "route": {"start": "Jawahar Circle Gate 1", "finish": "Jawahar Circle Gate 1", "note": "Flat loop on JLN Marg, closed to traffic from 6 pm"},
-    "schedule": [
-      {"time": "17:00", "title": "Bib collection desk opens"},
-      {"time": "18:30", "title": "21K flag-off"},
-      {"time": "19:15", "title": "10K flag-off"},
-      {"time": "19:45", "title": "5K flag-off"},
-      {"time": "22:15", "title": "Prize ceremony"}
+    "highlights": [
+      "Chip timing for 10K and 21K",
+      "Live DJ at the finish",
+      "Medal for every finisher"
     ],
-    "kit": ["Dri-fit T-shirt", "Timing bib", "Finisher medal", "Hydration every 2.5 km", "Physio zone"],
-    "prizes": ["21K: Rs 25,000 / 15,000 / 10,000 (men and women)", "10K: Rs 10,000 / 6,000 / 4,000 (men and women)"],
+    "route": {
+      "start": "Jawahar Circle Gate 1",
+      "finish": "Jawahar Circle Gate 1",
+      "note": "Flat loop on JLN Marg, closed to traffic from 6 pm"
+    },
+    "schedule": [
+      {
+        "time": "17:00",
+        "title": "Bib collection desk opens"
+      },
+      {
+        "time": "18:30",
+        "title": "21K flag-off"
+      },
+      {
+        "time": "19:15",
+        "title": "10K flag-off"
+      },
+      {
+        "time": "19:45",
+        "title": "5K flag-off"
+      },
+      {
+        "time": "22:15",
+        "title": "Prize ceremony"
+      }
+    ],
+    "kit": [
+      "Dri-fit T-shirt",
+      "Timing bib",
+      "Finisher medal",
+      "Hydration every 2.5 km",
+      "Physio zone"
+    ],
+    "prizes": [
+      "21K: Rs 25,000 / 15,000 / 10,000 (men and women)",
+      "10K: Rs 10,000 / 6,000 / 4,000 (men and women)"
+    ],
     "faqs": [
-      {"q": "What is the minimum age?", "a": "12 years for 5K, 16 for 10K and 18 for 21K."},
-      {"q": "Is parking available?", "a": "Yes, free parking at the WTP and Gaurav Tower lots, with a shuttle every 10 minutes."}
+      {
+        "q": "What is the minimum age?",
+        "a": "12 years for 5K, 16 for 10K and 18 for 21K."
+      },
+      {
+        "q": "Is parking available?",
+        "a": "Yes, free parking at the WTP and Gaurav Tower lots, with a shuttle every 10 minutes."
+      }
     ],
     "refund_policy": "Full refund up to 14 days before the race. 50% refund up to 7 days before. No refund after that, but you can transfer your bib to a friend once for free.",
-    "tags": ["marathon", "night run", "fitness", "half marathon"]
+    "tags": [
+      "marathon",
+      "night run",
+      "fitness",
+      "half marathon"
+    ],
+    "reg_closes": "2026-11-18T23:59",
+    "language": "Hindi & English",
+    "age_min": 12,
+    "mode": "venue"
   },
   {
     "slug": "kota-campus-beats",
@@ -54,30 +116,78 @@
       "address": "Chambal Riverfront, Nayapura, Kota, Rajasthan 324001",
       "map_query": "Chambal Riverfront Kota"
     },
-    "organizer": {"name": "Riverside Live", "slug": "riverside-live"},
+    "organizer": "campus-beats",
     "poster": "img/posters/kota-campus-beats.svg",
     "banner": "img/banners/kota-campus-beats.svg",
     "tickets": [
-      {"name": "Student (ID required)", "price": 499, "capacity": 3000, "sold": 1200},
-      {"name": "General", "price": 999, "capacity": 1500, "sold": 400},
-      {"name": "Front Pit", "price": 1999, "capacity": 300, "sold": 150}
+      {
+        "name": "Student (ID required)",
+        "price": 499,
+        "capacity": 3000,
+        "sold": 1200
+      },
+      {
+        "name": "General",
+        "price": 999,
+        "capacity": 1500,
+        "sold": 400
+      },
+      {
+        "name": "Front Pit",
+        "price": 1999,
+        "capacity": 300,
+        "sold": 150
+      }
     ],
     "about": "An open-air indie and pop night on the riverfront, made for the city's coaching students. Three bands, a food street and a silent-disco tent after the main set.",
-    "highlights": ["Three live bands", "Silent-disco tent", "Student pricing"],
-    "schedule": [
-      {"time": "17:00", "title": "Gates open"},
-      {"time": "18:00", "title": "Opening band"},
-      {"time": "19:30", "title": "Second band"},
-      {"time": "21:00", "title": "Headliner"}
+    "highlights": [
+      "Three live bands",
+      "Silent-disco tent",
+      "Student pricing"
     ],
-    "kit": ["Re-entry wristband", "Free water refills", "Cloakroom"],
+    "schedule": [
+      {
+        "time": "17:00",
+        "title": "Gates open"
+      },
+      {
+        "time": "18:00",
+        "title": "Opening band"
+      },
+      {
+        "time": "19:30",
+        "title": "Second band"
+      },
+      {
+        "time": "21:00",
+        "title": "Headliner"
+      }
+    ],
+    "kit": [
+      "Re-entry wristband",
+      "Free water refills",
+      "Cloakroom"
+    ],
     "prizes": [],
     "faqs": [
-      {"q": "Do I need a student ID?", "a": "Yes, for the Student ticket. Carry your coaching or college ID card."},
-      {"q": "Is outside food allowed?", "a": "No, but the food street has stalls from Rs 60."}
+      {
+        "q": "Do I need a student ID?",
+        "a": "Yes, for the Student ticket. Carry your coaching or college ID card."
+      },
+      {
+        "q": "Is outside food allowed?",
+        "a": "No, but the food street has stalls from Rs 60."
+      }
     ],
     "refund_policy": "Refunds up to 5 days before the event. If the show is cancelled, you get a full refund within 7 working days.",
-    "tags": ["concert", "live music", "students", "band"]
+    "tags": [
+      "concert",
+      "live music",
+      "students",
+      "band"
+    ],
+    "language": "Hindi & English",
+    "mode": "venue"
   },
   {
     "slug": "jodhpur-blue-city-cyclothon",
@@ -93,28 +203,71 @@
       "address": "Ratanada, Jodhpur, Rajasthan 342011",
       "map_query": "Ratanada Jodhpur"
     },
-    "organizer": {"name": "Thar Pedal Society", "slug": "thar-pedal-society"},
+    "organizer": "blue-city-sports",
     "poster": "img/posters/jodhpur-blue-city-cyclothon.svg",
     "banner": "img/banners/jodhpur-blue-city-cyclothon.svg",
     "tickets": [
-      {"name": "25 km Ride", "price": 699, "capacity": 500, "sold": 500},
-      {"name": "50 km Ride", "price": 999, "capacity": 300, "sold": 300}
+      {
+        "name": "25 km Ride",
+        "price": 699,
+        "capacity": 500,
+        "sold": 500
+      },
+      {
+        "name": "50 km Ride",
+        "price": 999,
+        "capacity": 300,
+        "sold": 300
+      }
     ],
     "about": "A morning ride from Ratanada past Mehrangarh to Kaylana Lake and back. Marshalled route, support vans and a breakfast stop at the lake.",
-    "highlights": ["Marshalled route", "Lakeside breakfast", "Bike repair van"],
-    "schedule": [
-      {"time": "05:30", "title": "Reporting"},
-      {"time": "06:00", "title": "50 km flag-off"},
-      {"time": "06:30", "title": "25 km flag-off"},
-      {"time": "10:30", "title": "Certificates and photos"}
+    "highlights": [
+      "Marshalled route",
+      "Lakeside breakfast",
+      "Bike repair van"
     ],
-    "kit": ["Cycling jersey", "Helmet check", "Breakfast", "E-certificate"],
+    "schedule": [
+      {
+        "time": "05:30",
+        "title": "Reporting"
+      },
+      {
+        "time": "06:00",
+        "title": "50 km flag-off"
+      },
+      {
+        "time": "06:30",
+        "title": "25 km flag-off"
+      },
+      {
+        "time": "10:30",
+        "title": "Certificates and photos"
+      }
+    ],
+    "kit": [
+      "Cycling jersey",
+      "Helmet check",
+      "Breakfast",
+      "E-certificate"
+    ],
     "prizes": [],
     "faqs": [
-      {"q": "Can I rent a cycle?", "a": "Yes, 60 hybrid bikes are available at Rs 300 on a first-come basis."}
+      {
+        "q": "Can I rent a cycle?",
+        "a": "Yes, 60 hybrid bikes are available at Rs 300 on a first-come basis."
+      }
     ],
     "refund_policy": "Full refund up to 10 days before the ride. No refund after that.",
-    "tags": ["cyclothon", "cycling", "ride", "fitness"]
+    "tags": [
+      "cyclothon",
+      "cycling",
+      "ride",
+      "fitness"
+    ],
+    "reg_closes": "2026-12-06T23:59",
+    "language": "Hindi & English",
+    "age_min": 14,
+    "mode": "venue"
   },
   {
     "slug": "chandigarh-startup-mixer",
@@ -130,27 +283,62 @@
       "address": "SCO 41, Sector 17-C, Chandigarh 160017",
       "map_query": "Sector 17 Chandigarh"
     },
-    "organizer": {"name": "Tricity Founders Circle", "slug": "tricity-founders"},
+    "organizer": "startup-chd",
     "poster": "img/posters/chandigarh-startup-mixer.svg",
     "banner": "img/banners/chandigarh-startup-mixer.svg",
     "tickets": [
-      {"name": "Free Pass", "price": 0, "capacity": 250, "sold": 140}
+      {
+        "name": "Free Pass",
+        "price": 0,
+        "capacity": 250,
+        "sold": 140
+      }
     ],
     "about": "An evening of five-minute founder pitches, an open demo table and a no-pressure networking hour. Students are welcome.",
-    "highlights": ["8 founder pitches", "Open demo table", "Networking hour"],
-    "schedule": [
-      {"time": "16:00", "title": "Check-in and chai"},
-      {"time": "16:30", "title": "Founder pitches"},
-      {"time": "18:00", "title": "Demo table"},
-      {"time": "19:00", "title": "Networking"}
+    "highlights": [
+      "8 founder pitches",
+      "Open demo table",
+      "Networking hour"
     ],
-    "kit": ["Name badge", "Snacks and chai", "Wi-Fi"],
+    "schedule": [
+      {
+        "time": "16:00",
+        "title": "Check-in and chai"
+      },
+      {
+        "time": "16:30",
+        "title": "Founder pitches"
+      },
+      {
+        "time": "18:00",
+        "title": "Demo table"
+      },
+      {
+        "time": "19:00",
+        "title": "Networking"
+      }
+    ],
+    "kit": [
+      "Name badge",
+      "Snacks and chai",
+      "Wi-Fi"
+    ],
     "prizes": [],
     "faqs": [
-      {"q": "Can I pitch?", "a": "Pitch slots are picked from registrations. Tick 'I want to pitch' when you sign up."}
+      {
+        "q": "Can I pitch?",
+        "a": "Pitch slots are picked from registrations. Tick 'I want to pitch' when you sign up."
+      }
     ],
     "refund_policy": "This is a free event. If you can't come, please cancel your pass so someone on the waitlist gets it.",
-    "tags": ["startup", "networking", "pitch", "tech"]
+    "tags": [
+      "startup",
+      "networking",
+      "pitch",
+      "tech"
+    ],
+    "language": "English",
+    "mode": "venue"
   },
   {
     "slug": "surat-street-food-fest",
@@ -166,27 +354,64 @@
       "address": "Dumas Road, Piplod, Surat, Gujarat 395007",
       "map_query": "Dumas Road Piplod Surat"
     },
-    "organizer": {"name": "Tapi Taste Collective", "slug": "tapi-taste"},
+    "organizer": "rang-utsav",
     "poster": "img/posters/surat-street-food-fest.svg",
     "banner": "img/banners/surat-street-food-fest.svg",
     "tickets": [
-      {"name": "Day Entry", "price": 199, "capacity": 5000, "sold": 900},
-      {"name": "3-Day Pass", "price": 449, "capacity": 1500, "sold": 260}
+      {
+        "name": "Day Entry",
+        "price": 199,
+        "capacity": 5000,
+        "sold": 900
+      },
+      {
+        "name": "3-Day Pass",
+        "price": 449,
+        "capacity": 1500,
+        "sold": 260
+      }
     ],
     "about": "Sixty stalls from Surat's best-known street food families, a live cooking stage and a kids' zone. Entry includes two tasting coupons.",
-    "highlights": ["60+ stalls", "Live cooking stage", "Two tasting coupons"],
-    "schedule": [
-      {"time": "16:00", "title": "Gates open (all days)"},
-      {"time": "19:00", "title": "Cooking stage show"},
-      {"time": "23:00", "title": "Close"}
+    "highlights": [
+      "60+ stalls",
+      "Live cooking stage",
+      "Two tasting coupons"
     ],
-    "kit": ["Two tasting coupons", "Free drinking water", "Kids' zone"],
+    "schedule": [
+      {
+        "time": "16:00",
+        "title": "Gates open (all days)"
+      },
+      {
+        "time": "19:00",
+        "title": "Cooking stage show"
+      },
+      {
+        "time": "23:00",
+        "title": "Close"
+      }
+    ],
+    "kit": [
+      "Two tasting coupons",
+      "Free drinking water",
+      "Kids' zone"
+    ],
     "prizes": [],
     "faqs": [
-      {"q": "Are there Jain food options?", "a": "Yes, stalls with Jain options carry a green flag."}
+      {
+        "q": "Are there Jain food options?",
+        "a": "Yes, stalls with Jain options carry a green flag."
+      }
     ],
     "refund_policy": "Refunds up to 3 days before your entry date.",
-    "tags": ["food", "street food", "festival", "family"]
+    "tags": [
+      "food",
+      "street food",
+      "festival",
+      "family"
+    ],
+    "language": "Gujarati & Hindi",
+    "mode": "venue"
   },
   {
     "slug": "ajmer-sufi-evening",
@@ -202,27 +427,63 @@
       "address": "Ana Sagar Lake, Daulat Bagh, Ajmer, Rajasthan 305001",
       "map_query": "Daulat Bagh Ajmer"
     },
-    "organizer": {"name": "Rang Manch Foundation", "slug": "rang-manch"},
+    "organizer": "sahitya-sangam",
     "poster": "img/posters/ajmer-sufi-evening.svg",
     "banner": "img/banners/ajmer-sufi-evening.svg",
     "tickets": [
-      {"name": "Lawn Seating", "price": 299, "capacity": 600, "sold": 210},
-      {"name": "Front Row Chair", "price": 699, "capacity": 120, "sold": 102}
+      {
+        "name": "Lawn Seating",
+        "price": 299,
+        "capacity": 600,
+        "sold": 210
+      },
+      {
+        "name": "Front Row Chair",
+        "price": 699,
+        "capacity": 120,
+        "sold": 102
+      }
     ],
     "about": "An evening of qawwali and Rajasthani folk music on the lawns beside Ana Sagar lake, with diyas on the water at sunset.",
-    "highlights": ["Two qawwali groups", "Manganiyar folk set", "Diyas at sunset"],
-    "schedule": [
-      {"time": "18:00", "title": "Gates open"},
-      {"time": "18:30", "title": "Folk set"},
-      {"time": "19:30", "title": "Qawwali"}
+    "highlights": [
+      "Two qawwali groups",
+      "Manganiyar folk set",
+      "Diyas at sunset"
     ],
-    "kit": ["Floor cushions", "Chai stall"],
+    "schedule": [
+      {
+        "time": "18:00",
+        "title": "Gates open"
+      },
+      {
+        "time": "18:30",
+        "title": "Folk set"
+      },
+      {
+        "time": "19:30",
+        "title": "Qawwali"
+      }
+    ],
+    "kit": [
+      "Floor cushions",
+      "Chai stall"
+    ],
     "prizes": [],
     "faqs": [
-      {"q": "Is it family friendly?", "a": "Yes. Children under 5 enter free."}
+      {
+        "q": "Is it family friendly?",
+        "a": "Yes. Children under 5 enter free."
+      }
     ],
     "refund_policy": "Refunds up to 48 hours before the event.",
-    "tags": ["qawwali", "sufi", "folk", "music"]
+    "tags": [
+      "qawwali",
+      "sufi",
+      "folk",
+      "music"
+    ],
+    "language": "Hindi & Urdu",
+    "mode": "venue"
   },
   {
     "slug": "jaipur-blue-pottery-workshop",
@@ -238,27 +499,55 @@
       "address": "Amer Road, Jaipur, Rajasthan 302002",
       "map_query": "Amer Road Jaipur"
     },
-    "organizer": {"name": "Neel Kala Studio", "slug": "neel-kala"},
+    "organizer": "neel-kala",
     "poster": "img/posters/jaipur-blue-pottery-workshop.svg",
     "banner": "img/banners/jaipur-blue-pottery-workshop.svg",
     "tickets": [
-      {"name": "Workshop Seat", "price": 1499, "capacity": 30, "sold": 30}
+      {
+        "name": "Workshop Seat",
+        "price": 1499,
+        "capacity": 30,
+        "sold": 30
+      }
     ],
     "about": "A two-day hands-on workshop with master potters. Shape, paint and glaze one plate and one tile to take home.",
-    "highlights": ["Taught by master potters", "Take home two pieces", "Lunch included"],
-    "schedule": [
-      {"time": "Day 1, 10:00", "title": "Shaping"},
-      {"time": "Day 2, 10:00", "title": "Painting and glazing"}
+    "highlights": [
+      "Taught by master potters",
+      "Take home two pieces",
+      "Lunch included"
     ],
-    "kit": ["All materials", "Apron", "Lunch both days"],
+    "schedule": [
+      {
+        "time": "Day 1, 10:00",
+        "title": "Shaping"
+      },
+      {
+        "time": "Day 2, 10:00",
+        "title": "Painting and glazing"
+      }
+    ],
+    "kit": [
+      "All materials",
+      "Apron",
+      "Lunch both days"
+    ],
     "prizes": [],
     "faqs": [],
     "refund_policy": "Refunds up to 7 days before the workshop.",
     "results": {
       "summary": "30 participants made 60 pieces across two days. The finished plates were fired and handed out on 27 September.",
-      "photos": ["img/posters/jaipur-blue-pottery-workshop.svg"]
+      "photos": [
+        "img/posters/jaipur-blue-pottery-workshop.svg"
+      ]
     },
-    "tags": ["pottery", "craft", "workshop", "art"]
+    "tags": [
+      "pottery",
+      "craft",
+      "workshop",
+      "art"
+    ],
+    "language": "Hindi & English",
+    "mode": "venue"
   },
   {
     "slug": "kota-standup-night",
@@ -274,17 +563,31 @@
       "address": "Talwandi, Kota, Rajasthan 324005",
       "map_query": "Talwandi Kota"
     },
-    "organizer": {"name": "Riverside Live", "slug": "riverside-live"},
+    "organizer": "laugh-local",
     "poster": "img/posters/kota-standup-night.svg",
     "banner": "img/banners/kota-standup-night.svg",
     "tickets": [
-      {"name": "General", "price": 349, "capacity": 400, "sold": 388}
+      {
+        "name": "General",
+        "price": 349,
+        "capacity": 400,
+        "sold": 388
+      }
     ],
     "about": "Four stand-up comics from Rajasthan and Delhi on hostel life, mess food and parents' calls.",
-    "highlights": ["Four comics", "Open mic slot"],
+    "highlights": [
+      "Four comics",
+      "Open mic slot"
+    ],
     "schedule": [
-      {"time": "19:30", "title": "Doors"},
-      {"time": "20:00", "title": "Show"}
+      {
+        "time": "19:30",
+        "title": "Doors"
+      },
+      {
+        "time": "20:00",
+        "title": "Show"
+      }
     ],
     "kit": [],
     "prizes": [],
@@ -292,8 +595,711 @@
     "refund_policy": "No refunds within 24 hours of the show.",
     "results": {
       "summary": "A packed hall of 388. The open mic slot went to a first-time comic from the audience.",
-      "photos": ["img/posters/kota-standup-night.svg"]
+      "photos": [
+        "img/posters/kota-standup-night.svg"
+      ]
     },
-    "tags": ["comedy", "stand-up", "students"]
+    "tags": [
+      "comedy",
+      "stand-up",
+      "students"
+    ],
+    "language": "Hindi",
+    "mode": "venue"
+  },
+  {
+    "slug": "amer-hills-trail-ultra",
+    "title": "Amer Hills Trail Ultra",
+    "tagline": "25K and 50K through forts, forest and farm tracks",
+    "category": "Running",
+    "city": "Jaipur",
+    "featured": true,
+    "mode": "venue",
+    "start": "2026-11-29T05:00",
+    "end": "2026-11-29T13:00",
+    "reg_closes": "2026-11-21T23:59",
+    "language": "Hindi & English",
+    "age_min": 16,
+    "venue": {
+      "name": "Amer Fort Parking Ground",
+      "address": "Amer Road, Amer, Jaipur, Rajasthan 302028",
+      "map_query": "Amer Fort Jaipur"
+    },
+    "organizer": "desert-stride",
+    "poster": "img/posters/amer-hills-trail-ultra.svg",
+    "banner": "img/banners/amer-hills-trail-ultra.svg",
+    "tickets": [
+      {
+        "name": "25K Trail",
+        "price": 2499,
+        "capacity": 350,
+        "sold": 214,
+        "note": "Cut-off 5 hours. Minimum age 16."
+      },
+      {
+        "name": "50K Ultra",
+        "price": 3999,
+        "capacity": 150,
+        "sold": 97,
+        "note": "Cut-off 8 hours. Minimum age 18. One finished half marathon needed."
+      }
+    ],
+    "about": "A hilly trail race that climbs out of Amer, crosses the Aravalli ridge on jeep tracks and loops back through village farm roads. About 500 m of climbing on the 25K and 1,000 m on the 50K. Aid stations every 5 km, sweepers on both routes and an ambulance at the start line.",
+    "highlights": [
+      "Fully marked route with GPX file",
+      "Aid station every 5 km",
+      "Finisher trophy and medal",
+      "Free race photos"
+    ],
+    "route": {
+      "start": "Amer Fort Parking Ground",
+      "finish": "Amer Fort Parking Ground",
+      "note": "Loop route with sand sections near Kukas and a 3 km climb to Nahargarh ridge. GPX shared 30 days before race day."
+    },
+    "schedule": [
+      {
+        "time": "04:00",
+        "title": "Bib desk and bag drop open"
+      },
+      {
+        "time": "05:00",
+        "title": "50K flag-off"
+      },
+      {
+        "time": "05:30",
+        "title": "25K flag-off"
+      },
+      {
+        "time": "10:30",
+        "title": "25K cut-off"
+      },
+      {
+        "time": "13:00",
+        "title": "50K cut-off and prize ceremony"
+      }
+    ],
+    "kit": [
+      "Race T-shirt",
+      "Timing bib",
+      "Finisher trophy and medal",
+      "E-certificate",
+      "Breakfast after the finish",
+      "Medical and physio support"
+    ],
+    "prizes": [
+      "50K: Rs 21,000 / 11,000 / 7,000 (men and women)",
+      "25K: Rs 11,000 / 7,000 / 5,000 (men and women)"
+    ],
+    "faqs": [
+      {
+        "q": "Do I need trail shoes?",
+        "a": "Recommended. About 12 km of the 50K is on sand and loose stone."
+      },
+      {
+        "q": "Is there a bag drop?",
+        "a": "Yes, free bag drop at the start. Bags must be collected by 2 pm."
+      },
+      {
+        "q": "Can I switch from 50K to 25K?",
+        "a": "Yes, once, until registration closes. The price difference is not refunded."
+      }
+    ],
+    "refund_policy": "50% refund until 21 days before the race. After that no refund, but you can transfer your bib once for free until registration closes.",
+    "tags": [
+      "trail run",
+      "ultra marathon",
+      "marathon",
+      "aravalli",
+      "running"
+    ]
+  },
+  {
+    "slug": "sharad-purnima-garba-night",
+    "title": "Sharad Purnima Garba Night",
+    "tagline": "Live dhol, full moon, all night garba",
+    "category": "Garba & Dandiya",
+    "city": "Surat",
+    "featured": true,
+    "mode": "venue",
+    "start": "2026-10-24T19:00",
+    "end": "2026-10-25T01:00",
+    "language": "Gujarati & Hindi",
+    "venue": {
+      "name": "Vesu Lake Garden Lawns",
+      "address": "VIP Road, Vesu, Surat, Gujarat 395007",
+      "map_query": "Vesu Surat"
+    },
+    "organizer": "rang-utsav",
+    "poster": "img/posters/sharad-purnima-garba-night.svg",
+    "banner": "img/banners/sharad-purnima-garba-night.svg",
+    "tickets": [
+      {
+        "name": "Single Pass",
+        "price": 349,
+        "capacity": 1200,
+        "sold": 1010
+      },
+      {
+        "name": "Couple Pass",
+        "price": 599,
+        "capacity": 500,
+        "sold": 455
+      },
+      {
+        "name": "Group of 5",
+        "price": 1399,
+        "capacity": 120,
+        "sold": 120
+      }
+    ],
+    "about": "A full-moon garba night with a 12-piece live band, two dance circles (beginners and pros) and prizes for the best dressed. Traditional dress is encouraged.",
+    "highlights": [
+      "12-piece live band",
+      "Separate circle for beginners",
+      "Best-dressed prizes every hour",
+      "Food stalls and free water"
+    ],
+    "schedule": [
+      {
+        "time": "19:00",
+        "title": "Gates open"
+      },
+      {
+        "time": "20:00",
+        "title": "Aarti and first round"
+      },
+      {
+        "time": "22:30",
+        "title": "Best-dressed prizes"
+      },
+      {
+        "time": "01:00",
+        "title": "Close"
+      }
+    ],
+    "kit": [
+      "Entry band",
+      "Free water",
+      "Lockers on request"
+    ],
+    "prizes": [
+      "Best dressed (men, women, kids): gift hampers every hour"
+    ],
+    "faqs": [
+      {
+        "q": "Is there parking?",
+        "a": "Paid parking for cars and free parking for two-wheelers on site."
+      },
+      {
+        "q": "Can kids come?",
+        "a": "Yes. Kids under 8 enter free with a paid adult."
+      }
+    ],
+    "refund_policy": "No refunds. Passes can be transferred to a friend by sharing the QR ticket.",
+    "tags": [
+      "garba",
+      "dandiya",
+      "navratri",
+      "dance",
+      "sharad purnima"
+    ]
+  },
+  {
+    "slug": "deepotsav-kavi-sammelan",
+    "title": "दीपोत्सव कवि सम्मेलन",
+    "tagline": "हास्य, वीर और श्रृंगार रस की एक शाम",
+    "category": "Kavi Sammelan",
+    "city": "Ajmer",
+    "featured": false,
+    "mode": "venue",
+    "start": "2026-11-06T18:30",
+    "end": "2026-11-06T22:30",
+    "language": "Hindi",
+    "venue": {
+      "name": "Jawahar Rang Manch",
+      "address": "Jawahar Rang Manch, Ajmer, Rajasthan 305001",
+      "map_query": "Jawahar Rang Manch Ajmer"
+    },
+    "organizer": "sahitya-sangam",
+    "poster": "img/posters/deepotsav-kavi-sammelan.svg",
+    "banner": "img/banners/deepotsav-kavi-sammelan.svg",
+    "tickets": [
+      {
+        "name": "निःशुल्क प्रवेश (Free entry)",
+        "price": 0,
+        "capacity": 800,
+        "sold": 512,
+        "note": "Seats are first come, first served."
+      }
+    ],
+    "about": "दीपावली से पहले एक साहित्यिक शाम। राजस्थान और देश के जाने-माने कवि हास्य, वीर और श्रृंगार रस की कविताएँ सुनाएँगे। प्रवेश निःशुल्क है, पर सीट के लिए रजिस्ट्रेशन ज़रूरी है।",
+    "highlights": [
+      "6 renowned poets on one stage",
+      "Free entry with registration",
+      "Family-friendly evening"
+    ],
+    "schedule": [
+      {
+        "time": "18:30",
+        "title": "दीप प्रज्वलन"
+      },
+      {
+        "time": "19:00",
+        "title": "कवि सम्मेलन आरंभ"
+      },
+      {
+        "time": "22:00",
+        "title": "सम्मान समारोह"
+      }
+    ],
+    "kit": [],
+    "prizes": [],
+    "faqs": [
+      {
+        "q": "क्या रजिस्ट्रेशन ज़रूरी है?",
+        "a": "हाँ, निःशुल्क रजिस्ट्रेशन से सीट पक्की होती है। 18:15 के बाद खाली सीटें सभी के लिए खुली होंगी।"
+      }
+    ],
+    "refund_policy": "Free event. If you can't come, please cancel your registration so someone else gets the seat.",
+    "tags": [
+      "kavi sammelan",
+      "poetry",
+      "hindi",
+      "diwali",
+      "कवि सम्मेलन"
+    ]
+  },
+  {
+    "slug": "little-legs-kids-run",
+    "title": "Little Legs Kids Run",
+    "tagline": "2K and 4K fun runs for ages 5 to 14",
+    "category": "Running",
+    "city": "Kota",
+    "featured": false,
+    "mode": "venue",
+    "start": "2026-12-20T07:00",
+    "end": "2026-12-20T10:00",
+    "reg_closes": "2026-12-15T23:59",
+    "language": "Hindi & English",
+    "age_min": 5,
+    "venue": {
+      "name": "Chambal Garden",
+      "address": "Chambal Garden, Kota, Rajasthan 324001",
+      "map_query": "Chambal Garden Kota"
+    },
+    "organizer": "pink-pace-runners",
+    "poster": "img/posters/little-legs-kids-run.svg",
+    "banner": "img/banners/little-legs-kids-run.svg",
+    "tickets": [
+      {
+        "name": "2K (ages 5 to 8)",
+        "price": 199,
+        "capacity": 300,
+        "sold": 88
+      },
+      {
+        "name": "4K (ages 9 to 14)",
+        "price": 249,
+        "capacity": 300,
+        "sold": 120
+      }
+    ],
+    "about": "A safe, fully marshalled fun run for kids inside Chambal Garden. Every finisher gets a medal and a certificate. Parents can run alongside in the 2K.",
+    "highlights": [
+      "Medal for every child",
+      "Closed, marshalled course",
+      "Parents can run the 2K free"
+    ],
+    "schedule": [
+      {
+        "time": "07:00",
+        "title": "Warm-up with coaches"
+      },
+      {
+        "time": "07:30",
+        "title": "4K start"
+      },
+      {
+        "time": "08:15",
+        "title": "2K start"
+      },
+      {
+        "time": "09:30",
+        "title": "Medals and photos"
+      }
+    ],
+    "kit": [
+      "Kids T-shirt",
+      "Bib",
+      "Medal",
+      "Certificate",
+      "Snack box"
+    ],
+    "prizes": [],
+    "faqs": [
+      {
+        "q": "Can a parent run too?",
+        "a": "Yes, one parent can run the 2K with their child at no extra cost."
+      }
+    ],
+    "refund_policy": "Full refund up to 7 days before the run.",
+    "tags": [
+      "kids run",
+      "kids marathon",
+      "running",
+      "family"
+    ]
+  },
+  {
+    "slug": "marwar-rapid-chess-open",
+    "title": "Marwar Rapid Chess Open",
+    "tagline": "9 rounds, rated and unrated sections",
+    "category": "Sports",
+    "city": "Jodhpur",
+    "featured": false,
+    "mode": "venue",
+    "start": "2026-12-06T09:00",
+    "end": "2026-12-06T19:00",
+    "reg_closes": "2026-12-02T23:59",
+    "language": "Hindi & English",
+    "venue": {
+      "name": "Umaid Stadium Indoor Hall",
+      "address": "Umaid Stadium, Jodhpur, Rajasthan 342001",
+      "map_query": "Umaid Stadium Jodhpur"
+    },
+    "organizer": "blue-city-sports",
+    "poster": "img/posters/marwar-rapid-chess-open.svg",
+    "banner": "img/banners/marwar-rapid-chess-open.svg",
+    "tickets": [
+      {
+        "name": "Open (FIDE rated)",
+        "price": 800,
+        "capacity": 200,
+        "sold": 131
+      },
+      {
+        "name": "Under-15",
+        "price": 500,
+        "capacity": 120,
+        "sold": 64
+      }
+    ],
+    "about": "A one-day FIDE-rated rapid tournament, 15 minutes plus 10 seconds per move, 9 rounds Swiss. Separate unrated under-15 section with trophies for the top 10.",
+    "highlights": [
+      "FIDE rated",
+      "Rs 1,00,000 prize fund",
+      "Trophies for top 10 under-15"
+    ],
+    "schedule": [
+      {
+        "time": "08:30",
+        "title": "Reporting"
+      },
+      {
+        "time": "09:00",
+        "title": "Round 1"
+      },
+      {
+        "time": "13:00",
+        "title": "Lunch"
+      },
+      {
+        "time": "18:30",
+        "title": "Prize distribution"
+      }
+    ],
+    "kit": [
+      "Lunch",
+      "Scoresheets",
+      "Certificate"
+    ],
+    "prizes": [
+      "Open: Rs 25,000 / 15,000 / 10,000 and 20 more prizes",
+      "Under-15: trophies for top 10"
+    ],
+    "faqs": [
+      {
+        "q": "Do I need a FIDE ID?",
+        "a": "Only for the Open section. Under-15 players don't need one."
+      }
+    ],
+    "refund_policy": "Full refund until registration closes.",
+    "tags": [
+      "chess",
+      "tournament",
+      "fide",
+      "sports"
+    ]
+  },
+  {
+    "slug": "pushkar-sunrise-yoga",
+    "title": "Pushkar Sunrise Yoga",
+    "tagline": "Free community yoga by the ghats",
+    "category": "Wellness",
+    "city": "Ajmer",
+    "featured": false,
+    "mode": "venue",
+    "start": "2026-11-15T06:00",
+    "end": "2026-11-15T07:30",
+    "language": "Hindi & English",
+    "venue": {
+      "name": "Varah Ghat, Pushkar",
+      "address": "Varah Ghat, Pushkar, Ajmer, Rajasthan 305022",
+      "map_query": "Varah Ghat Pushkar"
+    },
+    "organizer": "sahitya-sangam",
+    "poster": "img/posters/pushkar-sunrise-yoga.svg",
+    "banner": "img/banners/pushkar-sunrise-yoga.svg",
+    "tickets": [
+      {
+        "name": "Free mat spot",
+        "price": 0,
+        "capacity": 150,
+        "sold": 61,
+        "note": "Bring your own mat or borrow one at the ghat."
+      }
+    ],
+    "about": "A gentle 75-minute yoga and pranayama session at sunrise, led by certified teachers. Open to all levels.",
+    "highlights": [
+      "All levels welcome",
+      "Certified teachers",
+      "Herbal tea after the session"
+    ],
+    "schedule": [
+      {
+        "time": "06:00",
+        "title": "Breathing and warm-up"
+      },
+      {
+        "time": "06:20",
+        "title": "Asanas"
+      },
+      {
+        "time": "07:10",
+        "title": "Meditation"
+      }
+    ],
+    "kit": [
+      "Herbal tea"
+    ],
+    "prizes": [],
+    "faqs": [],
+    "refund_policy": "Free event. Please cancel if you can't come.",
+    "tags": [
+      "yoga",
+      "wellness",
+      "free",
+      "pushkar"
+    ]
+  },
+  {
+    "slug": "race-day-nutrition-masterclass",
+    "title": "Race-Day Nutrition Masterclass",
+    "tagline": "What to eat before, during and after a half marathon",
+    "category": "Workshop",
+    "city": "Online",
+    "featured": false,
+    "mode": "online",
+    "start": "2026-11-08T11:00",
+    "end": "2026-11-08T12:30",
+    "language": "Hindi & English",
+    "venue": {
+      "name": "Online (Zoom)",
+      "address": "Joining link is sent with your ticket"
+    },
+    "organizer": "pink-pace-runners",
+    "poster": "img/posters/race-day-nutrition-masterclass.svg",
+    "banner": "img/banners/race-day-nutrition-masterclass.svg",
+    "tickets": [
+      {
+        "name": "Live + recording",
+        "price": 149,
+        "capacity": 500,
+        "sold": 176
+      }
+    ],
+    "about": "A live 90-minute class with a sports dietitian on carb loading, gels, hydration and recovery meals, with Indian food examples. Recording shared for 30 days.",
+    "highlights": [
+      "Live Q&A",
+      "Indian meal plans",
+      "Recording for 30 days"
+    ],
+    "schedule": [
+      {
+        "time": "11:00",
+        "title": "Before the race"
+      },
+      {
+        "time": "11:30",
+        "title": "During the race"
+      },
+      {
+        "time": "12:00",
+        "title": "Recovery and Q&A"
+      }
+    ],
+    "kit": [
+      "PDF meal plans",
+      "Recording"
+    ],
+    "prizes": [],
+    "faqs": [
+      {
+        "q": "Where do I get the link?",
+        "a": "It's on your ticket and in the confirmation SMS."
+      }
+    ],
+    "refund_policy": "Full refund up to 24 hours before the class.",
+    "tags": [
+      "nutrition",
+      "running",
+      "online",
+      "marathon",
+      "workshop"
+    ]
+  },
+  {
+    "slug": "tricity-half-marathon-2026",
+    "title": "Tricity Half Marathon 2026",
+    "tagline": "5K, 10K and 21K through Sukhna Lake and Sector 17",
+    "category": "Running",
+    "city": "Chandigarh",
+    "featured": false,
+    "mode": "venue",
+    "start": "2026-09-27T05:00",
+    "end": "2026-09-27T10:00",
+    "language": "Hindi, Punjabi & English",
+    "age_min": 12,
+    "venue": {
+      "name": "Sukhna Lake",
+      "address": "Sukhna Lake, Sector 1, Chandigarh 160001",
+      "map_query": "Sukhna Lake Chandigarh"
+    },
+    "organizer": "pink-pace-runners",
+    "poster": "img/posters/tricity-half-marathon-2026.svg",
+    "banner": "img/banners/tricity-half-marathon-2026.svg",
+    "tickets": [
+      {
+        "name": "5K",
+        "price": 400,
+        "capacity": 1000,
+        "sold": 940
+      },
+      {
+        "name": "10K",
+        "price": 700,
+        "capacity": 800,
+        "sold": 800
+      },
+      {
+        "name": "21K",
+        "price": 1100,
+        "capacity": 600,
+        "sold": 588
+      }
+    ],
+    "about": "A flat, fast course from Sukhna Lake through the leafy sectors of Chandigarh, with timing for all distances.",
+    "highlights": [
+      "Flat and fast course",
+      "Chip timing for all",
+      "Finisher medal"
+    ],
+    "schedule": [
+      {
+        "time": "05:00",
+        "title": "21K flag-off"
+      },
+      {
+        "time": "05:45",
+        "title": "10K flag-off"
+      },
+      {
+        "time": "06:15",
+        "title": "5K flag-off"
+      }
+    ],
+    "kit": [
+      "T-shirt",
+      "Timing bib",
+      "Medal",
+      "Breakfast"
+    ],
+    "prizes": [
+      "21K: Rs 15,000 / 10,000 / 5,000 (men and women)"
+    ],
+    "faqs": [],
+    "refund_policy": "No refunds after 14 days before race day.",
+    "results": {
+      "summary": "2,328 runners finished across three distances. Course records fell in the men's 21K and the women's 10K.",
+      "photos": [
+        "img/banners/tricity-half-marathon-2026.svg",
+        "img/posters/tricity-half-marathon-2026.svg"
+      ],
+      "finishers": [
+        {
+          "bib": "21001",
+          "name": "Harpreet Singh",
+          "category": "21K Men",
+          "time": "1:09:42",
+          "rank": 1
+        },
+        {
+          "bib": "21017",
+          "name": "Rahul Verma",
+          "category": "21K Men",
+          "time": "1:11:05",
+          "rank": 2
+        },
+        {
+          "bib": "21102",
+          "name": "Simran Kaur",
+          "category": "21K Women",
+          "time": "1:21:38",
+          "rank": 1
+        },
+        {
+          "bib": "21140",
+          "name": "Neha Bhardwaj",
+          "category": "21K Women",
+          "time": "1:24:11",
+          "rank": 2
+        },
+        {
+          "bib": "10023",
+          "name": "Aman Gill",
+          "category": "10K Men",
+          "time": "0:32:19",
+          "rank": 1
+        },
+        {
+          "bib": "10311",
+          "name": "Pooja Rana",
+          "category": "10K Women",
+          "time": "0:37:02",
+          "rank": 1
+        },
+        {
+          "bib": "05110",
+          "name": "Kabir Sethi",
+          "category": "5K Men",
+          "time": "0:16:48",
+          "rank": 1
+        },
+        {
+          "bib": "05402",
+          "name": "Ananya Joshi",
+          "category": "5K Women",
+          "time": "0:19:55",
+          "rank": 1
+        }
+      ]
+    },
+    "tags": [
+      "half marathon",
+      "marathon",
+      "running",
+      "10k",
+      "5k"
+    ]
   }
 ]

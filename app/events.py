@@ -1,6 +1,6 @@
 """Event data: loading, computed status/badges, search and filters, and publish checks.
 
-Phase 1 reads events from data/events.json. Later phases swap this for a database,
+Events and organizers are read from data/*.json. Later phases swap this for a database,
 but templates only use the Event properties below, so they won't need to change.
 """
 import json
@@ -11,6 +11,7 @@ from pathlib import Path
 
 IST = timezone(timedelta(hours=5, minutes=30))
 DATA_FILE = Path(__file__).parent / "data" / "events.json"
+ORGANIZERS_FILE = Path(__file__).parent / "data" / "organizers.json"
 
 SELLING_FAST_RATIO = 0.8
 
@@ -19,8 +20,12 @@ PLACEHOLDER_PATTERNS = re.compile(
     r"\b(tbd|tba|lorem|ipsum|xxx+|placeholder|coming soon|to be announced|final route)\b|\{\{|\[insert",
     re.IGNORECASE,
 )
-REQUIRED_FIELDS = ["slug", "title", "category", "city", "start", "end", "about", "poster", "refund_policy"]
+REQUIRED_FIELDS = ["slug", "title", "category", "city", "start", "end", "about", "poster", "refund_policy", "organizer"]
 REQUIRED_VENUE_FIELDS = ["name", "address"]
+
+DATE_FILTERS = [("today", "Today"), ("weekend", "This weekend"), ("week", "This week"), ("month", "This month")]
+PRICE_FILTERS = [("free", "Free"), ("u500", "Under ₹500"), ("u1000", "Under ₹1,000"), ("paid", "Paid")]
+SORTS = [("date", "Soonest"), ("price", "Price: low to high"), ("popular", "Most popular")]
 
 
 def now_ist():
@@ -48,6 +53,7 @@ class Ticket:
 class Event:
     raw: dict
     tickets: list = field(default_factory=list)
+    org: dict = field(default_factory=dict)  # organizer profile, filled in by EventStore
 
     def __getattr__(self, name):
         # Plain JSON fields (title, city, faqs, ...) read straight from raw.
@@ -63,6 +69,20 @@ class Event:
     @property
     def end(self):
         return datetime.fromisoformat(self.raw["end"]).replace(tzinfo=IST)
+
+    @property
+    def is_online(self):
+        return self.raw.get("mode") == "online"
+
+    @property
+    def reg_closes(self):
+        """When registration closes: its own date if set, else when the event starts."""
+        value = self.raw.get("reg_closes")
+        return datetime.fromisoformat(value).replace(tzinfo=IST) if value else self.start
+
+    def registration_open(self, at=None):
+        at = at or now_ist()
+        return not self.sold_out and at < self.reg_closes and not self.is_past(at)
 
     def status(self, at=None):
         at = at or now_ist()
@@ -89,6 +109,10 @@ class Event:
         return sum(min(t.sold, t.capacity) for t in self.tickets) / cap if cap else 0
 
     @property
+    def registered(self):
+        return sum(min(t.sold, t.capacity) for t in self.tickets)
+
+    @property
     def selling_fast(self):
         return not self.sold_out and self.sold_ratio >= SELLING_FAST_RATIO
 
@@ -112,10 +136,14 @@ class Event:
             out.append(("Happening now", "live"))
         if self.sold_out:
             out.append(("Sold out", "soldout"))
+        elif not self.registration_open(at):
+            out.append(("Registration closed", "muted"))
         elif self.selling_fast:
             out.append(("Selling fast", "hot"))
         if self.is_free:
             out.append(("Free", "free"))
+        if self.is_online:
+            out.append(("Online", "muted"))
         return out
 
 
@@ -157,22 +185,47 @@ def problems(raw):
     return issues
 
 
-def _build(raw):
+def date_window(key, at=None):
+    """(start, end) for the date filter: today, weekend, week or month. None means any date."""
+    at = at or now_ist()
+    day = at.replace(hour=0, minute=0, second=0, microsecond=0)
+    if key == "today":
+        return at, day + timedelta(days=1)
+    if key == "weekend":
+        # Saturday and Sunday of this week; on a Sunday, just the rest of today.
+        saturday = day - timedelta(days=1) if day.weekday() == 6 else day + timedelta(days=5 - day.weekday())
+        return max(at, saturday), saturday + timedelta(days=2)
+    if key == "week":
+        return at, day + timedelta(days=7 - day.weekday())
+    if key == "month":
+        return at, (day.replace(day=1) + timedelta(days=32)).replace(day=1)
+    return None
+
+
+def _build(raw, organizers):
     tickets = [Ticket(**t) for t in raw.get("tickets", [])]
-    return Event(raw=raw, tickets=tickets)
+    return Event(raw=raw, tickets=tickets, org=organizers.get(raw.get("organizer"), {}))
 
 
 class EventStore:
-    def __init__(self, path=DATA_FILE):
+    def __init__(self, path=DATA_FILE, organizers_path=ORGANIZERS_FILE):
         with open(path, encoding="utf-8") as f:
             raws = json.load(f)
+        with open(organizers_path, encoding="utf-8") as f:
+            self.organizers = {o["slug"]: o for o in json.load(f)}
         self.invalid = {r.get("slug", "?"): problems(r) for r in raws if problems(r)}
+        for r in raws:
+            if r.get("slug") not in self.invalid and r.get("organizer") not in self.organizers:
+                self.invalid[r["slug"]] = [f"unknown organizer {r.get('organizer')!r}"]
         # Never show an event that fails the publish checks.
-        self.events = [_build(r) for r in raws if r.get("slug") not in self.invalid]
+        self.events = [_build(r, self.organizers) for r in raws if r.get("slug") not in self.invalid]
         self._by_slug = {e.slug: e for e in self.events}
 
     def get(self, slug):
         return self._by_slug.get(slug)
+
+    def by_organizer(self, slug):
+        return [e for e in self.events if e.organizer == slug]
 
     def upcoming(self, at=None):
         """Upcoming and live events, soonest first."""
@@ -185,16 +238,22 @@ class EventStore:
     def featured(self, at=None):
         return [e for e in self.upcoming(at) if e.raw.get("featured")]
 
+    def similar(self, event, limit=4, at=None):
+        """Upcoming events in the same category first, then the same city."""
+        pool = [e for e in self.upcoming(at) if e.slug != event.slug]
+        pool.sort(key=lambda e: (e.category != event.category, e.city != event.city, e.start))
+        return pool[:limit]
+
     def cities(self):
         return sorted({e.city for e in self.events})
 
     def categories(self):
         return sorted({e.category for e in self.events})
 
-    def counts(self, attr, at=None):
-        """Upcoming events per city or category, busiest first: [(name, count), ...]."""
+    def counts(self, attr, at=None, when="upcoming"):
+        """Events per city or category, busiest first: [(name, count), ...]."""
         totals = {}
-        for e in self.upcoming(at):
+        for e in self.past(at) if when == "past" else self.upcoming(at):
             key = getattr(e, attr)
             totals[key] = totals.get(key, 0) + 1
         return sorted(totals.items(), key=lambda kv: (-kv[1], kv[0]))
@@ -213,21 +272,33 @@ class EventStore:
             "categories": [c for c, _ in self.counts("category", at) if q in c.lower()],
         }
 
-    def search(self, q="",city=None, category=None, max_price=None, when="upcoming", sort="date", at=None):
+    def search(self, q="", city=None, category=None, max_price=None, when="upcoming", sort="date",
+               date=None, price=None, at=None):
         pool = self.past(at) if when == "past" else self.upcoming(at)
         q = q.strip().lower()
+        window = date_window(date, at) if when != "past" else None
+        price_cap = {"u500": 500, "u1000": 1000}.get(price, max_price)
         out = []
         for e in pool:
-            haystack = " ".join([e.title, e.city, e.category, e.venue["name"], " ".join(e.raw.get("tags", []))]).lower()
+            haystack = " ".join([e.title, e.tagline, e.city, e.category, e.venue["name"], e.org.get("name", ""),
+                                 " ".join(e.raw.get("tags", []))]).lower()
             if q and q not in haystack:
                 continue
             if city and e.city != city:
                 continue
             if category and e.category != category:
                 continue
-            if max_price is not None and e.price_from > max_price:
+            if price_cap is not None and e.price_from > price_cap:
+                continue
+            if price == "free" and not e.is_free:
+                continue
+            if price == "paid" and e.is_free:
+                continue
+            if window and not (e.start < window[1] and e.end >= window[0]):
                 continue
             out.append(e)
         if sort == "price":
             out.sort(key=lambda e: e.price_from)
+        elif sort == "popular":
+            out.sort(key=lambda e: -e.sold_ratio)
         return out

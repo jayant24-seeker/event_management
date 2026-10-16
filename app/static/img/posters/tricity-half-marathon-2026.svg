@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1200" width="900" height="1200">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0.3" y2="1">
+      <stop offset="0" stop-color="#0A1F33"/><stop offset="1" stop-color="#1D6FA3"/>
+    </linearGradient>
+    <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.08 0"/></filter>
+  </defs>
+  <rect width="900" height="1200" fill="url(#bg)"/>
+  <path d="M0,120 Q56,84 112,120 Q169,156 225,120 Q281,84 338,120 Q394,156 450,120 Q506,84 562,120 Q619,156 675,120 Q731,84 788,120 Q844,156 900,120" fill="none" stroke="#FF7A59" stroke-width="9" opacity="0.9"/>
+  <path d="M0,192 Q56,156 112,192 Q169,228 225,192 Q281,156 338,192 Q394,228 450,192 Q506,156 562,192 Q619,228 675,192 Q731,156 788,192 Q844,228 900,192" fill="none" stroke="#EEF7FF" stroke-width="3" opacity="0.3"/>
+  <path d="M0,264 Q56,228 112,264 Q169,300 225,264 Q281,228 338,264 Q394,300 450,264 Q506,228 562,264 Q619,300 675,264 Q731,228 788,264 Q844,300 900,264" fill="none" stroke="#EEF7FF" stroke-width="3" opacity="0.3"/>
+  <path d="M0,336 Q56,300 112,336 Q169,372 225,336 Q281,300 338,336 Q394,372 450,336 Q506,300 562,336 Q619,372 675,336 Q731,300 788,336 Q844,372 900,336" fill="none" stroke="#FF7A59" stroke-width="9" opacity="0.9"/>
+  <path d="M0,408 Q56,372 112,408 Q169,444 225,408 Q281,372 338,408 Q394,444 450,408 Q506,372 562,408 Q619,444 675,408 Q731,372 788,408 Q844,444 900,408" fill="none" stroke="#EEF7FF" stroke-width="3" opacity="0.3"/>
+  <path d="M0,480 Q56,444 112,480 Q169,516 225,480 Q281,444 338,480 Q394,516 450,480 Q506,444 562,480 Q619,516 675,480 Q731,444 788,480 Q844,516 900,480" fill="none" stroke="#EEF7FF" stroke-width="3" opacity="0.3"/>
+  <path d="M0,552 Q56,516 112,552 Q169,588 225,552 Q281,516 338,552 Q394,588 450,552 Q506,516 562,552 Q619,588 675,552 Q731,516 788,552 Q844,588 900,552" fill="none" stroke="#FF7A59" stroke-width="9" opacity="0.9"/>
+  <path d="M0,624 Q56,588 112,624 Q169,660 225,624 Q281,588 338,624 Q394,660 450,624 Q506,588 562,624 Q619,660 675,624 Q731,588 788,624 Q844,660 900,624" fill="none" stroke="#EEF7FF" stroke-width="3" opacity="0.3"/>
+  <path d="M0,696 Q56,660 112,696 Q169,732 225,696 Q281,660 338,696 Q394,732 450,696 Q506,660 562,696 Q619,732 675,696 Q731,660 788,696 Q844,732 900,696" fill="none" stroke="#EEF7FF" stroke-width="3" opacity="0.3"/>
+  <path d="M0,768 Q56,732 112,768 Q169,804 225,768 Q281,732 338,768 Q394,804 450,768 Q506,732 562,768 Q619,804 675,768 Q731,732 788,768 Q844,804 900,768" fill="none" stroke="#FF7A59" stroke-width="9" opacity="0.9"/>
+  <rect width="900" height="1200" filter="url(#grain)"/>
+  <text x="60" y="816" font-family="Bricolage Grotesque, Mukta, Kohinoor Devanagari, Arial Black, Helvetica, sans-serif" font-weight="800" font-size="92" fill="#EEF7FF" letter-spacing="-2">TRICITY HALF</text><text x="60" y="908" font-family="Bricolage Grotesque, Mukta, Kohinoor Devanagari, Arial Black, Helvetica, sans-serif" font-weight="800" font-size="92" fill="#EEF7FF" letter-spacing="-2">MARATHON</text><text x="60" y="1000" font-family="Bricolage Grotesque, Mukta, Kohinoor Devanagari, Arial Black, Helvetica, sans-serif" font-weight="800" font-size="92" fill="#EEF7FF" letter-spacing="-2">2026</text><rect x="60" y="1050" width="780" height="3" fill="#FF7A59"/><text x="60" y="1108" font-family="Bricolage Grotesque, Mukta, Kohinoor Devanagari, Arial Black, Helvetica, sans-serif" font-weight="700" font-size="40" fill="#FF7A59">27 Sep 2026</text><text x="840" y="1108" text-anchor="end" font-family="Bricolage Grotesque, Mukta, Kohinoor Devanagari, Arial Black, Helvetica, sans-serif" font-weight="700" font-size="40" fill="#EEF7FF">CHANDIGARH</text><text x="62" y="718" font-family="Bricolage Grotesque, Mukta, Kohinoor Devanagari, Arial Black, Helvetica, sans-serif" font-weight="700" font-size="30" fill="#FF7A59" letter-spacing="6">RUNNING</text>
+</svg>

@@ -22,7 +22,7 @@
       <a href="{{ url_for('main.home') }}" class="flex items-center gap-2 font-display text-xl font-extrabold">
         <span class="grid h-8 w-8 place-items-center rounded-lg bg-rani text-white">e</span>{{ site_name|lower }}
       </a>
-      {% if request.endpoint != 'main.home' %}
+      {% if request.endpoint not in ('main.home', 'main.explore') %}
       <div class="ml-4 hidden flex-1 md:block md:max-w-md">{{ search_box('header-q', value=request.args.get('q', '')) }}</div>
       {% endif %}
       <nav class="ml-auto flex items-center gap-1 text-sm font-medium">
