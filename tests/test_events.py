@@ -55,6 +55,28 @@ def test_search_and_filters(store):
     assert [e.slug for e in store.search(when="past", category="Comedy", at=TODAY)] == ["kota-standup-night"]
 
 
+def test_counts_and_suggest(store):
+    cities = dict(store.counts("city", TODAY))
+    assert cities["Jaipur"] == 1  # the past pottery workshop isn't counted
+    assert "Kota" in cities
+    found = store.suggest("ja", at=TODAY)
+    assert [e.slug for e in found["events"]] == ["jaipur-night-run-2026"]
+    assert found["cities"] == ["Jaipur"]
+    assert store.suggest("j", at=TODAY)["events"] == []  # too short to search
+
+
+def test_home_and_search_pages():
+    client = create_app().test_client()
+    home = client.get("/").get_data(as_text=True)
+    assert "data-hero-slide" in home and "Find something to do" in home
+    assert "Kota Stand-up Night" not in home  # past events stay off the homepage
+    page = client.get("/events?q=comedy&when=past").get_data(as_text=True)
+    assert "Kota Stand-up Night" in page
+    data = client.get("/api/suggest?q=surat").get_json()
+    assert data["events"][0]["url"] == "/events/surat-street-food-fest"
+    assert data["cities"][0]["url"] == "/events?city=Surat"
+
+
 def test_pages_render():
     client = create_app().test_client()
     assert client.get("/styleguide").status_code == 200

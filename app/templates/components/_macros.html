@@ -41,3 +41,17 @@
   </div>
 </a>
 {%- endmacro %}
+
+{# Search input with live suggestions (search.js). Submits to the Explore page. #}
+{% macro search_box(id, large=False, value='') -%}
+<form action="{{ url_for('main.explore') }}" method="get" role="search" class="relative" data-suggest>
+  <label for="{{ id }}" class="sr-only">Search events</label>
+  <svg class="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-ink-soft" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+  <input id="{{ id }}" name="q" type="search" value="{{ value }}" autocomplete="off"
+         role="combobox" aria-expanded="false" aria-autocomplete="list" aria-controls="{{ id }}-list"
+         class="input pl-12 {{ 'py-4 pr-32 text-base' if large else 'py-2' }}" placeholder="Search events or cities">
+  {% if large %}<button type="submit" class="btn-primary absolute right-1.5 top-1/2 -translate-y-1/2 py-3">Search</button>{% endif %}
+  <div id="{{ id }}-list" role="listbox" aria-label="Suggestions" hidden
+       class="absolute inset-x-0 top-full z-50 mt-2 max-h-[70vh] overflow-y-auto rounded-2xl border border-line bg-paper-raised p-2 shadow-poster"></div>
+</form>
+{%- endmacro %}

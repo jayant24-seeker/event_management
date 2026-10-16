@@ -1,6 +1,6 @@
 /** Design tokens live here. Colors point at CSS variables in app/static/src/input.css. */
 module.exports = {
-  content: ["./app/templates/**/*.html"],
+  content: ["./app/templates/**/*.html", "./app/static/js/**/*.js"],
   // Badge styles are picked in Python (events.py), so Tailwind can't see them in templates.
   safelist: ["badge-hot", "badge-soldout", "badge-free", "badge-live", "badge-muted"],
   theme: {

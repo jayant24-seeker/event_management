@@ -93,6 +93,10 @@ class Event:
         return not self.sold_out and self.sold_ratio >= SELLING_FAST_RATIO
 
     @property
+    def spots_left(self):
+        return sum(t.left for t in self.tickets)
+
+    @property
     def price_from(self):
         """Lowest price still on sale, falling back to the lowest overall."""
         open_prices = [t.price for t in self.tickets if not t.sold_out]
@@ -187,7 +191,29 @@ class EventStore:
     def categories(self):
         return sorted({e.category for e in self.events})
 
-    def search(self, q="", city=None, category=None, max_price=None, when="upcoming", sort="date", at=None):
+    def counts(self, attr, at=None):
+        """Upcoming events per city or category, busiest first: [(name, count), ...]."""
+        totals = {}
+        for e in self.upcoming(at):
+            key = getattr(e, attr)
+            totals[key] = totals.get(key, 0) + 1
+        return sorted(totals.items(), key=lambda kv: (-kv[1], kv[0]))
+
+    def suggest(self, q, limit=5, at=None):
+        """Search-box suggestions: matching upcoming events, cities and categories."""
+        q = q.strip().lower()
+        if len(q) < 2:
+            return {"events": [], "cities": [], "categories": []}
+        events = self.search(q, at=at)
+        # Titles that start with the query feel most relevant, so they go first.
+        events.sort(key=lambda e: not e.title.lower().startswith(q))
+        return {
+            "events": events[:limit],
+            "cities": [c for c, _ in self.counts("city", at) if q in c.lower()],
+            "categories": [c for c, _ in self.counts("category", at) if q in c.lower()],
+        }
+
+    def search(self, q="",city=None, category=None, max_price=None, when="upcoming", sort="date", at=None):
         pool = self.past(at) if when == "past" else self.upcoming(at)
         q = q.strip().lower()
         out = []

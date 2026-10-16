@@ -45,3 +45,9 @@
 
   .eyebrow { @apply text-xs font-bold uppercase tracking-[0.18em] text-rani; }
 }
+
+@layer utilities {
+  /* Horizontal swipe rows (hero slider, city tiles) without a visible scrollbar. */
+  .no-scrollbar { scrollbar-width: none; }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+}

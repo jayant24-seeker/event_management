@@ -21,7 +21,9 @@ The built CSS (`app/static/css/app.css`) is committed, so the site runs without 
 
 | Path | What |
 | --- | --- |
-| `app/events.py` | Event model: Upcoming/Past split, badges (Free, Selling fast, Sold out, Event ended), search and filters, publish checks that block blank fields and placeholder text |
+| `app/events.py` | Event model: Upcoming/Past split, badges (Free, Selling fast, Sold out, Event ended), search, filters, search suggestions, city/category counts, publish checks that block blank fields and placeholder text |
+| `app/routes.py` | `/` homepage, `/events` search results (full Explore page in phase 3), `/api/suggest` search suggestions, `/events/<slug>` |
+| `app/static/js/` | `hero.js` (homepage slider), `search.js` (live suggestions) |
 | `app/data/events.json` | 8 dummy events (6 cities, 2 past) |
 | `app/templates/components/_macros.html` | Poster card, badge, date chip, price label |
 | `app/static/src/input.css` | Color tokens and component classes |
@@ -32,7 +34,7 @@ The built CSS (`app/static/css/app.css`) is committed, so the site runs without 
 ## Build plan
 
 1. ✅ Setup, design system, dummy data
-2. Homepage
+2. ✅ Homepage
 3. Explore Events (search, filters, Upcoming/Past tabs)
 4. Event page
 5. Account and booking
