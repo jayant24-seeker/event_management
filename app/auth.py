@@ -8,6 +8,7 @@ from flask import Blueprint, current_app, flash, g, redirect, render_template, r
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from .models import OtpCode, User, db, utcnow
+from .ratelimit import hit
 from .sms import SmsNotConfigured, send_sms
 
 bp = Blueprint("auth", __name__)
@@ -29,7 +30,9 @@ def normalize_phone(raw):
 
 def safe_next(target):
     # Only send people back to pages on this site.
-    return target if target and target.startswith("/") and not target.startswith("//") else url_for("main.home")
+    # A backslash counts as a slash in browsers, so "/\\evil.com" would leave the site too.
+    ok = target and target.startswith("/") and not target.startswith("//") and "\\" not in target
+    return target if ok else url_for("main.home")
 
 
 def login_required(view):
@@ -53,7 +56,7 @@ def login():
         recent = OtpCode.query.filter(OtpCode.phone == phone, OtpCode.created_at > utcnow() - timedelta(hours=1)).count() if phone else 0
         if not phone:
             error = "Enter a 10-digit Indian mobile number."
-        elif recent >= MAX_CODES_PER_HOUR:
+        elif recent >= MAX_CODES_PER_HOUR or not hit("otp"):
             error = "Too many codes asked for this number. Please try again in an hour."
         else:
             code = f"{secrets.randbelow(10**6):06d}"

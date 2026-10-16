@@ -5,6 +5,7 @@ from html import escape
 from flask import Blueprint, Response, abort, g, jsonify, redirect, render_template, request, url_for
 
 from .events import DATE_FILTERS, PRICE_FILTERS, SORTS, EventStore, now_ist
+from .ratelimit import hit
 
 bp = Blueprint("main", __name__)
 
@@ -200,6 +201,8 @@ def contact():
             errors.append("Add a phone number or email so we can reply.")
         if len(message) < 10:
             errors.append("Tell us a little more in the message.")
+        if not errors and not hit("contact"):
+            errors.append("We've had a lot of messages from your connection. Please try again in an hour.")
         if not errors:
             db.session.add(ContactMessage(name=name[:120], reply_to=reply_to[:200], topic=topic, message=message[:4000]))
             db.session.commit()

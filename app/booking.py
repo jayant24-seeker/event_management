@@ -11,6 +11,7 @@ from .auth import login_required, normalize_phone
 from .events import IST, now_ist
 from .models import (PAYMENT_HOLD, Attendee, Booking, Coupon, EventRow, SavedEvent, WaitlistEntry, db,
                      seats_taken, utcnow)
+from .ratelimit import hit
 from .routes import store
 
 bp = Blueprint("booking", __name__)
@@ -269,6 +270,8 @@ def notify(slug):
         phone = normalize_phone(phone_raw)
         if not phone:
             error = "Enter a 10-digit Indian mobile number."
+        elif not hit("waitlist"):
+            error = "Too many sign-ups from your connection. Please try again later."
         else:
             if not WaitlistEntry.query.filter_by(event_slug=slug, phone=phone).first():
                 db.session.add(WaitlistEntry(event_slug=slug, phone=phone, name=name.strip()[:120]))

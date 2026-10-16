@@ -8,7 +8,7 @@ Every item keeps `pytest` green. Newest at the bottom.
     source .venv/bin/activate && flask --app run run --debug
 
 ## Backlog (ideas, roughly in order)
-- [ ] Security pass: OTP rate limits, open redirects, ownership checks
+- [x] Security pass: OTP rate limits, open redirects, ownership checks
 - [ ] PWA: web app manifest, offline "My tickets", installable
 - [ ] Cancel a booking (attendee side) following the refund policy
 - [ ] Transfer a ticket to someone else
@@ -25,3 +25,4 @@ Every item keeps `pytest` green. Newest at the bottom.
 - [ ] Speed: cache the event list per request burst
 
 ## Done
+- Security: per-IP limits on sign-in codes, waitlist and contact form; blocked `/\host` open redirect; bad coupon expiry no longer crashes. Ownership checks reviewed (all OK).

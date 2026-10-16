@@ -379,10 +379,13 @@ def coupons(slug):
     elif Coupon.query.filter_by(event_slug=slug, code=code).first():
         flash(f"Code {code} already exists.")
     else:
-        until = request.form.get("valid_until")
+        try:
+            until = datetime.fromisoformat(request.form["valid_until"]) if request.form.get("valid_until") else None
+        except ValueError:
+            flash("Enter the expiry as a date and time.")
+            return redirect(url_for("org.event_admin", slug=slug) + "#coupons")
         db.session.add(Coupon(event_slug=slug, code=code, percent_off=pct,
-                              max_uses=request.form.get("max_uses", type=int) or None,
-                              valid_until=datetime.fromisoformat(until) if until else None))
+                              max_uses=request.form.get("max_uses", type=int) or None, valid_until=until))
         db.session.commit()
         flash(f"Code {code} created.")
     return redirect(url_for("org.event_admin", slug=slug) + "#coupons")

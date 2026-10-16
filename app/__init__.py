@@ -24,6 +24,7 @@ def create_app(config=None):
         SESSION_COOKIE_HTTPONLY=True,
         SESSION_COOKIE_SAMESITE="Lax",
         SESSION_COOKIE_SECURE=os.environ.get("SESSION_COOKIE_SECURE") == "1",
+        TRUSTED_PROXY=os.environ.get("TRUSTED_PROXY") == "1",
     )
     # Where organizer uploads are written. Files are served from /static/uploads/.
     app.config["MEDIA_ROOT"] = app.static_folder
