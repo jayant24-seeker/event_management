@@ -1,0 +1,27 @@
+# Overnight improvements log (branch `auto-improvements`)
+
+Work done on its own branch, one commit per item. `main` and the phase branches are untouched.
+Every item keeps `pytest` green. Newest at the bottom.
+
+## How to look at it
+    git checkout auto-improvements
+    source .venv/bin/activate && flask --app run run --debug
+
+## Backlog (ideas, roughly in order)
+- [ ] Security pass: OTP rate limits, open redirects, ownership checks
+- [ ] PWA: web app manifest, offline "My tickets", installable
+- [ ] Cancel a booking (attendee side) following the refund policy
+- [ ] Transfer a ticket to someone else
+- [ ] Follow organizers; "From organizers you follow" on the homepage
+- [ ] Reviews and ratings on past events
+- [ ] Calendar (month) view on Explore
+- [ ] Organizer analytics: sales over time chart, ticket mix, check-in rate
+- [ ] Site admin: review events, read contact messages
+- [ ] Printable / downloadable ticket
+- [ ] Social share image per event (Open Graph)
+- [ ] Typo-tolerant search
+- [ ] Dark mode
+- [ ] Accessibility audit and fixes
+- [ ] Speed: cache the event list per request burst
+
+## Done
