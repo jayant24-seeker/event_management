@@ -215,7 +215,9 @@ def ticket_qr(attendee):
 def show(ref):
     booking = own_booking_or_404(ref)
     e = get_event_or_404(booking.event_slug)
-    return render_template("booking/booking.html", b=booking, e=e, qr=ticket_qr)
+    percent = 100 if booking.total == 0 else e.refund_percent()
+    return render_template("booking/booking.html", b=booking, e=e, qr=ticket_qr, refund_percent=percent,
+                           refund_amount=booking.total * percent // 100)
 
 
 @bp.route("/bookings/<ref>/cancel", methods=["POST"])
@@ -223,13 +225,19 @@ def show(ref):
 def cancel(ref):
     booking = own_booking_or_404(ref)
     e = get_event_or_404(booking.event_slug)
-    # Free registrations can be cancelled any time before the event. Paid refunds follow
-    # the organizer's policy and are handled by them until refunds are built.
-    if booking.status != "confirmed" or booking.total > 0 or e.is_past():
+    # Free registrations can be cancelled any time before the event. Paid ones while the
+    # organizer's refund rules still give money back.
+    percent = 100 if booking.total == 0 else e.refund_percent()
+    if booking.status != "confirmed" or e.is_past() or percent == 0:
         abort(400)
-    booking.status = "cancelled"
+    refund = booking.total * percent // 100
+    booking.status, booking.cancelled_at, booking.refund_amount = "cancelled", utcnow(), refund
+    # TEST MODE: a real refund goes through the payment provider here (Razorpay refunds API).
     db.session.commit()
-    flash("Registration cancelled. Your seat is free for someone else.")
+    if booking.total == 0:
+        flash("Registration cancelled. Your seat is free for someone else.")
+    else:
+        flash(f"Booking cancelled. A refund of ₹{refund:,} is on its way to your original payment method (5-7 working days).")
     return redirect(url_for("booking.tickets"))
 
 

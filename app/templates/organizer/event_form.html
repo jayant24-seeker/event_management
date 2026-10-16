@@ -112,6 +112,7 @@
       </div>
       {{ area('faqs', 'FAQs', faq_text(raw), hint='One per line: question | answer', placeholder='Is there parking? | Yes, free parking at Gate 2.') }}
       {{ area('refund_policy', 'Refund policy', raw.refund_policy, rows=2, required=True, placeholder='e.g. Full refund up to 7 days before the event.') }}
+      {{ area('refund_tiers', 'Online cancellation rules', refund_tiers_text(raw), rows=2, hint='Lets attendees cancel and get money back themselves. One per line: days before the event | % refunded. Leave empty to use what your policy says (we read rules like "Full refund up to 7 days before"). Write 0 | 0 to switch online cancellation off.', placeholder='14 | 100\n7 | 50') }}
     </section>
 
     <section class="space-y-4 rounded-card border border-line bg-paper-raised p-5 sm:p-6">

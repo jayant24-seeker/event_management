@@ -84,6 +84,8 @@ class Booking(db.Model):
     payment_ref = db.Column(db.String(60), nullable=True)
     created_at = db.Column(db.DateTime, nullable=False, default=utcnow)
     confirmed_at = db.Column(db.DateTime, nullable=True)
+    cancelled_at = db.Column(db.DateTime, nullable=True)
+    refund_amount = db.Column(db.Integer, nullable=True)  # rupees sent back when cancelled
 
     user = db.relationship("User", backref="bookings")
     attendees = db.relationship("Attendee", backref="booking", cascade="all, delete-orphan", order_by="Attendee.id")
@@ -167,6 +169,23 @@ class WaitlistEntry(db.Model):
     name = db.Column(db.String(120), nullable=False, default="")
     created_at = db.Column(db.DateTime, nullable=False, default=utcnow)
     __table_args__ = (UniqueConstraint("event_slug", "phone"),)
+
+
+def add_missing_columns():
+    """Add nullable columns that newer code expects to tables made by older code.
+    A stand-in for real migrations (Alembic) while the schema only grows."""
+    from sqlalchemy import inspect, text
+
+    inspector = inspect(db.engine)
+    for table in db.metadata.sorted_tables:
+        if not inspector.has_table(table.name):
+            continue
+        have = {c["name"] for c in inspector.get_columns(table.name)}
+        for column in table.columns:
+            if column.name not in have and column.nullable:
+                ddl = column.type.compile(dialect=db.engine.dialect)
+                with db.engine.begin() as conn:
+                    conn.execute(text(f'ALTER TABLE "{table.name}" ADD COLUMN "{column.name}" {ddl}'))
 
 
 # A pending booking holds its seats this long while the person pays.

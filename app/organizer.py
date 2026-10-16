@@ -169,8 +169,14 @@ def event_from_form(form, existing=None):
     })
     if "attendee_fields" in raw and "name" not in raw["attendee_fields"]:
         raw["attendee_fields"].insert(0, "name")
-    for key in ("reg_closes", "age_min"):
+    for key in ("reg_closes", "age_min", "refund_tiers"):
         raw.pop(key, None)
+    tiers = []
+    for days, pct in pairs(form.get("refund_tiers")):
+        if days.strip().isdigit() and pct.strip().rstrip("%").isdigit():
+            tiers.append({"hours": int(days) * 24, "percent": min(int(pct.strip().rstrip("%")), 100)})
+    if tiers:
+        raw["refund_tiers"] = [t for t in tiers if t["percent"] > 0]  # "0 | 0" = no online refunds
     if form.get("reg_closes"):
         raw["reg_closes"] = form["reg_closes"]
     if form.get("age_min", "").isdigit():
@@ -423,6 +429,14 @@ def can_check_in(attendee):
 @bp.app_template_global()
 def schedule_text(raw):
     return "\n".join(f"{item['time']} | {item['title']}" for item in raw.get("schedule") or [])
+
+
+@bp.app_template_global()
+def refund_tiers_text(raw):
+    tiers = raw.get("refund_tiers")
+    if tiers is None:
+        return ""
+    return "\n".join(f"{t['hours'] // 24} | {t['percent']}" for t in tiers) or "0 | 0"
 
 
 @bp.app_template_global()

@@ -10,7 +10,7 @@ Every item keeps `pytest` green. Newest at the bottom.
 ## Backlog (ideas, roughly in order)
 - [x] Security pass: OTP rate limits, open redirects, ownership checks
 - [x] PWA: web app manifest, offline "My tickets", installable
-- [ ] Cancel a booking (attendee side) following the refund policy
+- [x] Cancel a booking (attendee side) following the refund policy
 - [ ] Transfer a ticket to someone else
 - [x] Follow organizers; "From organizers you follow" on the homepage
 - [x] Reviews and ratings on past events
@@ -29,3 +29,4 @@ Every item keeps `pytest` green. Newest at the bottom.
 - Installable app (PWA): manifest, icons, service worker. Ticket pages you have opened work with no signal; offline page lists them; signing out wipes them. Checked in Chromium with the network switched off.
 - Follow organizers: Follow button on organizer and event pages (works without JS), follower count on profile and dashboard, "From organizers you follow" row on the homepage.
 - Reviews: people with a confirmed ticket can rate (1-5 stars) and review an event after it ends; edit their own; rating summary with star bars; organizer rating on profile and on their upcoming event pages; demo reviews seeded (also into older dev databases).
+- Self-serve cancellation with refunds: rules read from the refund policy text ("Full refund up to 14 days before…", "50% … 7 days") or set by the organizer; booking page shows the exact amount back; vague policies fall back to "contact the organizer". Added an automatic add-missing-columns step so older databases keep working.

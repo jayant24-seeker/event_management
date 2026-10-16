@@ -72,6 +72,20 @@ class Event:
         return datetime.fromisoformat(self.raw["end"]).replace(tzinfo=IST)
 
     @property
+    def refund_tiers(self):
+        """[(hours before start, percent back)], longest notice first. Organizer's own rules win."""
+        explicit = self.raw.get("refund_tiers")
+        if explicit is not None:
+            return sorted(((int(t["hours"]), int(t["percent"])) for t in explicit), reverse=True)
+        return parse_refund_tiers(self.raw.get("refund_policy"))
+
+    def refund_percent(self, at=None):
+        """Share of the price refunded if someone cancels now (0 once the last cut-off passes)."""
+        at = at or now_ist()
+        hours_left = (self.start - at).total_seconds() / 3600
+        return next((p for hours, p in self.refund_tiers if hours_left >= hours), 0)
+
+    @property
     def is_online(self):
         return self.raw.get("mode") == "online"
 
@@ -146,6 +160,24 @@ class Event:
         if self.is_online:
             out.append(("Online", "muted"))
         return out
+
+
+_REFUND_RULE = re.compile(
+    r"(?:(full|\d{1,3}\s*%)\s+)?refunds?\s+(?:up\s+to|until|till)\s+(\d{1,3})\s+(days?|hours?)\s+before",
+    re.IGNORECASE)
+
+
+def parse_refund_tiers(policy):
+    """Read simple refund rules out of the policy text, e.g. "Full refund up to 14 days before.
+    50% refund up to 7 days before." -> [(14, 100), (7, 50)]. Anything vaguer gives [] and the
+    attendee is asked to contact the organizer instead of cancelling online."""
+    tiers = []
+    for amount, n, unit in _REFUND_RULE.findall(policy or ""):
+        percent = 100 if not amount or amount.lower() == "full" else int(amount.rstrip("% "))
+        hours = int(n) * (24 if unit.lower().startswith("day") else 1)
+        if 0 < percent <= 100:
+            tiers.append((hours, percent))
+    return sorted(set(tiers), reverse=True)
 
 
 def problems(raw):

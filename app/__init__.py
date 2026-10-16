@@ -5,7 +5,7 @@ from pathlib import Path
 
 from flask import Flask, abort, g, render_template, request, session
 
-from .models import User, db
+from .models import User, add_missing_columns, db
 
 
 def create_app(config=None):
@@ -36,6 +36,7 @@ def create_app(config=None):
     db.init_app(app)
     with app.app_context():
         db.create_all()
+        add_missing_columns()
         # Demo data loads by itself only on SQLite (development). On Postgres run `flask seed` once,
         # so several server workers starting together don't all try to load it.
         if app.config["SQLALCHEMY_DATABASE_URI"].startswith("sqlite"):
