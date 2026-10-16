@@ -12,47 +12,104 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Mukta:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
   {% block head %}{% endblock %}
 </head>
-<body class="min-h-screen">
+<body class="min-h-screen" data-auth="{{ '1' if current_user else '0' }}">
   <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 btn-dark">Skip to content</a>
 
   <header class="sticky top-0 z-40 border-b border-line/70 bg-paper/85 backdrop-blur">
-    <div class="container-site flex h-16 items-center gap-4">
+    <div class="container-site flex h-16 items-center gap-3">
       <a href="{{ url_for('main.home') }}" class="flex items-center gap-2 font-display text-xl font-extrabold">
         <span class="grid h-8 w-8 place-items-center rounded-lg bg-rani text-white">e</span>{{ site_name|lower }}
       </a>
       {% if request.endpoint not in ('main.home', 'main.explore') %}
       <div class="ml-4 hidden flex-1 md:block md:max-w-md">{{ search_box('header-q', value=request.args.get('q', '')) }}</div>
       {% endif %}
-      <nav class="ml-auto flex items-center gap-1 text-sm font-medium">
-        <a href="{{ url_for('main.explore') }}" class="btn-ghost hidden sm:inline-flex">Explore</a>
-        <a href="#" class="btn-ghost hidden sm:inline-flex">For organizers</a>
-        <a href="#" class="btn-dark py-2">Sign in</a>
+      <nav class="ml-auto hidden items-center gap-1 text-sm font-medium md:flex" aria-label="Main">
+        <a href="{{ url_for('main.explore') }}" class="btn-ghost">Explore</a>
+        <a href="{{ url_for('main.for_organizers') }}" class="btn-ghost">For organizers</a>
+        {% if current_user %}
+        <a href="{{ url_for('booking.tickets') }}" class="btn-ghost">My tickets</a>
+        <details class="relative" data-menu>
+          <summary class="grid h-10 w-10 cursor-pointer list-none place-items-center rounded-full bg-ink font-bold text-paper" aria-label="Account menu">{{ (current_user.name or 'U')[:1]|upper }}</summary>
+          <div class="absolute right-0 top-12 w-56 rounded-2xl border border-line bg-paper-raised p-2 shadow-poster">
+            <p class="truncate px-3 py-2 text-xs text-ink-soft">{{ current_user.name or current_user.phone }}</p>
+            <a href="{{ url_for('auth.account') }}" class="block rounded-xl px-3 py-2 hover:bg-ink/5">Profile</a>
+            <a href="{{ url_for('booking.saved') }}" class="block rounded-xl px-3 py-2 hover:bg-ink/5">Saved events</a>
+            {% if current_user.organizer_slug %}<a href="{{ url_for('org.dashboard') }}" class="block rounded-xl px-3 py-2 hover:bg-ink/5">Organizer dashboard</a>{% endif %}
+            <form method="post" action="{{ url_for('auth.logout') }}">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button class="w-full rounded-xl px-3 py-2 text-left hover:bg-ink/5">Sign out</button>
+            </form>
+          </div>
+        </details>
+        {% else %}
+        <a href="{{ url_for('auth.login', next=request.full_path.rstrip('?') if request.endpoint and not request.endpoint.startswith('auth.') else None) }}" class="btn-dark ml-1 py-2">Sign in</a>
+        {% endif %}
       </nav>
+
+      {# Phone menu: a details element, so it works without JS #}
+      <details class="ml-auto md:hidden" data-menu>
+        <summary class="grid h-10 w-10 cursor-pointer list-none place-items-center rounded-full border border-line" aria-label="Menu">
+          <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        </summary>
+        <div class="absolute inset-x-0 top-16 border-b border-line bg-paper-raised p-4 shadow-poster">
+          <div class="mb-3">{{ search_box('menu-q') }}</div>
+          <nav class="grid gap-1 text-base font-semibold" aria-label="Mobile">
+            <a href="{{ url_for('main.explore') }}" class="rounded-xl px-3 py-2.5 hover:bg-ink/5">Explore events</a>
+            <a href="{{ url_for('main.explore', when='past') }}" class="rounded-xl px-3 py-2.5 hover:bg-ink/5">Past events and results</a>
+            <a href="{{ url_for('main.for_organizers') }}" class="rounded-xl px-3 py-2.5 hover:bg-ink/5">For organizers</a>
+            {% if current_user %}
+            <a href="{{ url_for('booking.tickets') }}" class="rounded-xl px-3 py-2.5 hover:bg-ink/5">My tickets</a>
+            <a href="{{ url_for('booking.saved') }}" class="rounded-xl px-3 py-2.5 hover:bg-ink/5">Saved events</a>
+            {% if current_user.organizer_slug %}<a href="{{ url_for('org.dashboard') }}" class="rounded-xl px-3 py-2.5 hover:bg-ink/5">Organizer dashboard</a>{% endif %}
+            <a href="{{ url_for('auth.account') }}" class="rounded-xl px-3 py-2.5 hover:bg-ink/5">Profile</a>
+            {% else %}
+            <a href="{{ url_for('auth.login') }}" class="btn-dark mt-2">Sign in</a>
+            {% endif %}
+          </nav>
+        </div>
+      </details>
     </div>
   </header>
+
+  {% with messages = get_flashed_messages() %}{% if messages %}
+  <div class="container-site mt-4" role="status">
+    {% for m in messages %}<p class="rounded-xl bg-ink px-4 py-3 text-sm font-semibold text-paper">{{ m }}</p>{% endfor %}
+  </div>
+  {% endif %}{% endwith %}
 
   <main id="main">{% block content %}{% endblock %}</main>
 
   <footer class="mt-24 bg-ink text-paper/80">
-    <div class="container-site grid gap-8 py-12 text-sm sm:grid-cols-3">
+    <div class="container-site grid gap-8 py-12 text-sm sm:grid-cols-2 lg:grid-cols-4">
       <div>
         <p class="font-display text-lg font-extrabold text-paper">{{ site_name|lower }}</p>
-        <p class="mt-2 max-w-xs">Discover and book events across Rajasthan, Gujarat and Punjab.</p>
+        <p class="mt-2 max-w-xs">Discover and book runs, concerts, workshops and festivals across Rajasthan, Gujarat and Punjab.</p>
       </div>
       <div class="space-y-2">
         <p class="font-semibold text-paper">Explore</p>
         <p><a href="{{ url_for('main.explore') }}" class="hover:text-paper">Upcoming events</a></p>
-        <p><a href="{{ url_for('main.explore', when='past') }}" class="hover:text-paper">Past events</a></p>
+        <p><a href="{{ url_for('main.explore', when='past') }}" class="hover:text-paper">Past events and results</a></p>
+        <p><a href="{{ url_for('main.explore', city='Online') }}" class="hover:text-paper">Online events</a></p>
+      </div>
+      <div class="space-y-2">
+        <p class="font-semibold text-paper">Organizers</p>
+        <p><a href="{{ url_for('main.for_organizers') }}" class="hover:text-paper">Host your event</a></p>
+        <p><a href="{{ url_for('main.for_organizers') }}#pricing" class="hover:text-paper">Pricing</a></p>
       </div>
       <div class="space-y-2">
         <p class="font-semibold text-paper">Company</p>
-        <p><a href="#" class="hover:text-paper">About</a> · <a href="#" class="hover:text-paper">Contact</a></p>
-        <p class="text-paper/50">© 2026 N Square Digital Solutions. Built by Shree Soft Technologies.</p>
+        <p><a href="{{ url_for('main.page', name='about') }}" class="hover:text-paper">About</a> · <a href="{{ url_for('main.contact') }}" class="hover:text-paper">Contact</a></p>
+        <p><a href="{{ url_for('main.page', name='terms') }}" class="hover:text-paper">Terms</a> · <a href="{{ url_for('main.page', name='privacy') }}" class="hover:text-paper">Privacy</a> · <a href="{{ url_for('main.page', name='refunds') }}" class="hover:text-paper">Refunds</a></p>
       </div>
     </div>
+    <div class="border-t border-paper/10">
+      <p class="container-site py-5 text-xs text-paper/50">© 2026 N Square Digital Solutions. Built by Shree Soft Technologies.</p>
+    </div>
   </footer>
+  <script src="{{ url_for('static', filename='js/site.js') }}" defer></script>
   <script src="{{ url_for('static', filename='js/search.js') }}" defer></script>
   {% block scripts %}{% endblock %}
 </body>

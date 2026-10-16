@@ -1,14 +1,17 @@
 from datetime import timezone
 
-from flask import Blueprint, Response, abort, current_app, jsonify, render_template, request, url_for
+from flask import Blueprint, Response, abort, g, jsonify, render_template, request, url_for
 
-from .events import DATE_FILTERS, PRICE_FILTERS, SORTS, now_ist
+from .events import DATE_FILTERS, PRICE_FILTERS, SORTS, EventStore, now_ist
 
 bp = Blueprint("main", __name__)
 
 
 def store():
-    return current_app.extensions["events"]
+    """Events for this request, with live ticket sales (loaded once per request)."""
+    if "store" not in g:
+        g.store = EventStore.from_db()
+    return g.store
 
 
 @bp.route("/")
@@ -158,17 +161,6 @@ def event_ics(slug):
                     headers={"Content-Disposition": f'attachment; filename="{e.slug}.ics"'})
 
 
-@bp.route("/events/<slug>/register")
-def register(slug):
-    # Checkout arrives in phase 5. For now, confirm what was picked.
-    e = store().get(slug)
-    if not e:
-        abort(404)
-    picked = [(t, request.args.get(f"t{i}", 0, type=int)) for i, t in enumerate(e.tickets)]
-    picked = [(t, n) for t, n in picked if n > 0]
-    return render_template("register_stub.html", e=e, picked=picked, notify=bool(request.args.get("notify")))
-
-
 @bp.route("/organizers/<slug>")
 def organizer(slug):
     s = store()
@@ -180,3 +172,21 @@ def organizer(slug):
     past = sorted((e for e in events if e.is_past()), key=lambda e: e.start, reverse=True)
     return render_template("organizer.html", org=org, upcoming=upcoming, past=past,
                            registered=sum(e.registered for e in events))
+
+
+PAGES = {"about": "About us", "privacy": "Privacy policy", "terms": "Terms of use", "refunds": "Refund and cancellation policy"}
+
+
+@bp.route("/<any(about, privacy, terms, refunds):name>")
+def page(name):
+    return render_template(f"pages/{name}.html", title=PAGES[name])
+
+
+@bp.route("/contact")
+def contact():
+    return render_template("pages/contact.html", title="Contact us")
+
+
+@bp.route("/for-organizers")
+def for_organizers():
+    return render_template("pages/for_organizers.html", title="Host your event")

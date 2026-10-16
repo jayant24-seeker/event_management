@@ -338,7 +338,12 @@
       "tech"
     ],
     "language": "English",
-    "mode": "venue"
+    "mode": "venue",
+    "attendee_fields": [
+      "name",
+      "email",
+      "company"
+    ]
   },
   {
     "slug": "surat-street-food-fest",
@@ -867,6 +872,10 @@
       "hindi",
       "diwali",
       "कवि सम्मेलन"
+    ],
+    "attendee_fields": [
+      "name",
+      "age"
     ]
   },
   {
@@ -948,6 +957,13 @@
       "kids marathon",
       "running",
       "family"
+    ],
+    "attendee_fields": [
+      "name",
+      "gender",
+      "age",
+      "tshirt",
+      "emergency"
     ]
   },
   {
@@ -1029,6 +1045,12 @@
       "tournament",
       "fide",
       "sports"
+    ],
+    "attendee_fields": [
+      "name",
+      "gender",
+      "age",
+      "fide_id"
     ]
   },
   {
@@ -1156,6 +1178,10 @@
       "online",
       "marathon",
       "workshop"
+    ],
+    "attendee_fields": [
+      "name",
+      "email"
     ]
   },
   {

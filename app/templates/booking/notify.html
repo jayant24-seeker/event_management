@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Notify me · {{ e.title }} · {{ site_name }}{% endblock %}
+{% block head %}<meta name="robots" content="noindex">{% endblock %}
+{% block content %}
+<div class="container-site max-w-md py-12">
+  <a href="{{ url_for('main.event', slug=e.slug) }}" class="text-sm font-semibold text-rani hover:underline">← {{ e.title }}</a>
+  {% if done %}
+  <h1 class="mt-3 text-3xl font-extrabold">You're on the list</h1>
+  <p class="mt-2 text-ink-soft">We'll send an SMS if seats open up for {{ e.title }}. Seats go to whoever books first, so be quick!</p>
+  <a href="{{ url_for('main.explore', category=e.category) }}" class="btn-primary mt-6">See similar events</a>
+  {% else %}
+  <h1 class="mt-3 text-3xl font-extrabold">Get a message when tickets open up</h1>
+  <p class="mt-2 text-ink-soft">{{ e.title }} is sold out. People cancel, and organizers sometimes add seats.</p>
+  <form method="post" class="mt-6 space-y-4">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label class="block"><span class="mb-1.5 block text-sm font-semibold">Name</span>
+      <input name="name" value="{{ name }}" class="input" autocomplete="name"></label>
+    <label class="block"><span class="mb-1.5 block text-sm font-semibold">Mobile number</span>
+      <input name="phone" value="{{ phone }}" type="tel" inputmode="numeric" class="input" placeholder="98765 43210" required autocomplete="tel-national"></label>
+    {% if error %}<p class="text-sm font-semibold text-rani" role="alert">{{ error }}</p>{% endif %}
+    <button class="btn-primary btn-lg w-full">Notify me</button>
+  </form>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% from "components/_macros.html" import event_card %}
+{% block title %}Saved events · {{ site_name }}{% endblock %}
+{% block head %}<meta name="robots" content="noindex">{% endblock %}
+{% block content %}
+<div class="container-site py-10">
+  <h1 class="text-3xl font-extrabold sm:text-4xl">Saved events</h1>
+  {% if upcoming %}
+  <div class="mt-6 grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 md:grid-cols-3 lg:grid-cols-4">{% for e in upcoming %}{{ event_card(e) }}{% endfor %}</div>
+  {% else %}
+  <div class="mt-6 rounded-card border border-dashed border-line p-10 text-center">
+    <p class="font-semibold">Nothing saved yet.</p>
+    <p class="mt-1 text-sm text-ink-soft">Tap Save on any event to keep it here.</p>
+    <a href="{{ url_for('main.explore') }}" class="btn-primary mt-4">Explore events</a>
+  </div>
+  {% endif %}
+  {% if past %}
+  <h2 class="mt-12 text-xl font-bold">Already happened</h2>
+  <div class="mt-4 grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 md:grid-cols-3 lg:grid-cols-4">{% for e in past %}{{ event_card(e) }}{% endfor %}</div>
+  {% endif %}
+</div>
+{% endblock %}

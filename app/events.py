@@ -1,7 +1,8 @@
 """Event data: loading, computed status/badges, search and filters, and publish checks.
 
-Events and organizers are read from data/*.json. Later phases swap this for a database,
-but templates only use the Event properties below, so they won't need to change.
+The site reads events from the database (EventStore.from_db). data/*.json is the seed
+data, and tests load it directly with EventStore(). Templates only use the Event
+properties below, so they don't care where the data came from.
 """
 import json
 import re
@@ -202,24 +203,40 @@ def date_window(key, at=None):
     return None
 
 
-def _build(raw, organizers):
-    tickets = [Ticket(**t) for t in raw.get("tickets", [])]
+def _build(raw, organizers, sales):
+    tickets = []
+    for t in raw.get("tickets", []):
+        ticket = Ticket(**t)
+        # Seats sold on this site are added to any sold before (offline or on the old site).
+        ticket.sold += sales.get((raw["slug"], ticket.name), 0)
+        tickets.append(ticket)
     return Event(raw=raw, tickets=tickets, org=organizers.get(raw.get("organizer"), {}))
 
 
 class EventStore:
-    def __init__(self, path=DATA_FILE, organizers_path=ORGANIZERS_FILE):
-        with open(path, encoding="utf-8") as f:
-            raws = json.load(f)
-        with open(organizers_path, encoding="utf-8") as f:
-            self.organizers = {o["slug"]: o for o in json.load(f)}
+    def __init__(self, path=DATA_FILE, organizers_path=ORGANIZERS_FILE, *, raws=None, organizers=None, sales=None):
+        if raws is None:
+            with open(path, encoding="utf-8") as f:
+                raws = json.load(f)
+        if organizers is None:
+            with open(organizers_path, encoding="utf-8") as f:
+                organizers = json.load(f)
+        self.organizers = {o["slug"]: o for o in organizers}
         self.invalid = {r.get("slug", "?"): problems(r) for r in raws if problems(r)}
         for r in raws:
             if r.get("slug") not in self.invalid and r.get("organizer") not in self.organizers:
                 self.invalid[r["slug"]] = [f"unknown organizer {r.get('organizer')!r}"]
         # Never show an event that fails the publish checks.
-        self.events = [_build(r, self.organizers) for r in raws if r.get("slug") not in self.invalid]
+        self.events = [_build(r, self.organizers, sales or {}) for r in raws if r.get("slug") not in self.invalid]
         self._by_slug = {e.slug: e for e in self.events}
+
+    @classmethod
+    def from_db(cls):
+        from .models import EventRow, Organizer, seats_taken
+
+        raws = [row.data for row in EventRow.query.filter_by(status="published")]
+        organizers = [dict(o.data, slug=o.slug) for o in Organizer.query]
+        return cls(raws=raws, organizers=organizers, sales=seats_taken())
 
     def get(self, slug):
         return self._by_slug.get(slug)

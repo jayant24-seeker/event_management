@@ -60,22 +60,33 @@
     if (tick()) setInterval(tick, 1000);
   }
 
-  // ---- Save (kept on this device until accounts arrive).
+  // ---- Save: on the account when signed in, else in this browser (merged into the account at sign-in).
   const KEY = "eventouse:saved";
+  const signedIn = document.body.dataset.auth === "1";
   const read = () => { try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch { return []; } };
   const write = (list) => { try { localStorage.setItem(KEY, JSON.stringify(list)); } catch {} };
   document.querySelectorAll("[data-save]").forEach((btn) => {
     const slug = btn.dataset.save;
+    let on = signedIn ? btn.dataset.saved === "1" : read().includes(slug);
     const paint = () => {
-      const on = read().includes(slug);
       btn.setAttribute("aria-pressed", on);
       btn.querySelector("svg").setAttribute("fill", on ? "currentColor" : "none");
       btn.querySelector("[data-save-label]").textContent = on ? "Saved" : "Save";
     };
-    btn.addEventListener("click", () => {
-      const list = read();
-      write(list.includes(slug) ? list.filter((s) => s !== slug) : [...list, slug]);
+    btn.addEventListener("click", async () => {
+      on = !on;
       paint();
+      if (!signedIn) {
+        const list = read();
+        write(on ? [...new Set([...list, slug])] : list.filter((s) => s !== slug));
+        return;
+      }
+      const res = await fetch("/api/saved", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]').content },
+        body: JSON.stringify({ slugs: [slug], saved: on }),
+      }).catch(() => null);
+      if (!res || !res.ok) { on = !on; paint(); }
     });
     paint();
   });
