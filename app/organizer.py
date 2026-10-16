@@ -329,6 +329,33 @@ def attendee_rows(slug):
             .order_by(Booking.confirmed_at.desc(), Attendee.id).all())
 
 
+def daily_sales(slug, days=45):
+    """[(date, tickets, revenue)] per day in IST, from the first sale (at most `days` back) to today."""
+    from datetime import timedelta, timezone
+
+    from .events import IST
+
+    rows = (db.session.query(Booking.confirmed_at, Booking.subtotal - Booking.discount, func.count(Attendee.id))
+            .join(Attendee, Attendee.booking_id == Booking.id)
+            .filter(Booking.event_slug == slug, Booking.status == "confirmed", Booking.confirmed_at.isnot(None))
+            .group_by(Booking.id).all())
+    if not rows:
+        return []
+    per_day = {}
+    for at, revenue, tickets in rows:
+        day = at.replace(tzinfo=timezone.utc).astimezone(IST).date()
+        t, r = per_day.get(day, (0, 0))
+        per_day[day] = (t + tickets, r + (revenue or 0))
+    # Up to today while sales are recent; for an old event, stop a few days after the last sale.
+    last = min(now_ist().date(), max(per_day) + timedelta(days=3))
+    first = max(min(per_day), last - timedelta(days=days - 1))
+    out, day = [], first
+    while day <= last:
+        out.append((day, *per_day.get(day, (0, 0))))
+        day += timedelta(days=1)
+    return out
+
+
 @bp.route("/events/<slug>")
 @organizer_required
 def event_admin(slug):
@@ -340,9 +367,13 @@ def event_admin(slug):
                 .filter(Booking.event_slug == slug, Booking.status == "confirmed").group_by(Booking.coupon_code))
     waitlist = WaitlistEntry.query.filter_by(event_slug=slug).order_by(WaitlistEntry.created_at).all()
     keys = field_keys(row.data)
+    bookings = Booking.query.filter_by(event_slug=slug, status="confirmed").count()
+    cancelled = Booking.query.filter(Booking.event_slug == slug, Booking.status == "cancelled",
+                                     Booking.confirmed_at.isnot(None)).count()
     return render_template("organizer/event_admin.html", row=row, e=e, attendees=attendees, coupons=coupons,
                            used=used, waitlist=waitlist, keys=keys, fields=FIELDS,
-                           sales=sales_by_event([slug]).get(slug, (0, 0, 0)))
+                           sales=sales_by_event([slug]).get(slug, (0, 0, 0)), daily=daily_sales(slug),
+                           bookings=bookings, cancelled=cancelled)
 
 
 def csv_safe(value):

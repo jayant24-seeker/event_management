@@ -3,12 +3,14 @@
     flask --app run seed --reset    # wipe and reload the demo data
 """
 import json
-from datetime import datetime
+import random
+from datetime import datetime, timedelta
 
 import click
+from flask import current_app
 
 from .events import DATA_FILE, ORGANIZERS_FILE
-from .models import Coupon, EventRow, Organizer, Review, User, db
+from .models import Attendee, Booking, Coupon, EventRow, Organizer, Review, User, db, utcnow
 
 DEMO_ORGANIZER_PHONE = "+919999999999"
 
@@ -40,6 +42,43 @@ def load_reviews():
     db.session.commit()
 
 
+# Demo bookings so the organizer dashboard has sales to chart: (event, bookings, days of selling, share checked in)
+DEMO_SALES = [("jaipur-night-run-2026", 42, 30, 0.0), ("tricity-half-marathon-2026", 36, 40, 0.88),
+              ("little-legs-kids-run", 14, 18, 0.0)]
+DEMO_BUYER_PREFIX = "+91900000"
+FIRST = ["Aarav", "Diya", "Kabir", "Meera", "Rohan", "Isha", "Arjun", "Tara", "Vivaan", "Anika", "Dev", "Riya"]
+LAST = ["Sharma", "Mehta", "Singh", "Joshi", "Gupta", "Rathore", "Kaur", "Patel", "Verma", "Chauhan"]
+
+
+def load_demo_sales():
+    rng = random.Random(7)  # same demo data every time
+    now = utcnow()
+    for slug, n, span, checked_share in DEMO_SALES:
+        row = db.session.get(EventRow, slug)
+        if row is None:
+            continue
+        start = datetime.fromisoformat(row.data["start"]) - timedelta(hours=5, minutes=30)  # IST -> UTC
+        end_selling = min(now, start)
+        tiers = [t for t in row.data["tickets"] if t["capacity"] - t.get("sold", 0) > 5]
+        for i in range(n):
+            # More sales close to the end of the window, like real events.
+            when = end_selling - timedelta(days=span * (1 - rng.random() ** 0.6), hours=rng.randint(0, 12))
+            phone = f"{DEMO_BUYER_PREFIX}{rng.randint(10000, 99999)}"
+            user = User.query.filter_by(phone=phone).first() or User(phone=phone, name=f"{rng.choice(FIRST)} {rng.choice(LAST)}")
+            db.session.add(user)
+            t = rng.choice(tiers)
+            qty = rng.choice([1, 1, 1, 2, 2, 3])
+            b = Booking(user=user, event_slug=slug, status="confirmed", subtotal=t["price"] * qty,
+                        created_at=when, confirmed_at=when, payment_ref="DEMO" if t["price"] else None)
+            for _ in range(qty):
+                name = f"{rng.choice(FIRST)} {rng.choice(LAST)}"
+                b.attendees.append(Attendee(ticket_name=t["name"], price=t["price"], details={"name": name},
+                                            checked_in_at=start + timedelta(minutes=rng.randint(-60, 20))
+                                            if rng.random() < checked_share else None))
+            db.session.add(b)
+    db.session.commit()
+
+
 def load_json():
     events = json.loads(DATA_FILE.read_text(encoding="utf-8"))
     organizers = json.loads(ORGANIZERS_FILE.read_text(encoding="utf-8"))
@@ -55,14 +94,21 @@ def load_json():
                               valid_until=datetime.fromisoformat(until) if until else None))
     db.session.commit()
     load_reviews()
+    if current_app.config.get("DEMO_SALES", True):
+        load_demo_sales()
     return len(events), len(organizers)
 
 
 def seed_if_empty():
     if db.session.query(Organizer).first() is None:
         load_json()
-    elif db.session.query(Review).first() is None:
-        load_reviews()  # databases made before reviews existed
+        return
+    # Databases made before these demo extras existed get them once.
+    if db.session.query(Review).first() is None:
+        load_reviews()
+    if current_app.config.get("DEMO_SALES", True) and \
+            not User.query.filter(User.phone.startswith(DEMO_BUYER_PREFIX)).first():
+        load_demo_sales()
 
 
 def register_cli(app):

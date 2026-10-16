@@ -30,6 +30,8 @@ def create_app(config=None):
     app.config["MEDIA_ROOT"] = app.static_folder
     if config:
         app.config.update(config)
+    # Demo bookings for the organizer charts. Off in tests, so they start with empty sales.
+    app.config.setdefault("DEMO_SALES", not app.config.get("TESTING"))
     if app.config["SECRET_KEY"] == "dev-only-change-me" and not (app.debug or app.testing):
         app.logger.warning("SECRET_KEY is not set. Set it before going live.")
 

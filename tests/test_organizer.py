@@ -113,3 +113,22 @@ def test_landing_about_and_contact(app, client):
     post(client, "/contact", name="Bot", reply_to="bot@spam.com", message="Buy now buy now", website="http://spam")
     with app.app_context():
         assert ContactMessage.query.count() == 1
+
+
+def test_sales_chart_with_demo_sales(tmp_path):
+    from app import create_app
+
+    demo = create_app({"TESTING": True, "DEMO_SALES": True, "MEDIA_ROOT": str(tmp_path)})
+    c = demo.test_client()
+    with c.session_transaction() as s:
+        s["csrf"] = CSRF
+    sign_in(c, phone="9999999999")
+    page = text(c.get("/organizer/events/jaipur-night-run-2026"))
+    assert "Tickets sold per day" in page and "data-tip=" in page and "Show as a table" in page
+    past = text(c.get("/organizer/events/tricity-half-marathon-2026"))
+    assert "Check-in rate" in past and "0%" not in past.split("Check-in rate")[1][:80]
+
+
+def test_sales_chart_empty_state(client):
+    sign_in(client, phone="9999999999")
+    assert "No bookings on Eventouse yet" in text(client.get("/organizer/events/jaipur-night-run-2026"))
