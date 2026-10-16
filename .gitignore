@@ -6,3 +6,8 @@ node_modules/
 .pytest_cache/
 .DS_Store
 instance/
+
+# Local tool output (screenshots, browser logs, editor config)
+shots/
+.playwright-mcp/
+.claude/
