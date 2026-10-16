@@ -60,3 +60,38 @@ def test_old_databases_get_new_columns(app):
     from sqlalchemy import inspect
     with app.app_context():
         assert "refund_amount" in {c["name"] for c in inspect(db.engine).get_columns("booking")}
+
+
+def test_cancelling_a_sold_out_event_texts_the_waitlist(app, client):
+    from app.models import EventRow, WaitlistEntry
+
+    sign_in(client)
+    ref = paid_booking(app, "jaipur-night-run-2026")
+    with app.app_context():
+        row = db.session.get(EventRow, "jaipur-night-run-2026")
+        data = dict(row.data)
+        # Make every tier full, counting the booking above (one 10K seat).
+        data["tickets"] = [dict(t, sold=t["capacity"] - (1 if t["name"] == "10K" else 0)) for t in data["tickets"]]
+        if not any(t["name"] == "10K" for t in data["tickets"]):
+            data["tickets"].append({"name": "10K", "price": 1000, "capacity": 1, "sold": 0})
+        row.data = data
+        db.session.add_all([WaitlistEntry(event_slug="jaipur-night-run-2026", phone=f"+9198000000{i:02d}") for i in range(5)])
+        db.session.commit()
+    post(client, f"/bookings/{ref}/cancel")
+    with app.app_context():
+        told = WaitlistEntry.query.filter(WaitlistEntry.notified_at.isnot(None)).count()
+        assert told == 3  # one seat freed: the first three people hear about it
+
+
+def test_organizer_can_text_the_waitlist(app, client):
+    from app.models import WaitlistEntry
+
+    with app.app_context():
+        db.session.add(WaitlistEntry(event_slug="jaipur-night-run-2026", phone="+919800000099"))
+        db.session.commit()
+    sign_in(client, phone="9999999999")
+    res = post(client, "/organizer/events/jaipur-night-run-2026/waitlist/notify")
+    assert res.status_code == 302
+    assert "Texted 1 person" in text(client.get("/organizer/events/jaipur-night-run-2026"))
+    post(client, "/organizer/events/jaipur-night-run-2026/waitlist/notify")
+    assert "already been texted" in text(client.get("/organizer/events/jaipur-night-run-2026"))

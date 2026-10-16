@@ -5,7 +5,7 @@ import threading
 from datetime import datetime
 
 import segno
-from flask import Blueprint, abort, flash, g, jsonify, redirect, render_template, request, url_for
+from flask import Blueprint, abort, current_app, flash, g, jsonify, redirect, render_template, request, url_for
 
 from .auth import login_required, normalize_phone
 from .events import IST, now_ist
@@ -231,9 +231,12 @@ def cancel(ref):
     if booking.status != "confirmed" or e.is_past() or percent == 0:
         abort(400)
     refund = booking.total * percent // 100
+    was_sold_out = e.sold_out
     booking.status, booking.cancelled_at, booking.refund_amount = "cancelled", utcnow(), refund
     # TEST MODE: a real refund goes through the payment provider here (Razorpay refunds API).
     db.session.commit()
+    if was_sold_out:
+        notify_waitlist(e, len(booking.attendees))
     if booking.total == 0:
         flash("Registration cancelled. Your seat is free for someone else.")
     else:
@@ -286,6 +289,25 @@ def notify(slug):
                 db.session.commit()
             done = True
     return render_template("booking/notify.html", e=e, done=done, error=error, name=name, phone=phone_raw)
+
+
+def notify_waitlist(e, seats):
+    """Text the first people on the waitlist that seats opened up. First come, first served:
+    a few more than the free seats are told, since not everyone books."""
+    from .sms import SmsNotConfigured, send_sms
+
+    link = url_for("main.event", slug=e.slug, _external=True)
+    waiting = (WaitlistEntry.query.filter_by(event_slug=e.slug, notified_at=None)
+               .order_by(WaitlistEntry.created_at).limit(seats * 3).all())
+    for w in waiting:
+        try:
+            send_sms(w.phone, f"Good news: {seats} seat(s) just opened for {e.title}. First come, first served: {link}")
+        except SmsNotConfigured:
+            current_app.logger.exception("Waitlist SMS not sent")
+            break
+        w.notified_at = utcnow()
+    db.session.commit()
+    return len(waiting)
 
 
 # ---- Reviews (past events, people who had a confirmed ticket)

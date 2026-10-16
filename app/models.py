@@ -168,6 +168,7 @@ class WaitlistEntry(db.Model):
     phone = db.Column(db.String(15), nullable=False)
     name = db.Column(db.String(120), nullable=False, default="")
     created_at = db.Column(db.DateTime, nullable=False, default=utcnow)
+    notified_at = db.Column(db.DateTime, nullable=True)  # texted that seats opened up
     __table_args__ = (UniqueConstraint("event_slug", "phone"),)
 
 

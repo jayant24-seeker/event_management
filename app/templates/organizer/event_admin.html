@@ -105,11 +105,17 @@
     </section>
 
     {# Waitlist #}
-    <section class="rounded-card border border-line bg-paper-raised p-5">
+    <section id="waitlist" class="scroll-mt-24 rounded-card border border-line bg-paper-raised p-5">
       <h2 class="text-xl font-bold">Waitlist ({{ waitlist|length }})</h2>
-      <p class="mt-1 text-sm text-ink-soft">People who asked to hear if seats open up. Add seats in Edit event, then message them.</p>
+      <p class="mt-1 text-sm text-ink-soft">People who asked to hear if seats open up. We text them automatically when someone cancels. Added seats? Message them yourself:</p>
+      {% if waitlist %}
+      <form method="post" action="{{ url_for('org.notify_waitlist_now', slug=row.slug) }}" class="mt-3">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button class="btn-dark py-2">Text the waitlist</button>
+      </form>
+      {% endif %}
       <ul class="mt-4 max-h-72 divide-y divide-line overflow-y-auto text-sm">
-        {% for w in waitlist %}<li class="flex justify-between gap-3 py-2"><span>{{ w.name or '—' }}</span><span class="font-mono text-ink-soft">{{ w.phone }}</span></li>
+        {% for w in waitlist %}<li class="flex justify-between gap-3 py-2"><span>{{ w.name or '—' }}</span><span class="font-mono text-ink-soft">{{ w.phone }}{% if w.notified_at %} <span class="badge badge-free ml-1 font-sans">texted {{ w.notified_at|ist('%d %b') }}</span>{% endif %}</span></li>
         {% else %}<li class="py-3 text-ink-soft">Nobody yet.</li>{% endfor %}
       </ul>
     </section>

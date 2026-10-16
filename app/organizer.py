@@ -397,6 +397,22 @@ def coupons(slug):
     return redirect(url_for("org.event_admin", slug=slug) + "#coupons")
 
 
+@bp.route("/events/<slug>/waitlist/notify", methods=["POST"])
+@organizer_required
+def notify_waitlist_now(slug):
+    """After adding seats: text everyone on the waitlist who hasn't been told yet."""
+    from .booking import notify_waitlist
+
+    own_event_or_404(slug)
+    e = store().get(slug)
+    if e is None or not e.registration_open():
+        flash("Open registration (publish the event and make sure seats are left) before messaging the waitlist.")
+    else:
+        n = notify_waitlist(e, e.spots_left)
+        flash(f"Texted {n} {'person' if n == 1 else 'people'} on the waitlist." if n else "Everyone on the waitlist has already been texted.")
+    return redirect(url_for("org.event_admin", slug=slug) + "#waitlist")
+
+
 # ---------- Check-in ----------
 @bp.route("/check-in", methods=["POST"])
 @organizer_required
