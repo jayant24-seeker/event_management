@@ -1,3 +1,4 @@
+{% from "components/_macros.html" import search_box %}
 <!doctype html>
 <html lang="en">
 <head>
@@ -6,6 +7,7 @@
   <title>{% block title %}{{ site_name }}: discover events near you{% endblock %}</title>
   <meta name="description" content="{% block description %}Find runs, concerts, workshops and festivals in Jaipur, Kota, Jodhpur, Ajmer, Surat and Chandigarh. Book tickets in a minute.{% endblock %}">
   <meta name="theme-color" content="#1A1423">
+  <link rel="icon" href="{{ url_for('static', filename='favicon.svg') }}" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Mukta:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -20,12 +22,11 @@
       <a href="{{ url_for('main.home') }}" class="flex items-center gap-2 font-display text-xl font-extrabold">
         <span class="grid h-8 w-8 place-items-center rounded-lg bg-rani text-white">e</span>{{ site_name|lower }}
       </a>
-      <form action="#" role="search" class="ml-4 hidden flex-1 md:block md:max-w-md">
-        <label for="header-q" class="sr-only">Search events</label>
-        <input id="header-q" name="q" type="search" class="input py-2" placeholder="Search events, cities, categories">
-      </form>
+      {% if request.endpoint != 'main.home' %}
+      <div class="ml-4 hidden flex-1 md:block md:max-w-md">{{ search_box('header-q', value=request.args.get('q', '')) }}</div>
+      {% endif %}
       <nav class="ml-auto flex items-center gap-1 text-sm font-medium">
-        <a href="#" class="btn-ghost hidden sm:inline-flex">Explore</a>
+        <a href="{{ url_for('main.explore') }}" class="btn-ghost hidden sm:inline-flex">Explore</a>
         <a href="#" class="btn-ghost hidden sm:inline-flex">For organizers</a>
         <a href="#" class="btn-dark py-2">Sign in</a>
       </nav>
@@ -42,8 +43,8 @@
       </div>
       <div class="space-y-2">
         <p class="font-semibold text-paper">Explore</p>
-        <p><a href="#" class="hover:text-paper">Upcoming events</a></p>
-        <p><a href="#" class="hover:text-paper">Past events</a></p>
+        <p><a href="{{ url_for('main.explore') }}" class="hover:text-paper">Upcoming events</a></p>
+        <p><a href="{{ url_for('main.explore', when='past') }}" class="hover:text-paper">Past events</a></p>
       </div>
       <div class="space-y-2">
         <p class="font-semibold text-paper">Company</p>
@@ -52,6 +53,7 @@
       </div>
     </div>
   </footer>
+  <script src="{{ url_for('static', filename='js/search.js') }}" defer></script>
   {% block scripts %}{% endblock %}
 </body>
 </html>
