@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{{ site_name }}: discover events near you{% endblock %}</title>
+  <meta name="description" content="{% block description %}Find runs, concerts, workshops and festivals in Jaipur, Kota, Jodhpur, Ajmer, Surat and Chandigarh. Book tickets in a minute.{% endblock %}">
+  <meta name="theme-color" content="#1A1423">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Mukta:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+  {% block head %}{% endblock %}
+</head>
+<body class="min-h-screen">
+  <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 btn-dark">Skip to content</a>
+
+  <header class="sticky top-0 z-40 border-b border-line/70 bg-paper/85 backdrop-blur">
+    <div class="container-site flex h-16 items-center gap-4">
+      <a href="{{ url_for('main.home') }}" class="flex items-center gap-2 font-display text-xl font-extrabold">
+        <span class="grid h-8 w-8 place-items-center rounded-lg bg-rani text-white">e</span>{{ site_name|lower }}
+      </a>
+      <form action="#" role="search" class="ml-4 hidden flex-1 md:block md:max-w-md">
+        <label for="header-q" class="sr-only">Search events</label>
+        <input id="header-q" name="q" type="search" class="input py-2" placeholder="Search events, cities, categories">
+      </form>
+      <nav class="ml-auto flex items-center gap-1 text-sm font-medium">
+        <a href="#" class="btn-ghost hidden sm:inline-flex">Explore</a>
+        <a href="#" class="btn-ghost hidden sm:inline-flex">For organizers</a>
+        <a href="#" class="btn-dark py-2">Sign in</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">{% block content %}{% endblock %}</main>
+
+  <footer class="mt-24 bg-ink text-paper/80">
+    <div class="container-site grid gap-8 py-12 text-sm sm:grid-cols-3">
+      <div>
+        <p class="font-display text-lg font-extrabold text-paper">{{ site_name|lower }}</p>
+        <p class="mt-2 max-w-xs">Discover and book events across Rajasthan, Gujarat and Punjab.</p>
+      </div>
+      <div class="space-y-2">
+        <p class="font-semibold text-paper">Explore</p>
+        <p><a href="#" class="hover:text-paper">Upcoming events</a></p>
+        <p><a href="#" class="hover:text-paper">Past events</a></p>
+      </div>
+      <div class="space-y-2">
+        <p class="font-semibold text-paper">Company</p>
+        <p><a href="#" class="hover:text-paper">About</a> · <a href="#" class="hover:text-paper">Contact</a></p>
+        <p class="text-paper/50">© 2026 N Square Digital Solutions. Built by Shree Soft Technologies.</p>
+      </div>
+    </div>
+  </footer>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

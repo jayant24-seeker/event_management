@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1200" width="900" height="1200">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0.3" y2="1">
+      <stop offset="0" stop-color="#0B1E3F"/><stop offset="1" stop-color="#2F5BEA"/>
+    </linearGradient>
+    <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.08 0"/></filter>
+  </defs>
+  <rect width="900" height="1200" fill="url(#bg)"/>
+  <circle cx="558" cy="456" r="486" fill="none" stroke="#FF5DA2" stroke-width="10" opacity="0.9"/>
+  <circle cx="558" cy="456" r="432" fill="none" stroke="#F2F6FF" stroke-width="3" opacity="0.25"/>
+  <circle cx="558" cy="456" r="378" fill="none" stroke="#F2F6FF" stroke-width="3" opacity="0.25"/>
+  <circle cx="558" cy="456" r="324" fill="none" stroke="#FF5DA2" stroke-width="10" opacity="0.9"/>
+  <circle cx="558" cy="456" r="270" fill="none" stroke="#F2F6FF" stroke-width="3" opacity="0.25"/>
+  <circle cx="558" cy="456" r="216" fill="none" stroke="#F2F6FF" stroke-width="3" opacity="0.25"/>
+  <circle cx="558" cy="456" r="162" fill="none" stroke="#FF5DA2" stroke-width="10" opacity="0.9"/>
+  <circle cx="558" cy="456" r="108" fill="none" stroke="#F2F6FF" stroke-width="3" opacity="0.25"/>
+  <circle cx="558" cy="456" r="54" fill="none" stroke="#F2F6FF" stroke-width="3" opacity="0.25"/>
+  <rect width="900" height="1200" filter="url(#grain)"/>
+  <text x="60" y="908" font-family="Bricolage Grotesque, Arial Black, Helvetica, sans-serif" font-weight="800" font-size="92" fill="#F2F6FF" letter-spacing="-2">KOTA CAMPUS</text><text x="60" y="1000" font-family="Bricolage Grotesque, Arial Black, Helvetica, sans-serif" font-weight="800" font-size="92" fill="#F2F6FF" letter-spacing="-2">BEATS</text><rect x="60" y="1050" width="780" height="3" fill="#FF5DA2"/><text x="60" y="1108" font-family="Bricolage Grotesque, Arial Black, Helvetica, sans-serif" font-weight="700" font-size="40" fill="#FF5DA2">08 Nov 2026</text><text x="840" y="1108" text-anchor="end" font-family="Bricolage Grotesque, Arial Black, Helvetica, sans-serif" font-weight="700" font-size="40" fill="#F2F6FF">KOTA</text><text x="60" y="110" font-family="Bricolage Grotesque, Arial Black, Helvetica, sans-serif" font-weight="700" font-size="30" fill="#F2F6FF" opacity="0.85" letter-spacing="6">MUSIC</text>
+</svg>

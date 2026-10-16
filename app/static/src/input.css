@@ -1,0 +1,47 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Color tokens (RGB channels so Tailwind opacity works). */
+@layer base {
+  :root {
+    --ink: 26 20 35;          /* night plum: text, dark surfaces */
+    --ink-soft: 92 84 104;    /* secondary text */
+    --paper: 255 248 240;     /* warm off-white page */
+    --paper-raised: 255 255 255;
+    --line: 236 224 214;
+    --rani: 214 36 110;       /* rani pink: primary action */
+    --rani-dark: 168 20 82;
+    --marigold: 255 182 39;   /* accent: dates, highlights */
+    --leaf: 22 143 94;        /* free / success */
+  }
+  html { -webkit-tap-highlight-color: transparent; }
+  body { @apply bg-paper text-ink font-sans antialiased; }
+  h1, h2, h3, h4 { @apply font-display tracking-tight; }
+  :focus-visible { @apply outline-none ring-2 ring-rani ring-offset-2 ring-offset-paper; }
+}
+
+@layer components {
+  .container-site { @apply mx-auto w-full max-w-site px-4 sm:px-6 lg:px-8; }
+
+  .btn { @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition duration-200 disabled:cursor-not-allowed disabled:opacity-50; }
+  .btn-primary { @apply btn bg-rani text-white hover:bg-rani-dark; }
+  .btn-dark { @apply btn bg-ink text-paper hover:bg-ink/85; }
+  .btn-outline { @apply btn border border-ink/15 bg-paper-raised text-ink hover:border-ink/40; }
+  .btn-ghost { @apply btn text-ink hover:bg-ink/5; }
+  .btn-lg { @apply px-7 py-3.5 text-base; }
+
+  .chip { @apply inline-flex items-center gap-1.5 rounded-full border border-line bg-paper-raised px-3.5 py-1.5 text-sm font-medium text-ink transition hover:border-ink/30; }
+  .chip-active { @apply border-ink bg-ink text-paper hover:border-ink; }
+
+  .badge { @apply inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider shadow-sm; }
+  .badge-hot { @apply bg-marigold text-ink; }
+  .badge-soldout { @apply bg-ink text-paper; }
+  .badge-free { @apply bg-leaf text-white; }
+  .badge-live { @apply bg-rani text-white; }
+  .badge-muted { @apply bg-paper-raised/90 text-ink-soft; }
+
+  .input { @apply w-full rounded-full border border-line bg-paper-raised px-5 py-3 text-sm text-ink placeholder:text-ink-soft/70 focus:border-ink/40 focus:outline-none focus:ring-0; }
+
+  .eyebrow { @apply text-xs font-bold uppercase tracking-[0.18em] text-rani; }
+}

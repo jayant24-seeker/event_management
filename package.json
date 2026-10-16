@@ -1,0 +1,11 @@
+{
+  "name": "event-management-by-soft-technologies",
+  "private": true,
+  "scripts": {
+    "css:watch": "tailwindcss -i app/static/src/input.css -o app/static/css/app.css --watch",
+    "css:build": "tailwindcss -i app/static/src/input.css -o app/static/css/app.css --minify"
+  },
+  "devDependencies": {
+    "tailwindcss": "3.4.19"
+  }
+}

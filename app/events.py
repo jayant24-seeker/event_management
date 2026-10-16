@@ -1,0 +1,207 @@
+"""Event data: loading, computed status/badges, search and filters, and publish checks.
+
+Phase 1 reads events from data/events.json. Later phases swap this for a database,
+but templates only use the Event properties below, so they won't need to change.
+"""
+import json
+import re
+from dataclasses import dataclass, field
+from datetime import datetime, timedelta, timezone
+from pathlib import Path
+
+IST = timezone(timedelta(hours=5, minutes=30))
+DATA_FILE = Path(__file__).parent / "data" / "events.json"
+
+SELLING_FAST_RATIO = 0.8
+
+# Text that means an organizer left a field unfinished (see live-site issue #6).
+PLACEHOLDER_PATTERNS = re.compile(
+    r"\b(tbd|tba|lorem|ipsum|xxx+|placeholder|coming soon|to be announced|final route)\b|\{\{|\[insert",
+    re.IGNORECASE,
+)
+REQUIRED_FIELDS = ["slug", "title", "category", "city", "start", "end", "about", "poster", "refund_policy"]
+REQUIRED_VENUE_FIELDS = ["name", "address"]
+
+
+def now_ist():
+    return datetime.now(IST)
+
+
+@dataclass
+class Ticket:
+    name: str
+    price: int
+    capacity: int
+    sold: int = 0
+    note: str = ""
+
+    @property
+    def left(self):
+        return max(self.capacity - self.sold, 0)
+
+    @property
+    def sold_out(self):
+        return self.left == 0
+
+
+@dataclass
+class Event:
+    raw: dict
+    tickets: list = field(default_factory=list)
+
+    def __getattr__(self, name):
+        # Plain JSON fields (title, city, faqs, ...) read straight from raw.
+        try:
+            return self.raw[name]
+        except KeyError:
+            raise AttributeError(name) from None
+
+    @property
+    def start(self):
+        return datetime.fromisoformat(self.raw["start"]).replace(tzinfo=IST)
+
+    @property
+    def end(self):
+        return datetime.fromisoformat(self.raw["end"]).replace(tzinfo=IST)
+
+    def status(self, at=None):
+        at = at or now_ist()
+        if at > self.end:
+            return "past"
+        if at >= self.start:
+            return "live"
+        return "upcoming"
+
+    def is_past(self, at=None):
+        return self.status(at) == "past"
+
+    @property
+    def is_free(self):
+        return all(t.price == 0 for t in self.tickets)
+
+    @property
+    def sold_out(self):
+        return bool(self.tickets) and all(t.sold_out for t in self.tickets)
+
+    @property
+    def sold_ratio(self):
+        cap = sum(t.capacity for t in self.tickets)
+        return sum(min(t.sold, t.capacity) for t in self.tickets) / cap if cap else 0
+
+    @property
+    def selling_fast(self):
+        return not self.sold_out and self.sold_ratio >= SELLING_FAST_RATIO
+
+    @property
+    def price_from(self):
+        """Lowest price still on sale, falling back to the lowest overall."""
+        open_prices = [t.price for t in self.tickets if not t.sold_out]
+        prices = open_prices or [t.price for t in self.tickets]
+        return min(prices) if prices else 0
+
+    def badges(self, at=None):
+        """Card badges, most important first. Each is (label, style)."""
+        if self.is_past(at):
+            return [("Event ended", "muted")]
+        out = []
+        if self.status(at) == "live":
+            out.append(("Happening now", "live"))
+        if self.sold_out:
+            out.append(("Sold out", "soldout"))
+        elif self.selling_fast:
+            out.append(("Selling fast", "hot"))
+        if self.is_free:
+            out.append(("Free", "free"))
+        return out
+
+
+def problems(raw):
+    """Return a list of reasons this event can't be published (empty list = OK)."""
+    issues = []
+    for key in REQUIRED_FIELDS:
+        if not str(raw.get(key, "")).strip():
+            issues.append(f"'{key}' is required")
+    venue = raw.get("venue") or {}
+    for key in REQUIRED_VENUE_FIELDS:
+        if not str(venue.get(key, "")).strip():
+            issues.append(f"venue '{key}' is required")
+    if not raw.get("tickets"):
+        issues.append("at least one ticket type is required")
+    for t in raw.get("tickets", []):
+        if t.get("price", -1) < 0:
+            issues.append(f"ticket '{t.get('name')}' has a negative price")
+        if t.get("capacity", 0) <= 0:
+            issues.append(f"ticket '{t.get('name')}' needs a capacity above 0")
+    try:
+        if datetime.fromisoformat(raw["end"]) < datetime.fromisoformat(raw["start"]):
+            issues.append("end time is before start time")
+    except (KeyError, ValueError):
+        issues.append("start and end must be valid dates (YYYY-MM-DDTHH:MM)")
+
+    def walk(value, path):
+        if isinstance(value, str):
+            if PLACEHOLDER_PATTERNS.search(value):
+                issues.append(f"'{path}' looks like placeholder text: {value[:60]!r}")
+        elif isinstance(value, dict):
+            for k, v in value.items():
+                walk(v, f"{path}.{k}" if path else k)
+        elif isinstance(value, list):
+            for i, v in enumerate(value):
+                walk(v, f"{path}[{i}]")
+
+    walk(raw, "")
+    return issues
+
+
+def _build(raw):
+    tickets = [Ticket(**t) for t in raw.get("tickets", [])]
+    return Event(raw=raw, tickets=tickets)
+
+
+class EventStore:
+    def __init__(self, path=DATA_FILE):
+        with open(path, encoding="utf-8") as f:
+            raws = json.load(f)
+        self.invalid = {r.get("slug", "?"): problems(r) for r in raws if problems(r)}
+        # Never show an event that fails the publish checks.
+        self.events = [_build(r) for r in raws if r.get("slug") not in self.invalid]
+        self._by_slug = {e.slug: e for e in self.events}
+
+    def get(self, slug):
+        return self._by_slug.get(slug)
+
+    def upcoming(self, at=None):
+        """Upcoming and live events, soonest first."""
+        return sorted((e for e in self.events if not e.is_past(at)), key=lambda e: e.start)
+
+    def past(self, at=None):
+        """Archive, most recent first."""
+        return sorted((e for e in self.events if e.is_past(at)), key=lambda e: e.start, reverse=True)
+
+    def featured(self, at=None):
+        return [e for e in self.upcoming(at) if e.raw.get("featured")]
+
+    def cities(self):
+        return sorted({e.city for e in self.events})
+
+    def categories(self):
+        return sorted({e.category for e in self.events})
+
+    def search(self, q="", city=None, category=None, max_price=None, when="upcoming", sort="date", at=None):
+        pool = self.past(at) if when == "past" else self.upcoming(at)
+        q = q.strip().lower()
+        out = []
+        for e in pool:
+            haystack = " ".join([e.title, e.city, e.category, e.venue["name"], " ".join(e.raw.get("tags", []))]).lower()
+            if q and q not in haystack:
+                continue
+            if city and e.city != city:
+                continue
+            if category and e.category != category:
+                continue
+            if max_price is not None and e.price_from > max_price:
+                continue
+            out.append(e)
+        if sort == "price":
+            out.sort(key=lambda e: e.price_from)
+        return out

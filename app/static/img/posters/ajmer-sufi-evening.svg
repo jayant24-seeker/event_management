@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1200" width="900" height="1200">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0.3" y2="1">
+      <stop offset="0" stop-color="#1B1033"/><stop offset="1" stop-color="#7C3AED"/>
+    </linearGradient>
+    <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.08 0"/></filter>
+  </defs>
+  <rect width="900" height="1200" fill="url(#bg)"/>
+  <path d="M0,342 V234 Q0,144 90,117 Q180,144 180,234 V342" fill="none" stroke="#F7C873" stroke-width="5" opacity="0.85"/>
+  <path d="M180,342 V234 Q180,144 270,117 Q360,144 360,234 V342" fill="none" stroke="#FBF5FF" stroke-width="5" opacity="0.22"/>
+  <path d="M360,342 V234 Q360,144 450,117 Q540,144 540,234 V342" fill="none" stroke="#FBF5FF" stroke-width="5" opacity="0.22"/>
+  <path d="M540,342 V234 Q540,144 630,117 Q720,144 720,234 V342" fill="none" stroke="#FBF5FF" stroke-width="5" opacity="0.22"/>
+  <path d="M720,342 V234 Q720,144 810,117 Q900,144 900,234 V342" fill="none" stroke="#F7C873" stroke-width="5" opacity="0.85"/>
+  <path d="M900,342 V234 Q900,144 990,117 Q1080,144 1080,234 V342" fill="none" stroke="#FBF5FF" stroke-width="5" opacity="0.22"/>
+  <path d="M-90,567 V459 Q-90,369 0,342 Q90,369 90,459 V567" fill="none" stroke="#FBF5FF" stroke-width="5" opacity="0.22"/>
+  <path d="M90,567 V459 Q90,369 180,342 Q270,369 270,459 V567" fill="none" stroke="#FBF5FF" stroke-width="5" opacity="0.22"/>
+  <path d="M270,567 V459 Q270,369 360,342 Q450,369 450,459 V567" fill="none" stroke="#FBF5FF" stroke-width="5" opacity="0.22"/>
+  <path d="M450,567 V459 Q450,369 540,342 Q630,369 630,459 V567" fill="none" stroke="#F7C873" stroke-width="5" opacity="0.85"/>
+  <path d="M630,567 V459 Q630,369 720,342 Q810,369 810,459 V567" fill="none" stroke="#FBF5FF" stroke-width="5" opacity="0.22"/>
+  <path d="M810,567 V459 Q810,369 900,342 Q990,369 990,459 V567" fill="none" stroke="#FBF5FF" stroke-width="5" opacity="0.22"/>
+  <path d="M0,792 V684 Q0,594 90,567 Q180,594 180,684 V792" fill="none" stroke="#FBF5FF" stroke-width="5" opacity="0.22"/>
+  <path d="M180,792 V684 Q180,594 270,567 Q360,594 360,684 V792" fill="none" stroke="#FBF5FF" stroke-width="5" opacity="0.22"/>
+  <path d="M360,792 V684 Q360,594 450,567 Q540,594 540,684 V792" fill="none" stroke="#F7C873" stroke-width="5" opacity="0.85"/>
+  <path d="M540,792 V684 Q540,594 630,567 Q720,594 720,684 V792" fill="none" stroke="#FBF5FF" stroke-width="5" opacity="0.22"/>
+  <path d="M720,792 V684 Q720,594 810,567 Q900,594 900,684 V792" fill="none" stroke="#FBF5FF" stroke-width="5" opacity="0.22"/>
+  <path d="M900,792 V684 Q900,594 990,567 Q1080,594 1080,684 V792" fill="none" stroke="#FBF5FF" stroke-width="5" opacity="0.22"/>
+  <rect width="900" height="1200" filter="url(#grain)"/>
+  <text x="60" y="908" font-family="Bricolage Grotesque, Arial Black, Helvetica, sans-serif" font-weight="800" font-size="92" fill="#FBF5FF" letter-spacing="-2">SUFI EVENING</text><text x="60" y="1000" font-family="Bricolage Grotesque, Arial Black, Helvetica, sans-serif" font-weight="800" font-size="92" fill="#FBF5FF" letter-spacing="-2">BY THE LAKE</text><rect x="60" y="1050" width="780" height="3" fill="#F7C873"/><text x="60" y="1108" font-family="Bricolage Grotesque, Arial Black, Helvetica, sans-serif" font-weight="700" font-size="40" fill="#F7C873">15 Nov 2026</text><text x="840" y="1108" text-anchor="end" font-family="Bricolage Grotesque, Arial Black, Helvetica, sans-serif" font-weight="700" font-size="40" fill="#FBF5FF">AJMER</text><text x="60" y="110" font-family="Bricolage Grotesque, Arial Black, Helvetica, sans-serif" font-weight="700" font-size="30" fill="#FBF5FF" opacity="0.85" letter-spacing="6">CULTURAL</text>
+</svg>

@@ -1,0 +1,299 @@
+[
+  {
+    "slug": "jaipur-night-run-2026",
+    "title": "Jaipur Night Run 2026",
+    "tagline": "Run the Pink City under the lights",
+    "category": "Running",
+    "city": "Jaipur",
+    "featured": true,
+    "start": "2026-11-22T18:30",
+    "end": "2026-11-22T23:00",
+    "venue": {
+      "name": "Jawahar Circle Garden",
+      "address": "Jawahar Circle, Malviya Nagar, Jaipur, Rajasthan 302017",
+      "map_query": "Jawahar Circle Garden Jaipur"
+    },
+    "organizer": {"name": "Pink Pace Runners Club", "slug": "pink-pace-runners"},
+    "poster": "img/posters/jaipur-night-run-2026.svg",
+    "banner": "img/banners/jaipur-night-run-2026.svg",
+    "tickets": [
+      {"name": "5K Fun Run", "price": 799, "capacity": 800, "sold": 610},
+      {"name": "10K Timed", "price": 1199, "capacity": 600, "sold": 530},
+      {"name": "21K Half Marathon", "price": 1799, "capacity": 400, "sold": 372}
+    ],
+    "about": "A night-time road race through the wide boulevards around Jawahar Circle. Choose 5K, 10K or a half marathon, with live music at every 2 km and a finish-line food court.",
+    "highlights": ["Chip timing for 10K and 21K", "Live DJ at the finish", "Medal for every finisher"],
+    "route": {"start": "Jawahar Circle Gate 1", "finish": "Jawahar Circle Gate 1", "note": "Flat loop on JLN Marg, closed to traffic from 6 pm"},
+    "schedule": [
+      {"time": "17:00", "title": "Bib collection desk opens"},
+      {"time": "18:30", "title": "21K flag-off"},
+      {"time": "19:15", "title": "10K flag-off"},
+      {"time": "19:45", "title": "5K flag-off"},
+      {"time": "22:15", "title": "Prize ceremony"}
+    ],
+    "kit": ["Dri-fit T-shirt", "Timing bib", "Finisher medal", "Hydration every 2.5 km", "Physio zone"],
+    "prizes": ["21K: Rs 25,000 / 15,000 / 10,000 (men and women)", "10K: Rs 10,000 / 6,000 / 4,000 (men and women)"],
+    "faqs": [
+      {"q": "What is the minimum age?", "a": "12 years for 5K, 16 for 10K and 18 for 21K."},
+      {"q": "Is parking available?", "a": "Yes, free parking at the WTP and Gaurav Tower lots, with a shuttle every 10 minutes."}
+    ],
+    "refund_policy": "Full refund up to 14 days before the race. 50% refund up to 7 days before. No refund after that, but you can transfer your bib to a friend once for free.",
+    "tags": ["marathon", "night run", "fitness", "half marathon"]
+  },
+  {
+    "slug": "kota-campus-beats",
+    "title": "Kota Campus Beats",
+    "tagline": "One night, three bands, ten thousand students",
+    "category": "Music",
+    "city": "Kota",
+    "featured": true,
+    "start": "2026-11-08T17:00",
+    "end": "2026-11-08T22:30",
+    "venue": {
+      "name": "Chambal Riverfront Amphitheatre",
+      "address": "Chambal Riverfront, Nayapura, Kota, Rajasthan 324001",
+      "map_query": "Chambal Riverfront Kota"
+    },
+    "organizer": {"name": "Riverside Live", "slug": "riverside-live"},
+    "poster": "img/posters/kota-campus-beats.svg",
+    "banner": "img/banners/kota-campus-beats.svg",
+    "tickets": [
+      {"name": "Student (ID required)", "price": 499, "capacity": 3000, "sold": 1200},
+      {"name": "General", "price": 999, "capacity": 1500, "sold": 400},
+      {"name": "Front Pit", "price": 1999, "capacity": 300, "sold": 150}
+    ],
+    "about": "An open-air indie and pop night on the riverfront, made for the city's coaching students. Three bands, a food street and a silent-disco tent after the main set.",
+    "highlights": ["Three live bands", "Silent-disco tent", "Student pricing"],
+    "schedule": [
+      {"time": "17:00", "title": "Gates open"},
+      {"time": "18:00", "title": "Opening band"},
+      {"time": "19:30", "title": "Second band"},
+      {"time": "21:00", "title": "Headliner"}
+    ],
+    "kit": ["Re-entry wristband", "Free water refills", "Cloakroom"],
+    "prizes": [],
+    "faqs": [
+      {"q": "Do I need a student ID?", "a": "Yes, for the Student ticket. Carry your coaching or college ID card."},
+      {"q": "Is outside food allowed?", "a": "No, but the food street has stalls from Rs 60."}
+    ],
+    "refund_policy": "Refunds up to 5 days before the event. If the show is cancelled, you get a full refund within 7 working days.",
+    "tags": ["concert", "live music", "students", "band"]
+  },
+  {
+    "slug": "jodhpur-blue-city-cyclothon",
+    "title": "Blue City Cyclothon",
+    "tagline": "Ride from the fort to the lakes",
+    "category": "Cycling",
+    "city": "Jodhpur",
+    "featured": true,
+    "start": "2026-12-13T06:00",
+    "end": "2026-12-13T11:00",
+    "venue": {
+      "name": "Umaid Heritage Ground",
+      "address": "Ratanada, Jodhpur, Rajasthan 342011",
+      "map_query": "Ratanada Jodhpur"
+    },
+    "organizer": {"name": "Thar Pedal Society", "slug": "thar-pedal-society"},
+    "poster": "img/posters/jodhpur-blue-city-cyclothon.svg",
+    "banner": "img/banners/jodhpur-blue-city-cyclothon.svg",
+    "tickets": [
+      {"name": "25 km Ride", "price": 699, "capacity": 500, "sold": 500},
+      {"name": "50 km Ride", "price": 999, "capacity": 300, "sold": 300}
+    ],
+    "about": "A morning ride from Ratanada past Mehrangarh to Kaylana Lake and back. Marshalled route, support vans and a breakfast stop at the lake.",
+    "highlights": ["Marshalled route", "Lakeside breakfast", "Bike repair van"],
+    "schedule": [
+      {"time": "05:30", "title": "Reporting"},
+      {"time": "06:00", "title": "50 km flag-off"},
+      {"time": "06:30", "title": "25 km flag-off"},
+      {"time": "10:30", "title": "Certificates and photos"}
+    ],
+    "kit": ["Cycling jersey", "Helmet check", "Breakfast", "E-certificate"],
+    "prizes": [],
+    "faqs": [
+      {"q": "Can I rent a cycle?", "a": "Yes, 60 hybrid bikes are available at Rs 300 on a first-come basis."}
+    ],
+    "refund_policy": "Full refund up to 10 days before the ride. No refund after that.",
+    "tags": ["cyclothon", "cycling", "ride", "fitness"]
+  },
+  {
+    "slug": "chandigarh-startup-mixer",
+    "title": "Chandigarh Startup Mixer",
+    "tagline": "Founders, students and investors in one room",
+    "category": "Tech",
+    "city": "Chandigarh",
+    "featured": true,
+    "start": "2026-10-30T16:00",
+    "end": "2026-10-30T20:00",
+    "venue": {
+      "name": "Sector 17 Innovation Hub",
+      "address": "SCO 41, Sector 17-C, Chandigarh 160017",
+      "map_query": "Sector 17 Chandigarh"
+    },
+    "organizer": {"name": "Tricity Founders Circle", "slug": "tricity-founders"},
+    "poster": "img/posters/chandigarh-startup-mixer.svg",
+    "banner": "img/banners/chandigarh-startup-mixer.svg",
+    "tickets": [
+      {"name": "Free Pass", "price": 0, "capacity": 250, "sold": 140}
+    ],
+    "about": "An evening of five-minute founder pitches, an open demo table and a no-pressure networking hour. Students are welcome.",
+    "highlights": ["8 founder pitches", "Open demo table", "Networking hour"],
+    "schedule": [
+      {"time": "16:00", "title": "Check-in and chai"},
+      {"time": "16:30", "title": "Founder pitches"},
+      {"time": "18:00", "title": "Demo table"},
+      {"time": "19:00", "title": "Networking"}
+    ],
+    "kit": ["Name badge", "Snacks and chai", "Wi-Fi"],
+    "prizes": [],
+    "faqs": [
+      {"q": "Can I pitch?", "a": "Pitch slots are picked from registrations. Tick 'I want to pitch' when you sign up."}
+    ],
+    "refund_policy": "This is a free event. If you can't come, please cancel your pass so someone on the waitlist gets it.",
+    "tags": ["startup", "networking", "pitch", "tech"]
+  },
+  {
+    "slug": "surat-street-food-fest",
+    "title": "Surat Street Food Fest",
+    "tagline": "Locho to ghari, three days of eating",
+    "category": "Food",
+    "city": "Surat",
+    "featured": false,
+    "start": "2026-12-05T16:00",
+    "end": "2026-12-07T23:00",
+    "venue": {
+      "name": "Dumas Road Fair Ground",
+      "address": "Dumas Road, Piplod, Surat, Gujarat 395007",
+      "map_query": "Dumas Road Piplod Surat"
+    },
+    "organizer": {"name": "Tapi Taste Collective", "slug": "tapi-taste"},
+    "poster": "img/posters/surat-street-food-fest.svg",
+    "banner": "img/banners/surat-street-food-fest.svg",
+    "tickets": [
+      {"name": "Day Entry", "price": 199, "capacity": 5000, "sold": 900},
+      {"name": "3-Day Pass", "price": 449, "capacity": 1500, "sold": 260}
+    ],
+    "about": "Sixty stalls from Surat's best-known street food families, a live cooking stage and a kids' zone. Entry includes two tasting coupons.",
+    "highlights": ["60+ stalls", "Live cooking stage", "Two tasting coupons"],
+    "schedule": [
+      {"time": "16:00", "title": "Gates open (all days)"},
+      {"time": "19:00", "title": "Cooking stage show"},
+      {"time": "23:00", "title": "Close"}
+    ],
+    "kit": ["Two tasting coupons", "Free drinking water", "Kids' zone"],
+    "prizes": [],
+    "faqs": [
+      {"q": "Are there Jain food options?", "a": "Yes, stalls with Jain options carry a green flag."}
+    ],
+    "refund_policy": "Refunds up to 3 days before your entry date.",
+    "tags": ["food", "street food", "festival", "family"]
+  },
+  {
+    "slug": "ajmer-sufi-evening",
+    "title": "Sufi Evening by the Lake",
+    "tagline": "Qawwali and folk music at Ana Sagar",
+    "category": "Cultural",
+    "city": "Ajmer",
+    "featured": false,
+    "start": "2026-11-15T18:00",
+    "end": "2026-11-15T21:30",
+    "venue": {
+      "name": "Daulat Bagh Lawns",
+      "address": "Ana Sagar Lake, Daulat Bagh, Ajmer, Rajasthan 305001",
+      "map_query": "Daulat Bagh Ajmer"
+    },
+    "organizer": {"name": "Rang Manch Foundation", "slug": "rang-manch"},
+    "poster": "img/posters/ajmer-sufi-evening.svg",
+    "banner": "img/banners/ajmer-sufi-evening.svg",
+    "tickets": [
+      {"name": "Lawn Seating", "price": 299, "capacity": 600, "sold": 210},
+      {"name": "Front Row Chair", "price": 699, "capacity": 120, "sold": 102}
+    ],
+    "about": "An evening of qawwali and Rajasthani folk music on the lawns beside Ana Sagar lake, with diyas on the water at sunset.",
+    "highlights": ["Two qawwali groups", "Manganiyar folk set", "Diyas at sunset"],
+    "schedule": [
+      {"time": "18:00", "title": "Gates open"},
+      {"time": "18:30", "title": "Folk set"},
+      {"time": "19:30", "title": "Qawwali"}
+    ],
+    "kit": ["Floor cushions", "Chai stall"],
+    "prizes": [],
+    "faqs": [
+      {"q": "Is it family friendly?", "a": "Yes. Children under 5 enter free."}
+    ],
+    "refund_policy": "Refunds up to 48 hours before the event.",
+    "tags": ["qawwali", "sufi", "folk", "music"]
+  },
+  {
+    "slug": "jaipur-blue-pottery-workshop",
+    "title": "Blue Pottery Weekend Workshop",
+    "tagline": "Make and glaze your own piece",
+    "category": "Workshop",
+    "city": "Jaipur",
+    "featured": false,
+    "start": "2026-09-19T10:00",
+    "end": "2026-09-20T16:00",
+    "venue": {
+      "name": "Amer Road Craft Studio",
+      "address": "Amer Road, Jaipur, Rajasthan 302002",
+      "map_query": "Amer Road Jaipur"
+    },
+    "organizer": {"name": "Neel Kala Studio", "slug": "neel-kala"},
+    "poster": "img/posters/jaipur-blue-pottery-workshop.svg",
+    "banner": "img/banners/jaipur-blue-pottery-workshop.svg",
+    "tickets": [
+      {"name": "Workshop Seat", "price": 1499, "capacity": 30, "sold": 30}
+    ],
+    "about": "A two-day hands-on workshop with master potters. Shape, paint and glaze one plate and one tile to take home.",
+    "highlights": ["Taught by master potters", "Take home two pieces", "Lunch included"],
+    "schedule": [
+      {"time": "Day 1, 10:00", "title": "Shaping"},
+      {"time": "Day 2, 10:00", "title": "Painting and glazing"}
+    ],
+    "kit": ["All materials", "Apron", "Lunch both days"],
+    "prizes": [],
+    "faqs": [],
+    "refund_policy": "Refunds up to 7 days before the workshop.",
+    "results": {
+      "summary": "30 participants made 60 pieces across two days. The finished plates were fired and handed out on 27 September.",
+      "photos": ["img/posters/jaipur-blue-pottery-workshop.svg"]
+    },
+    "tags": ["pottery", "craft", "workshop", "art"]
+  },
+  {
+    "slug": "kota-standup-night",
+    "title": "Kota Stand-up Night",
+    "tagline": "Four comics, zero syllabus",
+    "category": "Comedy",
+    "city": "Kota",
+    "featured": false,
+    "start": "2026-08-29T19:30",
+    "end": "2026-08-29T22:00",
+    "venue": {
+      "name": "Talwandi Community Hall",
+      "address": "Talwandi, Kota, Rajasthan 324005",
+      "map_query": "Talwandi Kota"
+    },
+    "organizer": {"name": "Riverside Live", "slug": "riverside-live"},
+    "poster": "img/posters/kota-standup-night.svg",
+    "banner": "img/banners/kota-standup-night.svg",
+    "tickets": [
+      {"name": "General", "price": 349, "capacity": 400, "sold": 388}
+    ],
+    "about": "Four stand-up comics from Rajasthan and Delhi on hostel life, mess food and parents' calls.",
+    "highlights": ["Four comics", "Open mic slot"],
+    "schedule": [
+      {"time": "19:30", "title": "Doors"},
+      {"time": "20:00", "title": "Show"}
+    ],
+    "kit": [],
+    "prizes": [],
+    "faqs": [],
+    "refund_policy": "No refunds within 24 hours of the show.",
+    "results": {
+      "summary": "A packed hall of 388. The open mic slot went to a first-time comic from the audience.",
+      "photos": ["img/posters/kota-standup-night.svg"]
+    },
+    "tags": ["comedy", "stand-up", "students"]
+  }
+]
