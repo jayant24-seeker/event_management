@@ -9,8 +9,8 @@ from flask import Blueprint, abort, flash, g, jsonify, redirect, render_template
 
 from .auth import login_required, normalize_phone
 from .events import IST, now_ist
-from .models import (PAYMENT_HOLD, Attendee, Booking, Coupon, EventRow, SavedEvent, WaitlistEntry, db,
-                     seats_taken, utcnow)
+from .models import (PAYMENT_HOLD, Attendee, Booking, Coupon, EventRow, Review, SavedEvent, WaitlistEntry, db,
+                     rating_summary, seats_taken, utcnow)
 from .ratelimit import hit
 from .routes import store
 
@@ -278,6 +278,49 @@ def notify(slug):
                 db.session.commit()
             done = True
     return render_template("booking/notify.html", e=e, done=done, error=error, name=name, phone=phone_raw)
+
+
+# ---- Reviews (past events, people who had a confirmed ticket)
+def went_to(e):
+    return g.get("user") is not None and Booking.query.filter_by(
+        user_id=g.user.id, event_slug=e.slug, status="confirmed").first() is not None
+
+
+def review_context(e):
+    """What the event page needs to show reviews and, for attendees, the review form."""
+    if not e.is_past():
+        return {}
+    mine = Review.query.filter_by(user_id=g.user.id, event_slug=e.slug).first() if g.get("user") else None
+    return {
+        "reviews": Review.query.filter_by(event_slug=e.slug).order_by(Review.created_at.desc()).limit(30).all(),
+        "rating": rating_summary([e.slug]),
+        "my_review": mine,
+        "can_review": went_to(e),
+    }
+
+
+@bp.route("/events/<slug>/review", methods=["POST"])
+@login_required
+def review(slug):
+    e = get_event_or_404(slug)
+    if not e.is_past() or not went_to(e):
+        abort(403)
+    rating = request.form.get("rating", type=int)
+    text = request.form.get("text", "").strip()[:1000]
+    if rating not in range(1, 6):
+        flash("Pick 1 to 5 stars.")
+        return redirect(url_for("main.event", slug=slug) + "#reviews")
+    row = Review.query.filter_by(user_id=g.user.id, event_slug=slug).first()
+    if row is None:
+        row = Review(user_id=g.user.id, event_slug=slug, name="")
+        db.session.add(row)
+    # First name and initial only, like "Asha V."
+    parts = (g.user.name or "Attendee").split()
+    row.name = parts[0] + (f" {parts[-1][0]}." if len(parts) > 1 else "")
+    row.rating, row.text, row.created_at = rating, text, utcnow()
+    db.session.commit()
+    flash("Thanks for the review!")
+    return redirect(url_for("main.event", slug=slug) + "#reviews")
 
 
 # ---- Saved events

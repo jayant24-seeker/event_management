@@ -61,6 +61,13 @@
   .prose-site a { @apply font-semibold text-rani underline-offset-2 hover:underline; }
 
   .eyebrow { @apply text-xs font-bold uppercase tracking-[0.18em] text-rani; }
+
+  /* Star rating picker: inputs come 5..1 in the DOM and are shown reversed, so "~ label"
+     lights up the picked star and every star to its left. */
+  [data-star-input] input:checked ~ label,
+  [data-star-input] label:hover,
+  [data-star-input] label:hover ~ label { @apply text-marigold; }
+  [data-star-input] input:focus-visible + label { @apply rounded outline outline-2 outline-offset-2 outline-ink; }
 }
 
 @layer utilities {

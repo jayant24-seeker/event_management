@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "components/_macros.html" import badge, event_card, follow_button, price_label %}
+{% from "components/_macros.html" import badge, event_card, follow_button, price_label, stars %}
 {% set past = e.is_past() %}
 {% set open = e.registration_open() %}
 {% set page_url = url_for('main.event', slug=e.slug, _external=True) %}
@@ -83,6 +83,7 @@
 {# ---------- Section nav ---------- #}
 {% set sections = [] %}
 {% if past and e.raw.results %}{% set _x = sections.append(('results', _('Results'))) %}{% endif %}
+{% if past %}{% set _x = sections.append(('reviews', _('Reviews'))) %}{% endif %}
 {% set _x = sections.append(('about', _('About'))) %}
 {% if e.raw.schedule %}{% set _x = sections.append(('schedule', _('Schedule'))) %}{% endif %}
 {% if e.raw.route %}{% set _x = sections.append(('route', _('Route'))) %}{% endif %}
@@ -145,6 +146,67 @@
         </a>
         {% endfor %}
       </div>
+      {% endif %}
+    </section>
+    {% endif %}
+
+    {% if past %}
+    <section id="reviews" class="scroll-mt-32">
+      <p class="eyebrow">{{ _('Reviews') }}</p>
+      <h2 class="mt-1 text-3xl font-extrabold">{{ _('What people said') }}</h2>
+      {% if rating %}
+      <div class="mt-6 grid items-center gap-6 rounded-card border border-line bg-paper-raised p-5 sm:grid-cols-[auto_1fr] sm:p-6">
+        <div class="text-center sm:pr-6">
+          <p class="font-display text-5xl font-extrabold">{{ '%.1f'|format(rating.avg) }}</p>
+          {{ stars(rating.avg) }}
+          <p class="mt-1 text-sm text-ink-soft">{{ rating.count }} review{{ 's' if rating.count != 1 }}</p>
+        </div>
+        <div class="space-y-1.5">
+          {% for n, c in rating.stars.items() %}
+          <div class="flex items-center gap-3 text-sm">
+            <span class="w-3 font-semibold">{{ n }}</span>
+            <span class="h-2 flex-1 overflow-hidden rounded-full bg-ink/10"><span class="block h-full rounded-full bg-marigold" style="width: {{ (100 * c / rating.count)|round|int }}%"></span></span>
+            <span class="w-6 text-right text-ink-soft">{{ c }}</span>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+
+      {% if can_review %}
+      <form method="post" action="{{ url_for('booking.review', slug=e.slug) }}" class="mt-6 rounded-card border border-line bg-paper-raised p-5">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <p class="font-semibold">{{ _('You were there. How was it?') if not my_review else _('Your review') }}</p>
+        <fieldset class="mt-3 flex flex-row-reverse justify-end gap-1" data-star-input>
+          <legend class="sr-only">Rating</legend>
+          {% for i in range(5, 0, -1) %}
+          <input type="radio" name="rating" value="{{ i }}" id="star-{{ i }}" class="sr-only" {% if my_review and my_review.rating == i %}checked{% endif %} required>
+          <label for="star-{{ i }}" class="cursor-pointer text-ink/20" title="{{ i }} star{{ 's' if i > 1 }}">
+            <svg class="h-8 w-8" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z"/></svg>
+            <span class="sr-only">{{ i }} star{{ 's' if i > 1 }}</span>
+          </label>
+          {% endfor %}
+        </fieldset>
+        <textarea name="text" rows="3" maxlength="1000" class="input mt-3 rounded-2xl" placeholder="{{ _('What did you like? What could be better?') }}">{{ my_review.text if my_review }}</textarea>
+        <button class="btn-dark mt-3">{{ _('Update review') if my_review else _('Post review') }}</button>
+      </form>
+      {% endif %}
+
+      {% if reviews %}
+      <ul class="mt-6 space-y-3">
+        {% for rv in reviews %}
+        <li class="rounded-card border border-line bg-paper-raised p-5">
+          <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+            {{ stars(rv.rating) }}
+            <p class="font-semibold">{{ rv.name }}</p>
+            {% if rv.user_id %}<span class="badge badge-free">{{ _('Booked on') }} {{ site_name }}</span>{% endif %}
+          </div>
+          {% if rv.text %}<p class="mt-2 leading-relaxed text-ink/90">{{ rv.text }}</p>{% endif %}
+        </li>
+        {% endfor %}
+      </ul>
+      {% elif not can_review %}
+      <p class="mt-6 rounded-card border border-dashed border-line p-6 text-center text-ink-soft">{{ _('No reviews yet. People who booked can leave one after the event.') }}</p>
       {% endif %}
     </section>
     {% endif %}
@@ -295,6 +357,7 @@
           <p class="text-xs font-bold uppercase tracking-wider text-paper/60">{{ _('Organised by') }}</p>
           <p class="font-display text-xl font-extrabold">{{ e.org.name }}{% if e.org.verified %} <span class="ml-1 rounded-full bg-marigold px-2 py-0.5 align-middle font-sans text-[11px] font-bold uppercase tracking-wider text-ink">Verified</span>{% endif %}</p>
           <p class="text-sm text-paper/70">{{ e.org.city }} · hosting since {{ e.org.since }} · {{ org_events }} event{{ 's' if org_events != 1 }} on {{ site_name }}</p>
+          {% if org_rating %}<p class="mt-1 flex items-center gap-2 text-sm">{{ stars(org_rating.avg) }} <strong>{{ '%.1f'|format(org_rating.avg) }}</strong> <span class="text-paper/70">from {{ org_rating.count }} review{{ 's' if org_rating.count != 1 }} of past events</span></p>{% endif %}
         </div>
         <div class="flex gap-2">
           {{ follow_button(e.organizer) }}
@@ -324,6 +387,7 @@
       {% if past %}
         <p class="font-display text-2xl font-extrabold">Event ended</p>
         <p class="mt-1 text-sm text-ink-soft">{{ e.registered|num }} people took part.</p>
+        {% if rating %}<a href="#reviews" class="mt-3 flex items-center gap-2 text-sm font-semibold">{{ stars(rating.avg) }} {{ '%.1f'|format(rating.avg) }} · {{ rating.count }} review{{ 's' if rating.count != 1 }}</a>{% endif %}
         <a href="{{ url_for('main.organizer', slug=e.organizer) }}" class="btn-primary mt-5 w-full">See {{ e.org.name }}'s next events</a>
       {% else %}
         <div class="flex items-baseline justify-between gap-2">

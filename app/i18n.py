@@ -132,6 +132,14 @@ HI = {
     "Following": "फ़ॉलो कर रहे हैं",
     "For you": "आपके लिए",
     "From organizers you follow": "आपके फ़ॉलो किए आयोजकों से",
+    # Reviews
+    "Reviews": "समीक्षाएँ",
+    "What people said": "लोगों ने क्या कहा",
+    "You were there. How was it?": "आप वहाँ थे। कैसा रहा?",
+    "Your review": "आपकी समीक्षा",
+    "Post review": "समीक्षा भेजें",
+    "Update review": "समीक्षा बदलें",
+    "Booked on": "बुक किया:",
     # Offline page
     "No internet right now": "अभी इंटरनेट नहीं है",
     "Tickets you've opened on this phone before still work. Show the QR code at the gate.":

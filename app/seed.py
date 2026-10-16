@@ -8,7 +8,7 @@ from datetime import datetime
 import click
 
 from .events import DATA_FILE, ORGANIZERS_FILE
-from .models import Coupon, EventRow, Organizer, User, db
+from .models import Coupon, EventRow, Organizer, Review, User, db
 
 DEMO_ORGANIZER_PHONE = "+919999999999"
 
@@ -18,6 +18,26 @@ DEMO_COUPONS = [
     ("jaipur-night-run-2026", "PINKCITY15", 15, 100, None),
     ("little-legs-kids-run", "SIBLING20", 20, None, None),
 ]
+
+
+# Reviews from past editions, so past event pages and organizer ratings aren't empty in the demo.
+DEMO_REVIEWS = [
+    ("tricity-half-marathon-2026", "Harpreet K.", 5, "Well marked route, water every 2 km and the medal is lovely. Will run again."),
+    ("tricity-half-marathon-2026", "Rohit S.", 4, "Great crowd support near Sukhna Lake. Bag counter was slow after the finish."),
+    ("tricity-half-marathon-2026", "Neha G.", 5, "My first half marathon. Pacers were friendly and kept us on time."),
+    ("jaipur-blue-pottery-workshop", "Ananya M.", 5, "Small batch, patient teacher, and we took home two pieces each."),
+    ("jaipur-blue-pottery-workshop", "Vikram R.", 4, "Loved it. Would have liked a little more time for painting."),
+    ("kota-standup-night", "Ishaan P.", 5, "Laughed for two hours straight. The Kota coaching jokes hit home."),
+    ("kota-standup-night", "Sakshi T.", 3, "Good comics, but the show started 40 minutes late."),
+]
+
+
+def load_reviews():
+    slugs = {r.slug for r in EventRow.query}
+    for slug, name, rating, text in DEMO_REVIEWS:
+        if slug in slugs:
+            db.session.add(Review(event_slug=slug, name=name, rating=rating, text=text))
+    db.session.commit()
 
 
 def load_json():
@@ -34,12 +54,15 @@ def load_json():
         db.session.add(Coupon(event_slug=slug, code=code, percent_off=pct, max_uses=max_uses,
                               valid_until=datetime.fromisoformat(until) if until else None))
     db.session.commit()
+    load_reviews()
     return len(events), len(organizers)
 
 
 def seed_if_empty():
     if db.session.query(Organizer).first() is None:
         load_json()
+    elif db.session.query(Review).first() is None:
+        load_reviews()  # databases made before reviews existed
 
 
 def register_cli(app):

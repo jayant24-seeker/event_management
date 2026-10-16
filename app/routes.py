@@ -6,6 +6,7 @@ from flask import (Blueprint, Response, abort, current_app, flash, g, jsonify, r
                    send_from_directory, url_for)
 
 from .events import DATE_FILTERS, PRICE_FILTERS, SORTS, EventStore, now_ist
+from .models import rating_summary
 from .ratelimit import hit
 
 bp = Blueprint("main", __name__)
@@ -137,7 +138,11 @@ def event(slug):
     e = s.get(slug)
     if not e:
         abort(404)
-    return render_template("event.html", e=e, similar=s.similar(e), org_events=len(s.by_organizer(e.organizer)))
+    from .booking import review_context
+
+    org_slugs = [x.slug for x in s.by_organizer(e.organizer)]
+    return render_template("event.html", e=e, similar=s.similar(e), org_events=len(org_slugs),
+                           org_rating=rating_summary(org_slugs), **review_context(e))
 
 
 @bp.route("/events/<slug>.ics")
@@ -177,7 +182,8 @@ def organizer(slug):
     upcoming = sorted((e for e in events if not e.is_past()), key=lambda e: e.start)
     past = sorted((e for e in events if e.is_past()), key=lambda e: e.start, reverse=True)
     return render_template("organizer.html", org=org, upcoming=upcoming, past=past,
-                           registered=sum(e.registered for e in events), followers=follower_count(slug))
+                           registered=sum(e.registered for e in events), followers=follower_count(slug),
+                           rating=rating_summary([e.slug for e in events]))
 
 
 # ---------- Following organizers ----------

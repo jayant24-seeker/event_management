@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "components/_macros.html" import event_card, follow_button %}
+{% from "components/_macros.html" import event_card, follow_button, stars %}
 {% block title %}{{ org.name }} · Events in {{ org.city }} · {{ site_name }}{% endblock %}
 {% block description %}{{ org.about }} See upcoming and past events by {{ org.name }} on {{ site_name }}.{% endblock %}
 
@@ -15,6 +15,7 @@
           {% if org.verified %}<span class="badge bg-marigold text-ink">Verified organizer</span>{% endif %}
           <span class="text-paper/70">Hosting since {{ org.since }}</span>
           <span class="text-paper/70">· {{ followers|num }} follower{{ 's' if followers != 1 }}</span>
+          {% if rating %}<span class="flex items-center gap-1.5">· {{ stars(rating.avg) }} <strong>{{ '%.1f'|format(rating.avg) }}</strong> <span class="text-paper/70">({{ rating.count }} review{{ 's' if rating.count != 1 }})</span></span>{% endif %}
         </div>
       </div>
       <div class="sm:ml-auto">{{ follow_button(org.slug) }}</div>

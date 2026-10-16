@@ -125,6 +125,32 @@ class Follow(db.Model):
     __table_args__ = (UniqueConstraint("user_id", "organizer_slug"),)
 
 
+class Review(db.Model):
+    """A star rating and a few words from someone who went. One per person per event."""
+    id = db.Column(db.Integer, primary_key=True)
+    event_slug = db.Column(db.String(120), db.ForeignKey("event.slug"), nullable=False, index=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=True)  # None for imported reviews
+    name = db.Column(db.String(120), nullable=False)
+    rating = db.Column(db.Integer, nullable=False)  # 1 to 5
+    text = db.Column(db.Text, nullable=False, default="")
+    created_at = db.Column(db.DateTime, nullable=False, default=utcnow)
+    __table_args__ = (UniqueConstraint("user_id", "event_slug"),)
+
+
+def rating_summary(event_slugs):
+    """{"avg": 4.6, "count": 38, "stars": {5: 30, 4: 6, ...}} over these events, or None if no reviews."""
+    if not event_slugs:
+        return None
+    rows = (db.session.query(Review.rating, func.count(Review.id))
+            .filter(Review.event_slug.in_(list(event_slugs))).group_by(Review.rating).all())
+    count = sum(n for _, n in rows)
+    if not count:
+        return None
+    stars = {k: 0 for k in range(5, 0, -1)}
+    stars.update(dict(rows))
+    return {"avg": round(sum(r * n for r, n in rows) / count, 1), "count": count, "stars": stars}
+
+
 class ContactMessage(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), nullable=False)
