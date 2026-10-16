@@ -11,7 +11,7 @@ Every item keeps `pytest` green. Newest at the bottom.
 - [x] Security pass: OTP rate limits, open redirects, ownership checks
 - [x] PWA: web app manifest, offline "My tickets", installable
 - [x] Cancel a booking (attendee side) following the refund policy
-- [ ] Transfer a ticket to someone else
+- [x] Transfer a ticket to someone else
 - [x] Follow organizers; "From organizers you follow" on the homepage
 - [x] Reviews and ratings on past events
 - [ ] Calendar (month) view on Explore
@@ -31,3 +31,4 @@ Every item keeps `pytest` green. Newest at the bottom.
 - Reviews: people with a confirmed ticket can rate (1-5 stars) and review an event after it ends; edit their own; rating summary with star bars; organizer rating on profile and on their upcoming event pages; demo reviews seeded (also into older dev databases).
 - Self-serve cancellation with refunds: rules read from the refund policy text ("Full refund up to 14 days before…", "50% … 7 days") or set by the organizer; booking page shows the exact amount back; vague policies fall back to "contact the organizer". Added an automatic add-missing-columns step so older databases keep working.
 - Waitlist texts: when a booking on a sold-out event is cancelled, the first people on the waitlist get an SMS; organizers get a "Text the waitlist" button after adding seats; the list shows who was texted.
+- Ticket passes and transfers: every ticket has its own pass page (/pass/<code>) to send on WhatsApp, which also opens offline once viewed; the booker can move a ticket to a new name (new QR, old one stops working) unless the policy says non-transferable. QR codes now scale cleanly.

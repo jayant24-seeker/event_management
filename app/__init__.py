@@ -106,7 +106,7 @@ def create_app(config=None):
         response.headers.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
         response.headers.setdefault("X-Frame-Options", "SAMEORIGIN")
         response.headers.setdefault("Permissions-Policy", "camera=(), microphone=(), geolocation=()")
-        if g.get("user") is not None or request.path.startswith(("/organizer", "/bookings", "/tickets", "/pay", "/account")):
+        if g.get("user") is not None or request.path.startswith(("/organizer", "/bookings", "/tickets", "/pay", "/account", "/pass/")):
             response.headers["Cache-Control"] = "private, no-store"  # personal pages never cached
         return response
 

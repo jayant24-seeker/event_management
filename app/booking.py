@@ -10,7 +10,7 @@ from flask import Blueprint, abort, current_app, flash, g, jsonify, redirect, re
 from .auth import login_required, normalize_phone
 from .events import IST, now_ist
 from .models import (PAYMENT_HOLD, Attendee, Booking, Coupon, EventRow, Review, SavedEvent, WaitlistEntry, db,
-                     rating_summary, seats_taken, utcnow)
+                     rating_summary, seats_taken, short_code, utcnow)
 from .ratelimit import hit
 from .routes import store
 
@@ -207,7 +207,7 @@ def pay(ref):
 
 def ticket_qr(attendee):
     url = url_for("booking.check_ticket", code=attendee.code, _external=True)
-    return segno.make(url, error="m").svg_inline(scale=4, border=2, dark="#1A1423")
+    return segno.make(url, error="m").svg_inline(scale=4, border=2, dark="#1A1423", omitsize=True)  # sized by CSS
 
 
 @bp.route("/bookings/<ref>")
@@ -217,6 +217,7 @@ def show(ref):
     e = get_event_or_404(booking.event_slug)
     percent = 100 if booking.total == 0 else e.refund_percent()
     return render_template("booking/booking.html", b=booking, e=e, qr=ticket_qr, refund_percent=percent,
+                           can_transfer=transfers_allowed(e) and not e.is_past() and booking.status == "confirmed",
                            refund_amount=booking.total * percent // 100)
 
 
@@ -242,6 +243,45 @@ def cancel(ref):
     else:
         flash(f"Booking cancelled. A refund of ₹{refund:,} is on its way to your original payment method (5-7 working days).")
     return redirect(url_for("booking.tickets"))
+
+
+# ---- One ticket on its own: send it to the person it's for, or hand it to someone else
+def transfers_allowed(e):
+    policy = (e.refund_policy or "").lower()
+    return not any(w in policy for w in ("non-transferable", "not transferable", "no transfers"))
+
+
+@bp.route("/pass/<code>")
+def ticket_pass(code):
+    """A single ticket with its QR, for the person it belongs to. Anyone with the link can
+    open it, like a forwarded ticket screenshot; transferring a ticket changes the link."""
+    a = Attendee.query.filter_by(code=code).first()
+    if a is None:
+        abort(404)
+    e = get_event_or_404(a.booking.event_slug)
+    return render_template("booking/pass.html", a=a, e=e, qr=ticket_qr, valid=a.booking.status == "confirmed")
+
+
+@bp.route("/bookings/<ref>/tickets/<int:aid>/transfer", methods=["POST"])
+@login_required
+def transfer(ref, aid):
+    booking = own_booking_or_404(ref)
+    e = get_event_or_404(booking.event_slug)
+    a = next((x for x in booking.attendees if x.id == aid), None)
+    if a is None:
+        abort(404)
+    name = request.form.get("name", "").strip()[:120]
+    if booking.status != "confirmed" or e.is_past() or a.checked_in_at or not transfers_allowed(e):
+        abort(400)
+    if len(name) < 2:
+        flash("Enter the full name of the person you're giving the ticket to.")
+        return redirect(url_for("booking.show", ref=ref) + f"#ticket-{aid}")
+    old = a.name
+    a.details = dict(a.details, name=name, transferred_from=old)
+    a.code = short_code(10)  # the old QR and pass link stop working
+    db.session.commit()
+    flash(f"Ticket moved from {old} to {name}. The old QR code no longer works; send {name.split()[0]} the new one.")
+    return redirect(url_for("booking.show", ref=ref) + f"#ticket-{aid}")
 
 
 @bp.route("/tickets")

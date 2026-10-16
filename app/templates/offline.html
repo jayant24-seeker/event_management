@@ -16,21 +16,25 @@
 <script>
   // List the ticket pages the service worker kept, so they open without a signal.
   if ("caches" in window) {
-    caches.open("eventouse-pages").then(async (cache) => {
+    (async () => {
       const box = document.getElementById("offline-tickets");
-      for (const req of await cache.keys()) {
-        const path = new URL(req.url).pathname;
-        const html = await (await cache.match(req)).text();
-        const parts = (new DOMParser().parseFromString(html, "text/html").title || path).split(" · ");
-        const title = parts.length > 2 ? parts[1] : parts[0];  // "Your tickets · <event> · Eventouse"
-        const a = document.createElement("a");
-        a.href = path;
-        a.className = "block rounded-card border border-line bg-paper-raised p-4 font-semibold";
-        a.textContent = title;
-        box.append(a);
-        box.hidden = false;
+      for (const name of ["eventouse-passes", "eventouse-pages"]) {
+        if (!(await caches.has(name))) continue;
+        const cache = await caches.open(name);
+        for (const req of await cache.keys()) {
+          const path = new URL(req.url).pathname;
+          const html = await (await cache.match(req)).text();
+          const parts = (new DOMParser().parseFromString(html, "text/html").title || path).split(" · ");
+          const title = parts.length > 2 ? parts[1] : parts[0];  // "Your tickets · <event> · Eventouse"
+          const a = document.createElement("a");
+          a.href = path;
+          a.className = "block rounded-card border border-line bg-paper-raised p-4 font-semibold";
+          a.textContent = title;
+          box.append(a);
+          box.hidden = false;
+        }
       }
-    });
+    })();
   }
 </script>
 {% endblock %}
