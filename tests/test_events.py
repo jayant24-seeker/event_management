@@ -1,3 +1,4 @@
+import html
 from datetime import datetime
 
 import pytest
@@ -70,7 +71,7 @@ def test_counts_and_suggest(store):
 
 def test_home_and_search_pages():
     client = create_app().test_client()
-    home = client.get("/").get_data(as_text=True)
+    home = html.unescape(client.get("/").get_data(as_text=True))
     assert "data-hero-slide" in home and "Find something to do" in home
     # Past events only appear in the "Recently happened" strip, never in the upcoming grid.
     upcoming_grid = home.split("Don't miss these")[1].split("Recently happened")[0]

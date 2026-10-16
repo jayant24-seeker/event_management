@@ -29,7 +29,7 @@
       <ol class="flex flex-wrap items-center gap-1.5">
         <li><a href="{{ url_for('main.home') }}" class="hover:text-paper">Home</a></li>
         <li aria-hidden="true">/</li>
-        <li><a href="{{ url_for('main.explore', city=e.city) }}" class="hover:text-paper">{{ e.city }}</a></li>
+        <li><a href="{{ city_url(e.city) }}" class="hover:text-paper">{{ e.city }}</a></li>
         <li aria-hidden="true">/</li>
         <li><a href="{{ url_for('main.explore', category=e.category) }}" class="hover:text-paper">{{ e.category }}</a></li>
       </ol>
@@ -58,11 +58,11 @@
           </a>
           <button type="button" class="flex items-center gap-2 rounded-full border border-paper/30 px-4 py-2 font-semibold hover:bg-paper/10" data-save="{{ e.slug }}" data-saved="{{ '1' if e.slug in saved_slugs() else '0' }}" aria-pressed="false">
             <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>
-            <span data-save-label>Save</span>
+            <span data-save-label>{{ _('Save') }}</span>
           </button>
           <a href="#share" class="flex items-center gap-2 rounded-full border border-paper/30 px-4 py-2 font-semibold hover:bg-paper/10" data-share data-title="{{ e.title }}" data-url="{{ page_url }}">
             <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>
-            Share
+            {{ _('Share') }}
           </a>
         </div>
       </div>
@@ -82,14 +82,14 @@
 
 {# ---------- Section nav ---------- #}
 {% set sections = [] %}
-{% if past and e.raw.results %}{% set _ = sections.append(('results', 'Results')) %}{% endif %}
-{% set _ = sections.append(('about', 'About')) %}
-{% if e.raw.schedule %}{% set _ = sections.append(('schedule', 'Schedule')) %}{% endif %}
-{% if e.raw.route %}{% set _ = sections.append(('route', 'Route')) %}{% endif %}
-{% set _ = sections.append(('venue', 'Online' if e.is_online else 'Venue')) %}
-{% if e.raw.kit %}{% set _ = sections.append(('kit', 'What you get')) %}{% endif %}
-{% if e.raw.prizes %}{% set _ = sections.append(('prizes', 'Prizes')) %}{% endif %}
-{% set _ = sections.append(('faqs', 'FAQs')) %}
+{% if past and e.raw.results %}{% set _x = sections.append(('results', _('Results'))) %}{% endif %}
+{% set _x = sections.append(('about', _('About'))) %}
+{% if e.raw.schedule %}{% set _x = sections.append(('schedule', _('Schedule'))) %}{% endif %}
+{% if e.raw.route %}{% set _x = sections.append(('route', _('Route'))) %}{% endif %}
+{% set _x = sections.append(('venue', _('Online') if e.is_online else _('Venue'))) %}
+{% if e.raw.kit %}{% set _x = sections.append(('kit', _('What you get'))) %}{% endif %}
+{% if e.raw.prizes %}{% set _x = sections.append(('prizes', _('Prizes'))) %}{% endif %}
+{% set _x = sections.append(('faqs', _('FAQs'))) %}
 <nav class="sticky top-16 z-30 border-b border-line/70 bg-paper/95 backdrop-blur" aria-label="Sections">
   <div class="container-site no-scrollbar flex gap-1 overflow-x-auto py-2 text-sm font-semibold">
     {% for id, label in sections %}<a href="#{{ id }}" class="shrink-0 rounded-full px-3.5 py-1.5 text-ink-soft hover:bg-ink/5 hover:text-ink aria-[current=true]:bg-ink aria-[current=true]:text-paper" data-section-link>{{ label }}</a>{% endfor %}
@@ -104,7 +104,7 @@
     {% set r = e.raw.results %}
     <section id="results" class="scroll-mt-32">
       <p class="eyebrow">Results</p>
-      <h2 class="mt-1 text-3xl font-extrabold">How it went</h2>
+      <h2 class="mt-1 text-3xl font-extrabold">{{ _('How it went') }}</h2>
       <p class="mt-3 text-lg leading-relaxed">{{ r.summary }}</p>
       {% if r.finishers %}
       <div class="mt-6 rounded-card border border-line bg-paper-raised p-4 sm:p-6" data-results>
@@ -151,7 +151,7 @@
 
     <section id="about" class="scroll-mt-32">
       <p class="eyebrow">About</p>
-      <h2 class="mt-1 text-3xl font-extrabold">About this event</h2>
+      <h2 class="mt-1 text-3xl font-extrabold">{{ _('About this event') }}</h2>
       <p class="mt-4 text-lg leading-relaxed text-ink/90" {% if e.language == 'Hindi' %}lang="hi"{% endif %}>{{ e.about }}</p>
       {% if e.raw.highlights %}
       <ul class="mt-6 grid gap-3 sm:grid-cols-2">
@@ -165,12 +165,12 @@
 
       <dl class="mt-8 grid grid-cols-2 gap-px overflow-hidden rounded-card border border-line bg-line sm:grid-cols-3">
         {% set facts = [
-          ('Date', e.start.strftime('%a, %d %b %Y')),
-          ('Time', e.start.strftime('%-I:%M %p') ~ ' to ' ~ e.end.strftime('%-I:%M %p') if e.start.date() == e.end.date() else e.start.strftime('%-I:%M %p, %d %b') ~ ' to ' ~ e.end.strftime('%-I:%M %p, %d %b')),
-          ('Where', where),
-          ('Language', e.raw.language),
-          ('Age', (e.raw.age_min|string ~ ' years and up') if e.raw.age_min else None),
-          ('Registration closes', e.reg_closes.strftime('%d %b, %-I:%M %p') if not past else None),
+          (_('Date'), e.start.strftime('%a, %d %b %Y')),
+          (_('Time'), e.start.strftime('%-I:%M %p') ~ ' to ' ~ e.end.strftime('%-I:%M %p') if e.start.date() == e.end.date() else e.start.strftime('%-I:%M %p, %d %b') ~ ' to ' ~ e.end.strftime('%-I:%M %p, %d %b')),
+          (_('Where'), where),
+          (_('Language'), e.raw.language),
+          (_('Age'), (e.raw.age_min|string ~ ' years and up') if e.raw.age_min else None),
+          (_('Registration closes'), e.reg_closes.strftime('%d %b, %-I:%M %p') if not past else None),
         ] %}
         {% for label, value in facts if value %}
         <div class="bg-paper-raised p-4">
@@ -184,7 +184,7 @@
     {% if e.raw.schedule %}
     <section id="schedule" class="scroll-mt-32">
       <p class="eyebrow">Schedule</p>
-      <h2 class="mt-1 text-3xl font-extrabold">How the day runs</h2>
+      <h2 class="mt-1 text-3xl font-extrabold">{{ _('How the day runs') }}</h2>
       <ol class="relative mt-6 space-y-5 border-l-2 border-line pl-6">
         {% for item in e.schedule %}
         <li class="relative">
@@ -200,7 +200,7 @@
     {% if e.raw.route %}
     <section id="route" class="scroll-mt-32">
       <p class="eyebrow">Route</p>
-      <h2 class="mt-1 text-3xl font-extrabold">The course</h2>
+      <h2 class="mt-1 text-3xl font-extrabold">{{ _('The course') }}</h2>
       <div class="mt-6 grid gap-4 sm:grid-cols-2">
         <div class="rounded-card border border-line bg-paper-raised p-5">
           <p class="text-xs font-bold uppercase tracking-wider text-ink-soft">Start</p>
@@ -231,7 +231,7 @@
       </div>
       <a href="https://www.google.com/maps/dir/?api=1&destination={{ (e.venue.map_query or e.venue.address)|urlencode }}" target="_blank" rel="noopener" class="btn-outline mt-4">
         <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 11l18-8-8 18-2-8z"/></svg>
-        Get directions
+        {{ _('Get directions') }}
       </a>
       {% else %}
       <p class="mt-4 rounded-xl border border-line bg-paper-raised p-4">The joining link is on your ticket and in your confirmation message. It works on phone and laptop.</p>
@@ -241,7 +241,7 @@
     {% if e.raw.kit %}
     <section id="kit" class="scroll-mt-32">
       <p class="eyebrow">What you get</p>
-      <h2 class="mt-1 text-3xl font-extrabold">Kit and facilities</h2>
+      <h2 class="mt-1 text-3xl font-extrabold">{{ _('Kit and facilities') }}</h2>
       <ul class="mt-6 grid gap-2 sm:grid-cols-2">
         {% for item in e.kit %}
         <li class="flex items-center gap-3 rounded-xl bg-paper-raised px-4 py-3">
@@ -268,7 +268,7 @@
 
     <section id="faqs" class="scroll-mt-32">
       <p class="eyebrow">FAQs</p>
-      <h2 class="mt-1 text-3xl font-extrabold">Good to know</h2>
+      <h2 class="mt-1 text-3xl font-extrabold">{{ _('Good to know') }}</h2>
       <div class="mt-6 divide-y divide-line rounded-card border border-line bg-paper-raised">
         {% for faq in e.faqs %}
         <details class="group p-5" {% if loop.first %}open{% endif %}>
@@ -279,7 +279,7 @@
         </details>
         {% endfor %}
         <details class="group p-5" {% if not e.faqs %}open{% endif %}>
-          <summary class="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold">Refund and cancellation policy
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold">{{ _('Refund and cancellation policy') }}
             <svg class="h-5 w-5 shrink-0 transition group-open:rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
           </summary>
           <p class="mt-3 leading-relaxed text-ink-soft">{{ e.refund_policy }}</p>
@@ -292,25 +292,25 @@
       <div class="flex flex-wrap items-center gap-4">
         <span class="grid h-14 w-14 place-items-center rounded-2xl bg-marigold font-display text-2xl font-extrabold text-ink">{{ e.org.name[:1] }}</span>
         <div class="min-w-0 flex-1">
-          <p class="text-xs font-bold uppercase tracking-wider text-paper/60">Organised by</p>
+          <p class="text-xs font-bold uppercase tracking-wider text-paper/60">{{ _('Organised by') }}</p>
           <p class="font-display text-xl font-extrabold">{{ e.org.name }}{% if e.org.verified %} <span class="ml-1 rounded-full bg-marigold px-2 py-0.5 align-middle font-sans text-[11px] font-bold uppercase tracking-wider text-ink">Verified</span>{% endif %}</p>
           <p class="text-sm text-paper/70">{{ e.org.city }} · hosting since {{ e.org.since }} · {{ org_events }} event{{ 's' if org_events != 1 }} on {{ site_name }}</p>
         </div>
-        <a href="{{ url_for('main.organizer', slug=e.organizer) }}" class="btn border border-paper/30 text-paper hover:bg-paper/10">View profile</a>
+        <a href="{{ url_for('main.organizer', slug=e.organizer) }}" class="btn border border-paper/30 text-paper hover:bg-paper/10">{{ _('View profile') }}</a>
       </div>
       <p class="mt-4 text-paper/80">{{ e.org.about }}</p>
     </section>
 
     {# Share #}
     <section id="share" class="scroll-mt-32">
-      <h2 class="text-xl font-bold">Bring your friends</h2>
+      <h2 class="text-xl font-bold">{{ _('Bring your friends') }}</h2>
       {% set share_text = e.title ~ ' · ' ~ e.start.strftime('%d %b') ~ ' · ' ~ e.city %}
       <div class="mt-4 flex flex-wrap gap-2">
         <a class="btn-outline" target="_blank" rel="noopener" href="https://wa.me/?text={{ (share_text ~ ' ' ~ page_url)|urlencode }}">WhatsApp</a>
         <a class="btn-outline" target="_blank" rel="noopener" href="https://www.facebook.com/sharer/sharer.php?u={{ page_url|urlencode }}">Facebook</a>
         <a class="btn-outline" target="_blank" rel="noopener" href="https://twitter.com/intent/tweet?text={{ share_text|urlencode }}&url={{ page_url|urlencode }}">X</a>
         <a class="btn-outline" target="_blank" rel="noopener" href="https://www.linkedin.com/sharing/share-offsite/?url={{ page_url|urlencode }}">LinkedIn</a>
-        <button type="button" class="btn-outline" data-copy="{{ page_url }}">Copy link</button>
+        <button type="button" class="btn-outline" data-copy="{{ page_url }}">{{ _('Copy link') }}</button>
       </div>
     </section>
   </article>
@@ -324,8 +324,8 @@
         <a href="{{ url_for('main.organizer', slug=e.organizer) }}" class="btn-primary mt-5 w-full">See {{ e.org.name }}'s next events</a>
       {% else %}
         <div class="flex items-baseline justify-between gap-2">
-          <p class="font-display text-2xl font-extrabold">{{ 'Free' if e.is_free else price_label(e) }}</p>
-          {% if e.registered %}<p class="text-sm text-ink-soft"><strong class="text-ink">{{ e.registered|num }}</strong> registered</p>{% endif %}
+          <p class="font-display text-2xl font-extrabold">{{ _('Free') if e.is_free else price_label(e) }}</p>
+          {% if e.registered %}<p class="text-sm text-ink-soft"><strong class="text-ink">{{ e.registered|num }}</strong> {{ _('registered') }}</p>{% endif %}
         </div>
         <div class="mt-3 grid grid-cols-4 gap-2 text-center" data-countdown="{{ e.start.isoformat() }}" aria-label="Time until the event starts">
           {% for unit in ['days', 'hrs', 'min', 'sec'] %}
@@ -336,7 +336,7 @@
         {% if open %}
         <form method="get" action="{{ url_for('booking.register', slug=e.slug) }}" class="mt-5" data-ticket-form>
           <fieldset class="space-y-3">
-            <legend class="mb-2 text-sm font-bold">Choose tickets</legend>
+            <legend class="mb-2 text-sm font-bold">{{ _('Choose tickets') }}</legend>
             {% for t in e.tickets %}
             <div class="rounded-xl border p-3 {{ 'border-line bg-paper/60 opacity-60' if t.sold_out else 'border-line' }}" data-tier data-price="{{ t.price }}">
               <div class="flex items-start justify-between gap-3">
@@ -362,7 +362,7 @@
             <p class="text-sm text-ink-soft"><span data-count>0</span> ticket(s)</p>
             <p class="font-display text-2xl font-extrabold" data-total aria-live="polite">₹0</p>
           </div>
-          <button type="submit" class="btn-primary btn-lg mt-4 w-full" data-submit disabled>Select tickets to continue</button>
+          <button type="submit" class="btn-primary btn-lg mt-4 w-full" data-submit disabled>{{ _('Select tickets to continue') }}</button>
           <p class="mt-3 text-center text-xs text-ink-soft">Registration closes {{ e.reg_closes.strftime('%d %b, %-I:%M %p') }}</p>
         </form>
         {% elif e.sold_out %}
@@ -379,7 +379,7 @@
         {% endif %}
 
         <div class="mt-4 grid grid-cols-2 gap-2 text-sm">
-          <a href="{{ url_for('main.event_ics', slug=e.slug) }}" class="btn-outline px-3">Add to calendar</a>
+          <a href="{{ url_for('main.event_ics', slug=e.slug) }}" class="btn-outline px-3">{{ _('Add to calendar') }}</a>
           <a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text={{ e.title|urlencode }}&dates={{ gcal_dates(e) }}&location={{ where|urlencode }}&details={{ page_url|urlencode }}" target="_blank" rel="noopener" class="btn-outline px-3">Google Calendar</a>
         </div>
       {% endif %}
@@ -391,7 +391,7 @@
 {% if similar %}
 <section class="container-site mt-6">
   <div class="flex items-end justify-between gap-4">
-    <h2 class="text-3xl font-extrabold">You may also like</h2>
+    <h2 class="text-3xl font-extrabold">{{ _('You may also like') }}</h2>
     <a href="{{ url_for('main.explore', category=e.category) }}" class="btn-outline shrink-0">More {{ e.category|lower }}</a>
   </div>
   <div class="mt-6 grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 md:grid-cols-3 lg:grid-cols-4">
@@ -405,10 +405,10 @@
 <div class="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-paper-raised/95 p-3 backdrop-blur lg:hidden" data-mobile-bar>
   <div class="flex items-center justify-between gap-3">
     <div>
-      <p class="font-display text-lg font-extrabold leading-tight">{{ 'Free' if e.is_free else price_label(e) }}</p>
+      <p class="font-display text-lg font-extrabold leading-tight">{{ _('Free') if e.is_free else price_label(e) }}</p>
       <p class="text-xs text-ink-soft">{{ e.start.strftime('%a, %d %b') }}</p>
     </div>
-    <a href="#tickets" class="btn-primary px-8">{{ 'Register' if open else ('Notify me' if e.sold_out else 'Details') }}</a>
+    <a href="#tickets" class="btn-primary px-8">{{ _('Register') if open else (_('Notify me') if e.sold_out else 'Details') }}</a>
   </div>
 </div>
 <div class="h-20 lg:hidden"></div>

@@ -4,7 +4,8 @@
 {% set heading %}{% if f.q %}Results for “{{ f.q }}”{% elif f.city and f.category %}{{ f.category }} in {{ f.city }}{% elif f.city %}{{ 'Online events' if f.city == 'Online' else 'Events in ' ~ f.city }}{% elif f.category %}{{ f.category }} events{% else %}{{ 'Past events' if past else 'Explore events' }}{% endif %}{% endset %}
 {% block title %}{{ heading }} · {{ site_name }}{% endblock %}
 {% block description %}{{ 'Photos and results from past' if past else 'Upcoming' }} {{ (f.category ~ ' ') if f.category }}events{{ (' in ' ~ f.city) if f.city }}. Filter by city, date and price, and book in a minute on {{ site_name }}.{% endblock %}
-{% block head %}{% if f.q or f.date or f.price or f.sort != 'date' or page > 1 %}<meta name="robots" content="noindex, follow">{% endif %}{% endblock %}
+{% block head %}{% if f.q or f.date or f.price or f.sort != 'date' or page > 1 %}<meta name="robots" content="noindex, follow">{% endif %}
+{% if f.city and f.city != 'Online' and not (f.q or f.category or f.date or f.price) and not past %}<link rel="canonical" href="{{ request.host_url.rstrip('/') ~ city_url(f.city) }}">{% endif %}{% endblock %}
 
 {% block content %}
 <section class="container-site pt-8 sm:pt-10">
@@ -12,7 +13,7 @@
   <h1 class="mt-1 text-3xl font-extrabold sm:text-4xl">{{ heading }}</h1>
 
   <nav class="mt-5 flex gap-6 border-b border-line text-sm font-semibold" aria-label="Upcoming or past events">
-    {% for key, label in [('upcoming', 'Upcoming'), ('past', 'Past events')] %}
+    {% for key, label in [('upcoming', _('Upcoming')), ('past', _('Past events'))] %}
     <a href="{{ explore_url(when=key, date=None, sort=None) }}"
        class="-mb-px border-b-2 pb-3 {{ 'border-rani text-ink' if when == key else 'border-transparent text-ink-soft hover:text-ink' }}"
        {% if when == key %}aria-current="page"{% endif %}>
@@ -32,21 +33,21 @@
       <div class="relative flex-1 lg:max-w-xs">
         <label for="explore-q" class="sr-only">Search events</label>
         <svg class="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-soft" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
-        <input id="explore-q" name="q" type="search" value="{{ f.q }}" class="input py-2.5 pl-10" placeholder="Search events or cities">
+        <input id="explore-q" name="q" type="search" value="{{ f.q }}" class="input py-2.5 pl-10" placeholder="{{ _('Search events or cities') }}">
       </div>
 
       <button type="button" class="btn-outline lg:hidden" data-filter-toggle aria-expanded="false" aria-controls="filter-panel">
         <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
-        Filters{% set n_active = [f.city, f.category, f.date, f.price]|select|list|length %}{% if n_active %} <span class="rounded-full bg-rani px-1.5 text-xs text-white">{{ n_active }}</span>{% endif %}
+        {{ _("Filters") }}{% set n_active = [f.city, f.category, f.date, f.price]|select|list|length %}{% if n_active %} <span class="rounded-full bg-rani px-1.5 text-xs text-white">{{ n_active }}</span>{% endif %}
       </button>
 
       <div id="filter-panel" class="hidden basis-full gap-3 lg:flex lg:basis-auto lg:flex-1 lg:gap-2" data-filter-panel>
         {% macro select(name, label, options, current, any_label, default=None) -%}
         <label class="block">
-          <span class="mb-1 block text-xs font-semibold text-ink-soft lg:sr-only">{{ label }}</span>
+          <span class="mb-1 block text-xs font-semibold text-ink-soft lg:sr-only">{{ _(label) }}</span>
           <select name="{{ name }}" class="select {{ 'select-active' if current and current != default }}">
-            {% if any_label %}<option value="">{{ any_label }}</option>{% endif %}
-            {% for value, text in options %}<option value="{{ value }}" {{ 'selected' if current == value }}>{{ text }}</option>{% endfor %}
+            {% if any_label %}<option value="">{{ _(any_label) }}</option>{% endif %}
+            {% for value, text in options %}<option value="{{ value }}" {{ 'selected' if current == value }}>{{ _(text) }}</option>{% endfor %}
           </select>
         </label>
         {%- endmacro %}
@@ -55,7 +56,7 @@
         {% if not past %}{{ select('date', 'Date', date_filters, f.date, 'Any date') }}{% endif %}
         {{ select('price', 'Price', price_filters, f.price, 'Any price') }}
         {% if not past %}{{ select('sort', 'Sort by', sorts, f.sort, None, default='date') }}{% endif %}
-        <button type="submit" class="btn-dark col-span-2 lg:hidden" data-apply>Show results</button>
+        <button type="submit" class="btn-dark col-span-2 lg:hidden" data-apply>{{ _('Show results') }}</button>
         <noscript><button type="submit" class="btn-dark">Apply</button></noscript>
       </div>
     </div>
@@ -66,7 +67,7 @@
 <div class="container-site">
   {# Category quick picks #}
   <div class="no-scrollbar -mx-4 mt-5 flex gap-2 overflow-x-auto px-4 sm:mx-0 sm:flex-wrap sm:px-0">
-    <a href="{{ explore_url(category=None) }}" class="chip shrink-0 {{ 'chip-active' if not f.category }}">All</a>
+    <a href="{{ explore_url(category=None) }}" class="chip shrink-0 {{ 'chip-active' if not f.category }}">{{ _('All') }}</a>
     {% for cat, n in categories %}
     <a href="{{ explore_url(category=cat) }}" class="chip shrink-0 {{ 'chip-active' if f.category == cat }}">{{ cat }} <span class="text-xs opacity-60">{{ n }}</span></a>
     {% endfor %}
@@ -74,11 +75,11 @@
 
   {# Active filters #}
   {% set active = [] %}
-  {% if f.q %}{% set _ = active.append(('“' ~ f.q ~ '”', explore_url(q=None))) %}{% endif %}
-  {% if f.city %}{% set _ = active.append((f.city, explore_url(city=None))) %}{% endif %}
-  {% if f.category %}{% set _ = active.append((f.category, explore_url(category=None))) %}{% endif %}
-  {% if f.date %}{% set _ = active.append((dict(date_filters)[f.date], explore_url(date=None))) %}{% endif %}
-  {% if f.price %}{% set _ = active.append((dict(price_filters)[f.price], explore_url(price=None))) %}{% endif %}
+  {% if f.q %}{% set _x = active.append(('“' ~ f.q ~ '”', explore_url(q=None))) %}{% endif %}
+  {% if f.city %}{% set _x = active.append((f.city, explore_url(city=None))) %}{% endif %}
+  {% if f.category %}{% set _x = active.append((f.category, explore_url(category=None))) %}{% endif %}
+  {% if f.date %}{% set _x = active.append((_(dict(date_filters)[f.date]), explore_url(date=None))) %}{% endif %}
+  {% if f.price %}{% set _x = active.append((_(dict(price_filters)[f.price]), explore_url(price=None))) %}{% endif %}
   <div class="mt-5 flex flex-wrap items-center gap-2 text-sm">
     <p class="mr-1 font-semibold" role="status">{{ total }} event{{ 's' if total != 1 }}</p>
     {% for label, url in active %}
@@ -86,7 +87,7 @@
       {{ label }} <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
     </a>
     {% endfor %}
-    {% if active|length > 1 %}<a href="{{ url_for('main.explore', when='past' if past else None) }}" class="text-xs font-semibold text-rani hover:underline">Clear all</a>{% endif %}
+    {% if active|length > 1 %}<a href="{{ url_for('main.explore', when='past' if past else None) }}" class="text-xs font-semibold text-rani hover:underline">{{ _('Clear all') }}</a>{% endif %}
   </div>
 
   {% if results %}
@@ -106,7 +107,7 @@
 
   {% else %}
   <div class="mt-8 rounded-card border border-dashed border-line px-6 py-12 text-center">
-    <p class="font-display text-xl font-bold">No events match these filters</p>
+    <p class="font-display text-xl font-bold">{{ _('No events match these filters') }}</p>
     <p class="mt-1 text-sm text-ink-soft">Try a different date or city, or clear the filters.</p>
     <div class="mt-5 flex flex-wrap justify-center gap-2">
       {% if f.date %}<a href="{{ explore_url(date=None) }}" class="btn-outline">Any date</a>{% endif %}
@@ -115,7 +116,7 @@
     </div>
   </div>
   {% if popular %}
-  <h2 class="mt-14 text-2xl font-extrabold">Popular right now</h2>
+  <h2 class="mt-14 text-2xl font-extrabold">{{ _('Popular right now') }}</h2>
   <div class="mt-5 grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 md:grid-cols-3 lg:grid-cols-4">
     {% for e in popular %}{{ event_card(e) }}{% endfor %}
   </div>

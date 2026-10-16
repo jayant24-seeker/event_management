@@ -1,5 +1,5 @@
 {% macro badge(label, style) -%}
-<span class="badge badge-{{ style }}">{{ label }}</span>
+<span class="badge badge-{{ style }}">{{ _(label) }}</span>
 {%- endmacro %}
 
 {% macro date_chip(dt, dark=False) -%}
@@ -10,9 +10,9 @@
 {%- endmacro %}
 
 {% macro price_label(e) -%}
-{%- if e.sold_out -%}Sold out
-{%- elif e.is_free -%}Free
-{%- elif e.tickets|length > 1 -%}From {{ e.price_from|inr }}
+{%- if e.sold_out -%}{{ _('Sold out') }}
+{%- elif e.is_free -%}{{ _('Free') }}
+{%- elif e.tickets|length > 1 -%}{{ _('From') }} {{ e.price_from|inr }}
 {%- else -%}{{ e.price_from|inr }}{%- endif -%}
 {%- endmacro %}
 
@@ -30,14 +30,14 @@
       </div>
     </div>
     <div class="absolute inset-x-0 bottom-0 translate-y-full bg-gradient-to-t from-ink/90 to-transparent p-4 pt-10 transition duration-300 group-hover:translate-y-0">
-      <span class="btn-primary w-full">{{ 'See photos and results' if past else ('Notify me' if e.sold_out else 'Register now') }}</span>
+      <span class="btn-primary w-full">{{ _('See photos and results') if past else (_('Notify me') if e.sold_out else _('Register now')) }}</span>
     </div>
   </div>
   <div class="mt-3 px-1">
     <p class="text-xs font-bold uppercase tracking-wider text-rani">{{ e.category }}</p>
     <h3 class="mt-1 text-lg font-bold leading-snug group-hover:text-rani">{{ e.title }}</h3>
     <p class="mt-1 text-sm text-ink-soft">{{ e.venue.name if e.is_online else e.city ~ ' · ' ~ e.venue.name }}</p>
-    <p class="mt-1.5 text-sm font-semibold">{{ 'Event ended' if past else price_label(e) }}</p>
+    <p class="mt-1.5 text-sm font-semibold">{{ _('Event ended') if past else price_label(e) }}</p>
   </div>
 </a>
 {%- endmacro %}
@@ -49,8 +49,8 @@
   <svg class="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-ink-soft" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
   <input id="{{ id }}" name="q" type="search" value="{{ value }}" autocomplete="off"
          role="combobox" aria-expanded="false" aria-autocomplete="list" aria-controls="{{ id }}-list"
-         class="input pl-12 {{ 'py-4 pr-32 text-base' if large else 'py-2' }}" placeholder="Search events or cities">
-  {% if large %}<button type="submit" class="btn-primary absolute right-1.5 top-1/2 -translate-y-1/2 py-3">Search</button>{% endif %}
+         class="input pl-12 {{ 'py-4 pr-32 text-base' if large else 'py-2' }}" placeholder="{{ _('Search events or cities') }}">
+  {% if large %}<button type="submit" class="btn-primary absolute right-1.5 top-1/2 -translate-y-1/2 py-3">{{ _('Search') }}</button>{% endif %}
   <div id="{{ id }}-list" role="listbox" aria-label="Suggestions" hidden
        class="absolute inset-x-0 top-full z-50 mt-2 max-h-[70vh] overflow-y-auto rounded-2xl border border-line bg-paper-raised p-2 shadow-poster"></div>
 </form>

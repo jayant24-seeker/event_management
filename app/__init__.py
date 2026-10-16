@@ -3,7 +3,7 @@ import secrets
 from datetime import timedelta
 from pathlib import Path
 
-from flask import Flask, abort, g, request, session
+from flask import Flask, abort, g, render_template, request, session
 
 from .models import User, db
 
@@ -19,6 +19,8 @@ def create_app(config=None):
         SMS_PROVIDER=os.environ.get("SMS_PROVIDER", "console"),
         PERMANENT_SESSION_LIFETIME=timedelta(days=30),
         MAX_CONTENT_LENGTH=8 * 1024 * 1024,  # poster uploads
+        # Static files carry ?v=<file time> (see below), so browsers can keep them for a year.
+        SEND_FILE_MAX_AGE_DEFAULT=timedelta(days=365),
         SESSION_COOKIE_HTTPONLY=True,
         SESSION_COOKIE_SAMESITE="Lax",
         SESSION_COOKIE_SECURE=os.environ.get("SESSION_COOKIE_SECURE") == "1",
@@ -33,8 +35,11 @@ def create_app(config=None):
     db.init_app(app)
     with app.app_context():
         db.create_all()
-        from .seed import seed_if_empty
-        seed_if_empty()
+        # Demo data loads by itself only on SQLite (development). On Postgres run `flask seed` once,
+        # so several server workers starting together don't all try to load it.
+        if app.config["SQLALCHEMY_DATABASE_URI"].startswith("sqlite"):
+            from .seed import seed_if_empty
+            seed_if_empty()
 
     from .seed import register_cli
     register_cli(app)
@@ -56,8 +61,8 @@ def create_app(config=None):
     def inr(amount):
         return f"₹{num(amount)}"
 
-    from .seo import event_jsonld, gcal_dates
-    app.jinja_env.globals.update(event_jsonld=event_jsonld, gcal_dates=gcal_dates)
+    from .seo import event_jsonld, faq_jsonld, gcal_dates
+    app.jinja_env.globals.update(event_jsonld=event_jsonld, faq_jsonld=faq_jsonld, gcal_dates=gcal_dates)
 
     # ---- Signed-in user and CSRF protection for every form.
     @app.before_request
@@ -77,6 +82,40 @@ def create_app(config=None):
     @app.context_processor
     def globals_():
         return {"site_name": app.config["SITE_NAME"], "current_user": g.get("user"), "csrf_token": csrf_token}
+
+    # ---- Cache busting: /static/css/app.css?v=1729130000 changes whenever the file does.
+    versions = {}
+
+    @app.url_defaults
+    def static_version(endpoint, values):
+        if endpoint == "static" and "filename" in values:
+            path = Path(app.static_folder) / values["filename"]
+            try:
+                values["v"] = versions.get(path) if not app.debug and path in versions else int(path.stat().st_mtime)
+                versions[path] = values["v"]
+            except OSError:
+                pass
+
+    @app.after_request
+    def security_headers(response):
+        response.headers.setdefault("X-Content-Type-Options", "nosniff")
+        response.headers.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
+        response.headers.setdefault("X-Frame-Options", "SAMEORIGIN")
+        response.headers.setdefault("Permissions-Policy", "camera=(), microphone=(), geolocation=()")
+        if g.get("user") is not None or request.path.startswith(("/organizer", "/bookings", "/tickets", "/pay", "/account")):
+            response.headers["Cache-Control"] = "private, no-store"  # personal pages never cached
+        return response
+
+    @app.errorhandler(404)
+    def not_found(error):
+        return render_template("errors/404.html"), 404
+
+    @app.errorhandler(500)
+    def server_error(error):
+        return render_template("errors/500.html"), 500
+
+    from .i18n import register_i18n
+    register_i18n(app)
 
     from .auth import bp as auth_bp
     from .booking import bp as booking_bp

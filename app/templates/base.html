@@ -1,6 +1,6 @@
 {% from "components/_macros.html" import search_box %}
 <!doctype html>
-<html lang="en">
+<html lang="{{ lang }}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -27,46 +27,48 @@
       <div class="ml-4 hidden flex-1 md:block md:max-w-md">{{ search_box('header-q', value=request.args.get('q', '')) }}</div>
       {% endif %}
       <nav class="ml-auto hidden items-center gap-1 text-sm font-medium md:flex" aria-label="Main">
-        <a href="{{ url_for('main.explore') }}" class="btn-ghost">Explore</a>
-        <a href="{{ url_for('main.for_organizers') }}" class="btn-ghost">For organizers</a>
+{% set other = 'en' if lang == 'hi' else 'hi' %}<a href="{{ url_for('set_language', code=other) }}" class="btn-ghost px-3 font-semibold" lang="{{ other }}" hreflang="{{ other }}" title="{{ 'Switch to English' if other == 'en' else 'हिंदी में देखें' }}">{{ 'EN' if other == 'en' else 'हिं' }}</a>
+        <a href="{{ url_for('main.explore') }}" class="btn-ghost">{{ _('Explore') }}</a>
+        <a href="{{ url_for('main.for_organizers') }}" class="btn-ghost">{{ _('For organizers') }}</a>
         {% if current_user %}
-        <a href="{{ url_for('booking.tickets') }}" class="btn-ghost">My tickets</a>
+        <a href="{{ url_for('booking.tickets') }}" class="btn-ghost">{{ _('My tickets') }}</a>
         <details class="relative" data-menu>
           <summary class="grid h-10 w-10 cursor-pointer list-none place-items-center rounded-full bg-ink font-bold text-paper" aria-label="Account menu">{{ (current_user.name or 'U')[:1]|upper }}</summary>
           <div class="absolute right-0 top-12 w-56 rounded-2xl border border-line bg-paper-raised p-2 shadow-poster">
             <p class="truncate px-3 py-2 text-xs text-ink-soft">{{ current_user.name or current_user.phone }}</p>
-            <a href="{{ url_for('auth.account') }}" class="block rounded-xl px-3 py-2 hover:bg-ink/5">Profile</a>
-            <a href="{{ url_for('booking.saved') }}" class="block rounded-xl px-3 py-2 hover:bg-ink/5">Saved events</a>
-            {% if current_user.organizer_slug %}<a href="{{ url_for('org.dashboard') }}" class="block rounded-xl px-3 py-2 hover:bg-ink/5">Organizer dashboard</a>{% endif %}
+            <a href="{{ url_for('auth.account') }}" class="block rounded-xl px-3 py-2 hover:bg-ink/5">{{ _('Profile') }}</a>
+            <a href="{{ url_for('booking.saved') }}" class="block rounded-xl px-3 py-2 hover:bg-ink/5">{{ _('Saved events') }}</a>
+            {% if current_user.organizer_slug %}<a href="{{ url_for('org.dashboard') }}" class="block rounded-xl px-3 py-2 hover:bg-ink/5">{{ _('Organizer dashboard') }}</a>{% endif %}
             <form method="post" action="{{ url_for('auth.logout') }}">
               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-              <button class="w-full rounded-xl px-3 py-2 text-left hover:bg-ink/5">Sign out</button>
+              <button class="w-full rounded-xl px-3 py-2 text-left hover:bg-ink/5">{{ _('Sign out') }}</button>
             </form>
           </div>
         </details>
         {% else %}
-        <a href="{{ url_for('auth.login', next=request.full_path.rstrip('?') if request.endpoint and not request.endpoint.startswith('auth.') else None) }}" class="btn-dark ml-1 py-2">Sign in</a>
+        <a href="{{ url_for('auth.login', next=request.full_path.rstrip('?') if request.endpoint and not request.endpoint.startswith('auth.') else None) }}" class="btn-dark ml-1 py-2">{{ _('Sign in') }}</a>
         {% endif %}
       </nav>
 
       {# Phone menu: a details element, so it works without JS #}
-      <details class="ml-auto md:hidden" data-menu>
+      <div class="ml-auto md:hidden">{% set other = 'en' if lang == 'hi' else 'hi' %}<a href="{{ url_for('set_language', code=other) }}" class="btn-ghost px-3 font-semibold" lang="{{ other }}" hreflang="{{ other }}" title="{{ 'Switch to English' if other == 'en' else 'हिंदी में देखें' }}">{{ 'EN' if other == 'en' else 'हिं' }}</a></div>
+      <details class="md:hidden" data-menu>
         <summary class="grid h-10 w-10 cursor-pointer list-none place-items-center rounded-full border border-line" aria-label="Menu">
           <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
         </summary>
         <div class="absolute inset-x-0 top-16 border-b border-line bg-paper-raised p-4 shadow-poster">
           <div class="mb-3">{{ search_box('menu-q') }}</div>
           <nav class="grid gap-1 text-base font-semibold" aria-label="Mobile">
-            <a href="{{ url_for('main.explore') }}" class="rounded-xl px-3 py-2.5 hover:bg-ink/5">Explore events</a>
-            <a href="{{ url_for('main.explore', when='past') }}" class="rounded-xl px-3 py-2.5 hover:bg-ink/5">Past events and results</a>
-            <a href="{{ url_for('main.for_organizers') }}" class="rounded-xl px-3 py-2.5 hover:bg-ink/5">For organizers</a>
+            <a href="{{ url_for('main.explore') }}" class="rounded-xl px-3 py-2.5 hover:bg-ink/5">{{ _('Explore events') }}</a>
+            <a href="{{ url_for('main.explore', when='past') }}" class="rounded-xl px-3 py-2.5 hover:bg-ink/5">{{ _('Past events and results') }}</a>
+            <a href="{{ url_for('main.for_organizers') }}" class="rounded-xl px-3 py-2.5 hover:bg-ink/5">{{ _('For organizers') }}</a>
             {% if current_user %}
-            <a href="{{ url_for('booking.tickets') }}" class="rounded-xl px-3 py-2.5 hover:bg-ink/5">My tickets</a>
-            <a href="{{ url_for('booking.saved') }}" class="rounded-xl px-3 py-2.5 hover:bg-ink/5">Saved events</a>
-            {% if current_user.organizer_slug %}<a href="{{ url_for('org.dashboard') }}" class="rounded-xl px-3 py-2.5 hover:bg-ink/5">Organizer dashboard</a>{% endif %}
-            <a href="{{ url_for('auth.account') }}" class="rounded-xl px-3 py-2.5 hover:bg-ink/5">Profile</a>
+            <a href="{{ url_for('booking.tickets') }}" class="rounded-xl px-3 py-2.5 hover:bg-ink/5">{{ _('My tickets') }}</a>
+            <a href="{{ url_for('booking.saved') }}" class="rounded-xl px-3 py-2.5 hover:bg-ink/5">{{ _('Saved events') }}</a>
+            {% if current_user.organizer_slug %}<a href="{{ url_for('org.dashboard') }}" class="rounded-xl px-3 py-2.5 hover:bg-ink/5">{{ _('Organizer dashboard') }}</a>{% endif %}
+            <a href="{{ url_for('auth.account') }}" class="rounded-xl px-3 py-2.5 hover:bg-ink/5">{{ _('Profile') }}</a>
             {% else %}
-            <a href="{{ url_for('auth.login') }}" class="btn-dark mt-2">Sign in</a>
+            <a href="{{ url_for('auth.login') }}" class="btn-dark mt-2">{{ _('Sign in') }}</a>
             {% endif %}
           </nav>
         </div>
@@ -86,23 +88,23 @@
     <div class="container-site grid gap-8 py-12 text-sm sm:grid-cols-2 lg:grid-cols-4">
       <div>
         <p class="font-display text-lg font-extrabold text-paper">{{ site_name|lower }}</p>
-        <p class="mt-2 max-w-xs">Discover and book runs, concerts, workshops and festivals across Rajasthan, Gujarat and Punjab.</p>
+        <p class="mt-2 max-w-xs">{{ _('Discover and book runs, concerts, workshops and festivals across Rajasthan, Gujarat and Punjab.') }}</p>
       </div>
       <div class="space-y-2">
-        <p class="font-semibold text-paper">Explore</p>
-        <p><a href="{{ url_for('main.explore') }}" class="hover:text-paper">Upcoming events</a></p>
-        <p><a href="{{ url_for('main.explore', when='past') }}" class="hover:text-paper">Past events and results</a></p>
-        <p><a href="{{ url_for('main.explore', city='Online') }}" class="hover:text-paper">Online events</a></p>
+        <p class="font-semibold text-paper">{{ _('Explore') }}</p>
+        <p><a href="{{ url_for('main.explore') }}" class="hover:text-paper">{{ _('Upcoming events') }}</a></p>
+        <p><a href="{{ url_for('main.explore', when='past') }}" class="hover:text-paper">{{ _('Past events and results') }}</a></p>
+        <p><a href="{{ url_for('main.explore', city='Online') }}" class="hover:text-paper">{{ _('Online events') }}</a></p>
       </div>
       <div class="space-y-2">
-        <p class="font-semibold text-paper">Organizers</p>
-        <p><a href="{{ url_for('main.for_organizers') }}" class="hover:text-paper">Host your event</a></p>
-        <p><a href="{{ url_for('main.for_organizers') }}#pricing" class="hover:text-paper">Pricing</a></p>
+        <p class="font-semibold text-paper">{{ _('Organizers') }}</p>
+        <p><a href="{{ url_for('main.for_organizers') }}" class="hover:text-paper">{{ _('Host your event') }}</a></p>
+        <p><a href="{{ url_for('main.for_organizers') }}#pricing" class="hover:text-paper">{{ _('Pricing') }}</a></p>
       </div>
       <div class="space-y-2">
-        <p class="font-semibold text-paper">Company</p>
-        <p><a href="{{ url_for('main.page', name='about') }}" class="hover:text-paper">About</a> · <a href="{{ url_for('main.contact') }}" class="hover:text-paper">Contact</a></p>
-        <p><a href="{{ url_for('main.page', name='terms') }}" class="hover:text-paper">Terms</a> · <a href="{{ url_for('main.page', name='privacy') }}" class="hover:text-paper">Privacy</a> · <a href="{{ url_for('main.page', name='refunds') }}" class="hover:text-paper">Refunds</a></p>
+        <p class="font-semibold text-paper">{{ _('Company') }}</p>
+        <p><a href="{{ url_for('main.page', name='about') }}" class="hover:text-paper">{{ _('About') }}</a> · <a href="{{ url_for('main.contact') }}" class="hover:text-paper">{{ _('Contact') }}</a></p>
+        <p><a href="{{ url_for('main.page', name='terms') }}" class="hover:text-paper">{{ _('Terms') }}</a> · <a href="{{ url_for('main.page', name='privacy') }}" class="hover:text-paper">{{ _('Privacy') }}</a> · <a href="{{ url_for('main.page', name='refunds') }}" class="hover:text-paper">{{ _('Refunds') }}</a></p>
       </div>
     </div>
     <div class="border-t border-paper/10">

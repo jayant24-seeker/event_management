@@ -50,9 +50,9 @@
             </dl>
 
             <div class="mt-8 flex flex-wrap items-center gap-3">
-              <a href="{{ url }}" class="btn-primary btn-lg">{{ 'Notify me' if e.sold_out else 'Register now' }}</a>
-              <a href="{{ url }}" class="btn btn-lg border border-paper/30 text-paper hover:bg-paper/10">View details</a>
-              {% if e.selling_fast %}<span class="text-sm font-semibold text-marigold">Only {{ e.spots_left }} spots left</span>{% endif %}
+              <a href="{{ url }}" class="btn-primary btn-lg">{{ _('Notify me') if e.sold_out else _('Register now') }}</a>
+              <a href="{{ url }}" class="btn btn-lg border border-paper/30 text-paper hover:bg-paper/10">{{ _('View details') }}</a>
+              {% if e.selling_fast %}<span class="text-sm font-semibold text-marigold">{{ _('Only %d spots left')|format(e.spots_left) }}</span>{% endif %}
             </div>
           </div>
 
@@ -99,10 +99,10 @@
 {# ---------- Search ---------- #}
 <section class="container-site relative z-10 -mt-6">
   <div class="rounded-card bg-paper-raised p-4 shadow-poster sm:p-6">
-    <h1 class="font-display text-xl font-extrabold sm:text-2xl">Find something to do this weekend</h1>
+    <h1 class="font-display text-xl font-extrabold sm:text-2xl">{{ _('Find something to do this weekend') }}</h1>
     <div class="mt-3">{{ search_box('home-q', large=True) }}</div>
     <p class="mt-3 flex flex-wrap items-center gap-2 text-sm text-ink-soft">
-      <span>Try:</span>
+      <span>{{ _('Try:') }}</span>
       {% for term in ['night run', 'comedy', 'food fest', 'qawwali'] %}
       <a href="{{ url_for('main.explore', q=term) }}" class="chip px-3 py-1 text-xs">{{ term }}</a>
       {% endfor %}
@@ -114,18 +114,18 @@
 <section class="container-site mt-16">
   <div class="flex items-end justify-between gap-4">
     <div>
-      <p class="eyebrow">Browse by city</p>
-      <h2 class="mt-1 text-3xl font-extrabold">What's on near you</h2>
+      <p class="eyebrow">{{ _('Browse by city') }}</p>
+      <h2 class="mt-1 text-3xl font-extrabold">{{ _('What\'s on near you') }}</h2>
     </div>
   </div>
   <div class="no-scrollbar -mx-4 mt-6 flex snap-x gap-4 overflow-x-auto px-4 pb-2 sm:mx-0 sm:grid sm:grid-cols-3 sm:px-0 lg:grid-cols-6">
     {% for city, n, e in cities %}
-    <a href="{{ url_for('main.explore', city=city) }}"
+    <a href="{{ city_url(city) }}"
        class="group relative isolate flex aspect-[4/5] w-36 shrink-0 snap-start flex-col justify-end overflow-hidden rounded-card p-4 text-paper shadow-poster sm:w-auto">
       <img src="{{ url_for('static', filename=e.banner) }}" alt="" loading="lazy" class="absolute inset-0 -z-20 h-full w-full object-cover transition duration-500 group-hover:scale-110">
       <span class="absolute inset-0 -z-10 bg-gradient-to-t from-ink/90 via-ink/30 to-transparent"></span>
       <span class="font-display text-xl font-extrabold">{{ city }}</span>
-      <span class="text-sm text-paper/75">{{ n }} event{{ 's' if n != 1 }}</span>
+      <span class="text-sm text-paper/75">{{ n }} {{ _('event' if n == 1 else 'events') }}</span>
     </a>
     {% endfor %}
   </div>
@@ -133,7 +133,7 @@
 
 {# ---------- Categories ---------- #}
 <section class="container-site mt-14">
-  <p class="eyebrow">Browse by category</p>
+  <p class="eyebrow">{{ _('Browse by category') }}</p>
   <div class="mt-4 flex flex-wrap gap-2">
     {% for cat, n in category_counts %}
     <a href="{{ url_for('main.explore', category=cat) }}" class="chip py-2 hover:bg-ink hover:text-paper">
@@ -147,10 +147,10 @@
 <section class="container-site mt-16">
   <div class="flex items-end justify-between gap-4">
     <div>
-      <p class="eyebrow">Upcoming</p>
-      <h2 class="mt-1 text-3xl font-extrabold">Don't miss these</h2>
+      <p class="eyebrow">{{ _('Upcoming') }}</p>
+      <h2 class="mt-1 text-3xl font-extrabold">{{ _('Don\'t miss these') }}</h2>
     </div>
-    <a href="{{ url_for('main.explore') }}" class="btn-outline shrink-0">See all events</a>
+    <a href="{{ url_for('main.explore') }}" class="btn-outline shrink-0">{{ _('See all events') }}</a>
   </div>
   {% if upcoming %}
   <div class="mt-6 grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 md:grid-cols-3 lg:grid-cols-4">
@@ -167,10 +167,10 @@
   <div class="rounded-card bg-ink p-6 text-paper sm:p-10">
     <div class="flex flex-wrap items-end justify-between gap-4">
       <div>
-        <p class="eyebrow text-marigold">Recently happened</p>
-        <h2 class="mt-1 text-3xl font-extrabold">Results, photos and memories</h2>
+        <p class="eyebrow text-marigold">{{ _('Recently happened') }}</p>
+        <h2 class="mt-1 text-3xl font-extrabold">{{ _('Results, photos and memories') }}</h2>
       </div>
-      <a href="{{ url_for('main.explore', when='past') }}" class="btn border border-paper/30 text-paper hover:bg-paper/10">All past events</a>
+      <a href="{{ url_for('main.explore', when='past') }}" class="btn border border-paper/30 text-paper hover:bg-paper/10">{{ _('All past events') }}</a>
     </div>
     <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
       {% for e in past %}
