@@ -1,2 +1,133 @@
-{% extends "pages/_page.html" %}
-{% block body %}<p>This page is built in phase 6.</p>{% endblock %}
+{% extends "base.html" %}
+{% block title %}Sell tickets for your run, concert or workshop · {{ site_name }} for organizers{% endblock %}
+{% block description %}Create an event page in minutes, sell tickets with UPI and cards, collect T-shirt sizes and emergency contacts, and check people in with QR codes. Free for free events.{% endblock %}
+
+{% block content %}
+{% set cta = url_for('org.start') if current_user else url_for('auth.login', next=url_for('org.start')) %}
+{# ---------- Hero ---------- #}
+<section class="relative isolate overflow-hidden bg-ink text-paper">
+  <div class="absolute -right-24 -top-24 -z-10 h-[28rem] w-[28rem] rounded-full bg-rani/40 blur-3xl"></div>
+  <div class="absolute -bottom-32 left-1/3 -z-10 h-80 w-80 rounded-full bg-marigold/25 blur-3xl"></div>
+  <div class="container-site grid items-center gap-12 py-16 sm:py-24 lg:grid-cols-[1.1fr_1fr]">
+    <div>
+      <p class="eyebrow text-marigold">For organizers</p>
+      <h1 class="mt-3 text-4xl font-extrabold leading-[1.02] sm:text-6xl">Fill every slot at your next race, show or workshop.</h1>
+      <p class="mt-5 max-w-xl text-lg text-paper/80">A beautiful event page, ticketing with UPI and cards, attendee details your way, and QR check-in at the gate. Set up in 10 minutes.</p>
+      <div class="mt-8 flex flex-wrap gap-3">
+        <a href="{{ cta }}" class="btn-primary btn-lg">Create your event, it's free</a>
+        <a href="#how" class="btn btn-lg border border-paper/30 text-paper hover:bg-paper/10">See how it works</a>
+      </div>
+      <dl class="mt-10 grid max-w-md grid-cols-3 gap-4">
+        <div><dt class="text-xs uppercase tracking-wider text-paper/60">Events</dt><dd class="font-display text-3xl font-extrabold">{{ n_events }}+</dd></div>
+        <div><dt class="text-xs uppercase tracking-wider text-paper/60">Cities</dt><dd class="font-display text-3xl font-extrabold">{{ n_cities }}</dd></div>
+        <div><dt class="text-xs uppercase tracking-wider text-paper/60">Attendees</dt><dd class="font-display text-3xl font-extrabold">{{ (n_people // 100 * 100)|num }}+</dd></div>
+      </dl>
+    </div>
+    <div class="relative mx-auto h-[420px] w-full max-w-md" aria-hidden="true">
+      {% for e in sample %}
+      <img src="{{ url_for('static', filename=e.poster) }}" alt="" class="absolute w-56 rounded-card shadow-poster ring-1 ring-paper/20
+        {{ ['left-0 top-10 -rotate-6', 'left-1/2 top-0 z-10 -translate-x-1/2', 'right-0 top-16 rotate-6'][loop.index0] }}">
+      {% endfor %}
+      <div class="absolute bottom-0 left-1/2 z-20 w-72 -translate-x-1/2 rounded-2xl bg-paper-raised p-4 text-ink shadow-lift">
+        <p class="text-xs font-bold uppercase tracking-wider text-ink-soft">Today</p>
+        <p class="mt-1 font-display text-2xl font-extrabold">+48 tickets · ₹41,520</p>
+        <div class="mt-2 h-2 rounded-full bg-line"><div class="h-full w-4/5 rounded-full bg-rani"></div></div>
+        <p class="mt-1 text-xs text-ink-soft">80% sold · Selling fast badge on</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ---------- Features ---------- #}
+<section class="container-site py-16 sm:py-20">
+  <p class="eyebrow">Everything you need</p>
+  <h2 class="mt-1 max-w-2xl text-3xl font-extrabold sm:text-4xl">Built for the events India actually runs</h2>
+  <div class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    {% for title, text in [
+      ('Event pages people want to share', 'Big poster, schedule, route, map, kit, prizes and FAQs on one page that looks great on WhatsApp and Google.'),
+      ('Tickets your way', 'Multiple ticket types (5K, 10K, 21K, VIP, couple, group), early-bird codes, seat limits and registration deadlines.'),
+      ('Collect the right details', 'T-shirt size, age, gender, emergency contact, FIDE ID and more. Pick per event; download as CSV.'),
+      ('QR check-in at the gate', 'Every attendee gets a QR ticket. Scan with any phone camera, tap Check in. No app to install.'),
+      ('Never oversell', 'Live seat counts, a Sold out badge the moment you are full, and a waitlist that tells people when seats open.'),
+      ('Results and photos', 'Publish finisher results with bib search and a photo gallery. Past events keep bringing in new people.'),
+    ] %}
+    <div class="rounded-card border border-line bg-paper-raised p-6">
+      <span class="grid h-10 w-10 place-items-center rounded-xl bg-rani/10 font-display text-lg font-extrabold text-rani">{{ loop.index }}</span>
+      <h3 class="mt-4 text-lg font-bold">{{ title }}</h3>
+      <p class="mt-1 text-ink-soft">{{ text }}</p>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+{# ---------- How it works ---------- #}
+<section id="how" class="scroll-mt-20 bg-paper-raised py-16 sm:py-20">
+  <div class="container-site">
+    <p class="eyebrow">How it works</p>
+    <h2 class="mt-1 text-3xl font-extrabold sm:text-4xl">Live in four steps</h2>
+    <ol class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      {% for title, text in [
+        ('Sign in with your phone', 'No passwords. Set up your organizer profile in a minute.'),
+        ('Create your event', 'Add details, ticket types and a poster, or let us make one. We check for blanks and "TBD" before it goes live.'),
+        ('Share and sell', 'Share the link on WhatsApp and Instagram. Watch sales on your dashboard.'),
+        ('Check people in', 'Scan QR tickets at the gate, then post results and photos.'),
+      ] %}
+      <li class="relative pl-14">
+        <span class="absolute left-0 top-0 grid h-10 w-10 place-items-center rounded-full bg-ink font-display font-extrabold text-paper">{{ loop.index }}</span>
+        <h3 class="text-lg font-bold">{{ title }}</h3>
+        <p class="mt-1 text-ink-soft">{{ text }}</p>
+      </li>
+      {% endfor %}
+    </ol>
+  </div>
+</section>
+
+{# ---------- Pricing ---------- #}
+<section id="pricing" class="container-site scroll-mt-20 py-16 sm:py-20">
+  <p class="eyebrow">Pricing</p>
+  <h2 class="mt-1 text-3xl font-extrabold sm:text-4xl">Simple, and free when your event is</h2>
+  <p class="mt-2 text-sm text-ink-soft">Sample pricing for the demo. Final rates are set by {{ site_name }}.</p>
+  <div class="mt-8 grid gap-4 lg:grid-cols-3">
+    {% for name, price, unit, points, highlight in [
+      ('Free events', '₹0', 'forever', ['Unlimited registrations', 'QR tickets and check-in', 'Attendee CSV export'], False),
+      ('Paid events', '3%', 'per ticket sold + payment charges', ['Everything in Free', 'UPI, cards, net banking', 'Discount codes and waitlist', 'Payouts to your bank'], True),
+      ('Featured', '₹2,999', 'per event', ['Homepage hero slider for 7 days', 'Top of your city page', 'Instagram story shout-out'], False),
+    ] %}
+    <div class="rounded-card p-6 {{ 'bg-ink text-paper shadow-lift' if highlight else 'border border-line bg-paper-raised' }}">
+      <h3 class="text-lg font-bold">{{ name }}</h3>
+      <p class="mt-3"><span class="font-display text-4xl font-extrabold">{{ price }}</span> <span class="text-sm {{ 'text-paper/70' if highlight else 'text-ink-soft' }}">{{ unit }}</span></p>
+      <ul class="mt-5 space-y-2 text-sm">{% for p in points %}<li>✓ {{ p }}</li>{% endfor %}</ul>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+{# ---------- FAQ ---------- #}
+<section class="container-site max-w-3xl">
+  <h2 class="text-3xl font-extrabold">Questions organizers ask</h2>
+  <div class="mt-6 divide-y divide-line rounded-card border border-line bg-paper-raised">
+    {% for q, a in [
+      ('How do I get paid?', 'Ticket money goes to your bank account through our payment partner, usually within 2 to 3 working days after the event.'),
+      ('Can I run a free event?', 'Yes. Free events cost nothing, and attendees still get QR tickets.'),
+      ('Can I ask for T-shirt size and emergency contact?', 'Yes. Choose the details you need for each event. Runs ask for them by default.'),
+      ('What if I need to change the date?', 'Edit the event any time. Attendees see the update on their ticket and event page.'),
+      ('Do I need an app for check-in?', 'No. Open the ticket QR with your phone camera while signed in and tap Check in. You can also type the ticket code on your dashboard.'),
+    ] %}
+    <details class="group p-5" {% if loop.first %}open{% endif %}>
+      <summary class="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold">{{ q }}
+        <svg class="h-5 w-5 shrink-0 transition group-open:rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+      </summary>
+      <p class="mt-3 text-ink-soft">{{ a }}</p>
+    </details>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="container-site mt-16">
+  <div class="rounded-card bg-rani p-8 text-center text-white sm:p-12">
+    <h2 class="text-3xl font-extrabold sm:text-4xl">Your next event deserves a full house</h2>
+    <p class="mx-auto mt-2 max-w-xl text-white/85">Create your page now. It stays a draft until you publish.</p>
+    <a href="{{ cta }}" class="btn btn-lg mt-6 bg-white text-ink hover:bg-white/90">Start hosting</a>
+  </div>
+</section>
+{% endblock %}

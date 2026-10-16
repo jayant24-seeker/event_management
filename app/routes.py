@@ -1,6 +1,6 @@
 from datetime import timezone
 
-from flask import Blueprint, Response, abort, g, jsonify, render_template, request, url_for
+from flask import Blueprint, Response, abort, g, jsonify, redirect, render_template, request, url_for
 
 from .events import DATE_FILTERS, PRICE_FILTERS, SORTS, EventStore, now_ist
 
@@ -182,11 +182,35 @@ def page(name):
     return render_template(f"pages/{name}.html", title=PAGES[name])
 
 
-@bp.route("/contact")
+@bp.route("/contact", methods=["GET", "POST"])
 def contact():
-    return render_template("pages/contact.html", title="Contact us")
+    from .models import ContactMessage, db
+
+    form, errors, sent = request.form, [], False
+    if request.method == "POST":
+        if form.get("website"):  # hidden field only bots fill in
+            return redirect(url_for("main.contact"))
+        name, reply_to, message = form.get("name", "").strip(), form.get("reply_to", "").strip(), form.get("message", "").strip()
+        topic = form.get("topic") if form.get("topic") in TOPICS else "other"
+        if len(name) < 2:
+            errors.append("Please enter your name.")
+        if len(reply_to) < 6:
+            errors.append("Add a phone number or email so we can reply.")
+        if len(message) < 10:
+            errors.append("Tell us a little more in the message.")
+        if not errors:
+            db.session.add(ContactMessage(name=name[:120], reply_to=reply_to[:200], topic=topic, message=message[:4000]))
+            db.session.commit()
+            sent = True
+    return render_template("pages/contact.html", title="Contact us", form=form, errors=errors, sent=sent, topics=TOPICS)
+
+
+TOPICS = {"attendee": "A booking or ticket", "organizer": "Hosting an event", "partnership": "Partnership or media", "other": "Something else"}
 
 
 @bp.route("/for-organizers")
 def for_organizers():
-    return render_template("pages/for_organizers.html", title="Host your event")
+    s = store()
+    return render_template("pages/for_organizers.html", title="Host your event",
+                           n_events=len(s.events), n_cities=len(s.cities()),
+                           n_people=sum(e.registered for e in s.events), sample=s.featured()[:3])

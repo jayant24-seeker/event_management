@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}Dashboard · {{ g.org.data.name }} · {{ site_name }}{% endblock %}
+{% block head %}<meta name="robots" content="noindex">{% endblock %}
+{% macro event_row(r, e) -%}
+{% set s = sales.get(r.slug, (0, 0, 0)) %}
+<div class="grid items-center gap-4 rounded-card border border-line bg-paper-raised p-4 sm:grid-cols-[auto_1fr_auto]">
+  {% if r.data.poster %}<img src="{{ url_for('static', filename=r.data.poster) }}" alt="" class="h-20 w-[60px] rounded-lg object-cover">{% else %}<div class="grid h-20 w-[60px] place-items-center rounded-lg bg-ink/5 text-xs text-ink-soft">No art</div>{% endif %}
+  <div class="min-w-0">
+    <div class="flex flex-wrap items-center gap-2">
+      <span class="badge {{ 'badge-free' if r.status == 'published' else 'badge-muted' }}">{{ 'Published' if r.status == 'published' else 'Draft' }}</span>
+      {% if e %}{% for label, style in e.badges() if label != 'Free' %}<span class="badge badge-{{ style }}">{{ label }}</span>{% endfor %}{% endif %}
+    </div>
+    <p class="mt-1 font-display text-lg font-bold leading-snug">{{ r.data.title or 'Untitled event' }}</p>
+    <p class="text-sm text-ink-soft">{{ e.start.strftime('%a, %d %b %Y · %-I:%M %p') if e else (r.data.start or 'No date yet') }} · {{ r.data.city or '—' }}</p>
+  </div>
+  <div class="flex flex-wrap items-center gap-x-6 gap-y-2 sm:justify-end">
+    <div class="text-right"><p class="font-display text-xl font-extrabold">{{ s[0] }}</p><p class="text-xs text-ink-soft">sold here</p></div>
+    <div class="text-right"><p class="font-display text-xl font-extrabold">{{ s[1]|inr }}</p><p class="text-xs text-ink-soft">revenue</p></div>
+    <div class="flex gap-2">
+      <a href="{{ url_for('org.event_admin', slug=r.slug) }}" class="btn-dark py-2">Attendees</a>
+      <a href="{{ url_for('org.edit_event', slug=r.slug) }}" class="btn-outline py-2">Edit</a>
+    </div>
+  </div>
+</div>
+{%- endmacro %}
+{% block content %}
+<div class="container-site py-10">
+  <div class="flex flex-wrap items-end justify-between gap-4">
+    <div>
+      <p class="eyebrow">Organizer dashboard</p>
+      <h1 class="mt-1 text-3xl font-extrabold sm:text-4xl">{{ g.org.data.name }}{% if g.org.data.verified %} <span class="badge bg-marigold align-middle text-ink">Verified</span>{% endif %}</h1>
+    </div>
+    <div class="flex gap-2">
+      <a href="{{ url_for('main.organizer', slug=g.org.slug) }}" class="btn-outline">Public profile</a>
+      <a href="{{ url_for('org.new_event') }}" class="btn-primary">+ Create event</a>
+    </div>
+  </div>
+
+  <dl class="mt-8 grid grid-cols-2 gap-3 lg:grid-cols-4">
+    {% for label, value in [('Tickets sold on ' ~ site_name, totals[0]|num), ('Revenue', totals[1]|inr), ('Checked in', totals[2]|num), ('On waitlists', waitlist|num)] %}
+    <div class="rounded-card bg-ink p-5 text-paper">
+      <dt class="text-xs uppercase tracking-wider text-paper/60">{{ label }}</dt>
+      <dd class="mt-1 font-display text-3xl font-extrabold">{{ value }}</dd>
+    </div>
+    {% endfor %}
+  </dl>
+
+  <form method="post" action="{{ url_for('org.check_in') }}" class="mt-6 flex flex-wrap items-center gap-2 rounded-card border border-line bg-paper-raised p-4">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <p class="mr-2 font-semibold">Gate check-in</p>
+    <input name="code" class="input max-w-xs py-2 font-mono uppercase" placeholder="Ticket code" required autocomplete="off">
+    <button class="btn-dark py-2">Check in</button>
+    <p class="w-full text-xs text-ink-soft sm:w-auto">Or scan the ticket's QR with your phone camera while signed in.</p>
+  </form>
+
+  <h2 class="mt-10 text-xl font-bold">Upcoming and drafts</h2>
+  <div class="mt-4 space-y-3">
+    {% for r, e in upcoming %}{{ event_row(r, e) }}{% else %}
+    <div class="rounded-card border border-dashed border-line p-10 text-center">
+      <p class="font-semibold">No events yet.</p>
+      <a href="{{ url_for('org.new_event') }}" class="btn-primary mt-4">Create your first event</a>
+    </div>
+    {% endfor %}
+  </div>
+  {% if past %}
+  <h2 class="mt-10 text-xl font-bold">Past events</h2>
+  <div class="mt-4 space-y-3">{% for r, e in past %}{{ event_row(r, e) }}{% endfor %}</div>
+  {% endif %}
+  <p class="mt-8 text-xs text-ink-soft">"Sold here" counts bookings made on {{ site_name }}. Event pages also include seats you sold earlier or offline.</p>
+</div>
+{% endblock %}

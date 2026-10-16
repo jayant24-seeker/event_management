@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Become an organizer · {{ site_name }}{% endblock %}
+{% block head %}<meta name="robots" content="noindex">{% endblock %}
+{% block content %}
+<div class="container-site max-w-2xl py-12">
+  <p class="eyebrow">For organizers</p>
+  <h1 class="mt-1 text-4xl font-extrabold">Set up your organizer profile</h1>
+  <p class="mt-2 text-ink-soft">This is what attendees see on your events and your profile page. You can create events right after.</p>
+  {% if errors %}<div class="mt-6 rounded-xl border border-rani/40 bg-rani/5 p-4 text-sm" role="alert">{% for e in errors %}<p>{{ e }}</p>{% endfor %}</div>{% endif %}
+  <form method="post" class="mt-8 space-y-5">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label class="block"><span class="mb-1.5 block text-sm font-semibold">Organization or club name</span>
+      <input name="name" value="{{ form.name }}" class="input" required placeholder="e.g. Kota Runners Club"></label>
+    <label class="block"><span class="mb-1.5 block text-sm font-semibold">City</span>
+      <input name="city" value="{{ form.city }}" class="input" required placeholder="e.g. Kota"></label>
+    <label class="block"><span class="mb-1.5 block text-sm font-semibold">About you</span>
+      <textarea name="about" rows="4" class="input rounded-2xl" required placeholder="What kind of events do you run, and since when?">{{ form.about }}</textarea></label>
+    <div class="grid gap-4 sm:grid-cols-3">
+      {% for k, label in [('instagram', 'Instagram link'), ('facebook', 'Facebook link'), ('website', 'Website')] %}
+      <label class="block"><span class="mb-1.5 block text-sm font-semibold">{{ label }} <span class="font-normal text-ink-soft">(optional)</span></span>
+        <input name="{{ k }}" type="url" value="{{ form[k] }}" class="input" placeholder="https://"></label>
+      {% endfor %}
+    </div>
+    <button class="btn-primary btn-lg">Create my profile</button>
+  </form>
+</div>
+{% endblock %}

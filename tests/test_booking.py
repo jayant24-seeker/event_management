@@ -9,8 +9,8 @@ CSRF = "test-token"
 
 
 @pytest.fixture
-def app():
-    return create_app({"TESTING": True})
+def app(tmp_path):
+    return create_app({"TESTING": True, "MEDIA_ROOT": str(tmp_path)})
 
 
 @pytest.fixture

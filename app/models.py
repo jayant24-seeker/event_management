@@ -116,6 +116,15 @@ class SavedEvent(db.Model):
     __table_args__ = (UniqueConstraint("user_id", "event_slug"),)
 
 
+class ContactMessage(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120), nullable=False)
+    reply_to = db.Column(db.String(200), nullable=False)  # phone or email
+    topic = db.Column(db.String(30), nullable=False)
+    message = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, nullable=False, default=utcnow)
+
+
 class WaitlistEntry(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     event_slug = db.Column(db.String(120), db.ForeignKey("event.slug"), nullable=False, index=True)

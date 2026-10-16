@@ -8,7 +8,9 @@ from datetime import datetime
 import click
 
 from .events import DATA_FILE, ORGANIZERS_FILE
-from .models import Coupon, EventRow, Organizer, db
+from .models import Coupon, EventRow, Organizer, User, db
+
+DEMO_ORGANIZER_PHONE = "+919999999999"
 
 # (event, code, % off, max uses, valid until in IST)
 DEMO_COUPONS = [
@@ -26,6 +28,8 @@ def load_json():
     for e in events:
         db.session.add(EventRow(slug=e["slug"], organizer_slug=e["organizer"], status="published", data=e))
     db.session.flush()
+    # Demo organizer login: sign in with 99999 99999 to see the Pink Pace Runners Club dashboard.
+    db.session.add(User(phone=DEMO_ORGANIZER_PHONE, name="Demo Organizer", organizer_slug="pink-pace-runners"))
     for slug, code, pct, max_uses, until in DEMO_COUPONS:
         db.session.add(Coupon(event_slug=slug, code=code, percent_off=pct, max_uses=max_uses,
                               valid_until=datetime.fromisoformat(until) if until else None))

@@ -1,2 +1,31 @@
-{% extends "pages/_page.html" %}
-{% block body %}<p>This page is built in phase 6.</p>{% endblock %}
+{% extends "base.html" %}
+{% block title %}About · {{ site_name }}{% endblock %}
+{% block description %}{{ site_name }} helps people across Rajasthan, Gujarat and Punjab find runs, concerts, workshops and festivals, and helps organizers fill them.{% endblock %}
+{% block content %}
+<section class="bg-ink text-paper">
+  <div class="container-site max-w-4xl py-16 sm:py-24">
+    <p class="eyebrow text-marigold">About {{ site_name }}</p>
+    <h1 class="mt-3 text-4xl font-extrabold leading-tight sm:text-6xl">It's all about events, and the people who show up.</h1>
+    <p class="mt-6 max-w-2xl text-lg text-paper/80">We started with running events in Jaipur: marathons, night runs and cyclothons. Today {{ site_name }} lists runs, garba nights, kavi sammelans, workshops and tournaments across Rajasthan, Gujarat and Punjab.</p>
+  </div>
+</section>
+<div class="container-site max-w-4xl space-y-14 py-14">
+  <section class="grid gap-6 sm:grid-cols-3">
+    {% for title, text in [
+      ('For attendees', 'Find what is on near you this weekend, book in a minute with UPI, and keep your QR tickets on your phone.'),
+      ('For organizers', 'Sell tickets, collect the details you need and check people in at the gate, without spreadsheets.'),
+      ('For cities', 'Every event page is built to be found on Google and shared on WhatsApp, so local events reach more people.'),
+    ] %}
+    <div class="rounded-card border border-line bg-paper-raised p-6">
+      <h2 class="text-lg font-bold">{{ title }}</h2>
+      <p class="mt-2 text-ink-soft">{{ text }}</p>
+    </div>
+    {% endfor %}
+  </section>
+  <section class="prose-site">
+    <h2>Who we are</h2>
+    <p>{{ site_name }} is owned by <strong>N Square Digital Solutions</strong> and built by <strong>Shree Soft Technologies</strong>. Our office is in Jaipur, Rajasthan.</p>
+    <p>Have an event in mind? <a href="{{ url_for('main.for_organizers') }}">See how hosting works</a>, or <a href="{{ url_for('main.contact') }}">talk to us</a>.</p>
+  </section>
+</div>
+{% endblock %}

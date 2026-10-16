@@ -23,7 +23,7 @@ The first run creates `instance/eventouse.db` (SQLite) and loads the demo events
 flask --app run seed --reset
 ```
 
-**Signing in locally:** enter any 10-digit mobile number. No SMS is sent in development; the code is shown on the next screen (`SMS_PROVIDER=console`). Demo discount codes: `EARLYBIRD10` (Amer Hills Trail Ultra), `PINKCITY15` (Jaipur Night Run), `SIBLING20` (Little Legs Kids Run). Payments run in **test mode**.
+**Signing in locally:** enter any 10-digit mobile number. No SMS is sent in development; the code is shown on the next screen (`SMS_PROVIDER=console`). **Demo organizer:** sign in with `99999 99999` to open the Pink Pace Runners Club dashboard (Organizer dashboard in the account menu). Any other number can become an organizer at `/organizer/start`. Demo discount codes: `EARLYBIRD10` (Amer Hills Trail Ultra), `PINKCITY15` (Jaipur Night Run), `SIBLING20` (Little Legs Kids Run). Payments run in **test mode**.
 
 ### Before launch
 | Setting | Why |
@@ -46,13 +46,15 @@ flask --app run seed --reset
 | `app/models.py` | Database tables: organizers, events, users, OTP codes, bookings, attendees (tickets), coupons, saved events, waitlist |
 | `app/auth.py` | Phone + OTP sign-in, profile, sign out |
 | `app/booking.py` | Checkout with attendee details and coupons, test payment, QR tickets, My tickets, waitlist, saved events |
+| `app/organizer.py` | Organizer profile, dashboard, create/edit events (publish checks), attendee list + CSV, coupons, waitlist, QR check-in |
+| `app/posters.py` | Original SVG posters/banners for demo events and organizer events without artwork |
 | `app/sms.py` | SMS sending (console in development) |
 | `app/seed.py` | Loads `data/*.json` into an empty database; `flask seed --reset` |
 | `app/seo.py` | Event JSON-LD for Google, calendar helpers |
 | `app/templates/components/_macros.html` | Poster card, badge, date chip, price label |
 | `app/static/src/input.css` | Color tokens and component classes |
 | `tailwind.config.js` | Fonts, colors, shadows |
-| `tools/make_posters.py` | Generates original placeholder posters and banners |
+| `tools/make_posters.py` | Regenerates the demo events' posters and banners |
 | `/styleguide` | Live design-system page |
 
 ## Build plan
@@ -62,5 +64,5 @@ flask --app run seed --reset
 3. ✅ Explore Events (search, filters, Upcoming/Past tabs)
 4. ✅ Event page
 5. ✅ Account and booking
-6. For Organizers, About, Contact
+6. ✅ For Organizers, About, Contact
 7. SEO, speed, mobile testing, launch

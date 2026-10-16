@@ -28,5 +28,5 @@ Then open http://127.0.0.1:5000
 - [x] Phase 3: Explore Events
 - [x] Phase 4: event page
 - [x] Phase 5: account and booking
-- [ ] Phase 6: For Organizers, About, Contact
+- [x] Phase 6: For Organizers, About, Contact
 - [ ] Phase 7: SEO, speed, mobile testing, launch

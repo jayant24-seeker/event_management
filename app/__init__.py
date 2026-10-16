@@ -18,10 +18,13 @@ def create_app(config=None):
         # "console" prints OTPs to the log and shows them on screen. Set to a real provider in production.
         SMS_PROVIDER=os.environ.get("SMS_PROVIDER", "console"),
         PERMANENT_SESSION_LIFETIME=timedelta(days=30),
+        MAX_CONTENT_LENGTH=8 * 1024 * 1024,  # poster uploads
         SESSION_COOKIE_HTTPONLY=True,
         SESSION_COOKIE_SAMESITE="Lax",
         SESSION_COOKIE_SECURE=os.environ.get("SESSION_COOKIE_SECURE") == "1",
     )
+    # Where organizer uploads are written. Files are served from /static/uploads/.
+    app.config["MEDIA_ROOT"] = app.static_folder
     if config:
         app.config.update(config)
     if app.config["SECRET_KEY"] == "dev-only-change-me" and not (app.debug or app.testing):
@@ -77,8 +80,10 @@ def create_app(config=None):
 
     from .auth import bp as auth_bp
     from .booking import bp as booking_bp
+    from .organizer import bp as org_bp
     from .routes import bp
     app.register_blueprint(bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(booking_bp)
+    app.register_blueprint(org_bp)
     return app
