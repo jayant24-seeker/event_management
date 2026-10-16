@@ -5,7 +5,12 @@
   document.addEventListener("click", (ev) => menus.forEach((m) => { if (m.open && !m.contains(ev.target)) m.open = false; }));
   document.addEventListener("keydown", (ev) => { if (ev.key === "Escape") menus.forEach((m) => { m.open = false; }); });
 
-  if (document.body.dataset.auth !== "1") return;
+  // Installable app + tickets that open offline. Signed out: forget any saved ticket pages.
+  if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js").catch(() => {});
+  if (document.body.dataset.auth !== "1") {
+    if ("caches" in window) caches.delete("eventouse-pages").catch(() => {});
+    return;
+  }
   const KEY = "eventouse:saved";
   let guestSaved = [];
   try { guestSaved = JSON.parse(localStorage.getItem(KEY)) || []; } catch {}

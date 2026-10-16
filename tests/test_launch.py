@@ -1,6 +1,6 @@
 import html
 
-from test_booking import app, client  # noqa: F401  (fixtures)
+from test_booking import app, client, sign_in  # noqa: F401  (fixtures)
 
 
 def test_city_page_with_faq_schema(client):
@@ -40,3 +40,19 @@ def test_404_page_and_headers(client):
     assert home.headers["X-Content-Type-Options"] == "nosniff"
     assert "app.css?v=" in home.get_data(as_text=True)
     assert client.get("/tickets").headers["Cache-Control"] == "private, no-store"
+
+
+def test_installable_app_files(client):
+    m = client.get("/manifest.webmanifest")
+    assert m.status_code == 200 and m.json["display"] == "standalone" and len(m.json["icons"]) == 2
+    for icon in m.json["icons"]:
+        assert client.get(icon["src"]).status_code == 200
+    sw = client.get("/sw.js")
+    assert sw.status_code == 200 and "javascript" in sw.content_type and sw.headers["Cache-Control"] == "no-cache"
+    assert 'rel="manifest"' in client.get("/").get_data(as_text=True)
+
+
+def test_offline_page_never_shows_who_is_signed_in(client):
+    sign_in(client, name="Asha Verma")
+    page = client.get("/offline").get_data(as_text=True)
+    assert "No internet right now" in page and "Asha" not in page

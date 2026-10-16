@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}You're offline · {{ site_name }}{% endblock %}
+{% block head %}<meta name="robots" content="noindex">{% endblock %}
+{% block content %}
+<div class="container-site max-w-xl py-20 text-center">
+  <p class="font-display text-6xl font-extrabold text-rani">Offline</p>
+  <h1 class="mt-2 text-3xl font-extrabold">{{ _("No internet right now") }}</h1>
+  <p class="mt-2 text-ink-soft">{{ _("Tickets you've opened on this phone before still work. Show the QR code at the gate.") }}</p>
+  <div id="offline-tickets" class="mx-auto mt-6 grid max-w-sm gap-2 text-left" hidden>
+    <p class="text-sm font-bold uppercase tracking-wider text-ink-soft">{{ _("Saved on this phone") }}</p>
+  </div>
+  <button type="button" onclick="location.reload()" class="btn-primary mt-8">{{ _("Try again") }}</button>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+  // List the ticket pages the service worker kept, so they open without a signal.
+  if ("caches" in window) {
+    caches.open("eventouse-pages").then(async (cache) => {
+      const box = document.getElementById("offline-tickets");
+      for (const req of await cache.keys()) {
+        const path = new URL(req.url).pathname;
+        const html = await (await cache.match(req)).text();
+        const parts = (new DOMParser().parseFromString(html, "text/html").title || path).split(" · ");
+        const title = parts.length > 2 ? parts[1] : parts[0];  // "Your tickets · <event> · Eventouse"
+        const a = document.createElement("a");
+        a.href = path;
+        a.className = "block rounded-card border border-line bg-paper-raised p-4 font-semibold";
+        a.textContent = title;
+        box.append(a);
+        box.hidden = false;
+      }
+    });
+  }
+</script>
+{% endblock %}

@@ -9,7 +9,7 @@ Every item keeps `pytest` green. Newest at the bottom.
 
 ## Backlog (ideas, roughly in order)
 - [x] Security pass: OTP rate limits, open redirects, ownership checks
-- [ ] PWA: web app manifest, offline "My tickets", installable
+- [x] PWA: web app manifest, offline "My tickets", installable
 - [ ] Cancel a booking (attendee side) following the refund policy
 - [ ] Transfer a ticket to someone else
 - [ ] Follow organizers; "From organizers you follow" on the homepage
@@ -26,3 +26,4 @@ Every item keeps `pytest` green. Newest at the bottom.
 
 ## Done
 - Security: per-IP limits on sign-in codes, waitlist and contact form; blocked `/\host` open redirect; bad coupon expiry no longer crashes. Ownership checks reviewed (all OK).
+- Installable app (PWA): manifest, icons, service worker. Ticket pages you have opened work with no signal; offline page lists them; signing out wipes them. Checked in Chromium with the network switched off.

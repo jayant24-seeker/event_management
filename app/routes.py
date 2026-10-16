@@ -2,7 +2,8 @@ import re
 from datetime import timezone
 from html import escape
 
-from flask import Blueprint, Response, abort, g, jsonify, redirect, render_template, request, url_for
+from flask import (Blueprint, Response, abort, current_app, g, jsonify, redirect, render_template, request,
+                   send_from_directory, url_for)
 
 from .events import DATE_FILTERS, PRICE_FILTERS, SORTS, EventStore, now_ist
 from .ratelimit import hit
@@ -276,3 +277,31 @@ def sitemap():
                    + f"<changefreq>{freq}</changefreq></url>")
     xml.append("</urlset>")
     return Response("\n".join(xml), mimetype="application/xml")
+
+
+# ---------- Installable app (PWA) ----------
+@bp.route("/manifest.webmanifest")
+def manifest():
+    icon = lambda size: {"src": url_for("static", filename=f"icons/icon-{size}.png"), "sizes": f"{size}x{size}",  # noqa: E731
+                         "type": "image/png", "purpose": "any maskable"}
+    return jsonify(
+        name="Eventouse: events near you", short_name="Eventouse", start_url="/?source=app", scope="/",
+        display="standalone", background_color="#FFF8F0", theme_color="#1A1423",
+        description="Discover and book runs, concerts, workshops and festivals.",
+        icons=[icon(192), icon(512)],
+        shortcuts=[{"name": "My tickets", "url": "/tickets"}, {"name": "Explore events", "url": "/events"}],
+    ), 200, {"Content-Type": "application/manifest+json"}
+
+
+@bp.route("/sw.js")
+def service_worker():
+    # Served from the root so it can look after every page; never cached long, so updates arrive.
+    res = send_from_directory(current_app.static_folder, "js/sw.js", mimetype="text/javascript", max_age=0)
+    res.headers["Cache-Control"] = "no-cache"
+    return res
+
+
+@bp.route("/offline")
+def offline():
+    g.user = None  # the service worker keeps this page; it must not carry anyone's name
+    return render_template("offline.html")
