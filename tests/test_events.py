@@ -72,7 +72,9 @@ def test_home_and_search_pages():
     client = create_app().test_client()
     home = client.get("/").get_data(as_text=True)
     assert "data-hero-slide" in home and "Find something to do" in home
-    assert "Kota Stand-up Night" not in home  # past events stay off the homepage
+    # Past events only appear in the "Recently happened" strip, never in the upcoming grid.
+    upcoming_grid = home.split("Don't miss these")[1].split("Recently happened")[0]
+    assert "Kota Stand-up Night" not in upcoming_grid and "Recently happened" in home
     page = client.get("/events?q=comedy&when=past").get_data(as_text=True)
     assert "Kota Stand-up Night" in page
     data = client.get("/api/suggest?q=surat").get_json()
@@ -147,3 +149,33 @@ def test_explore_page_filters_and_tabs():
     assert client.get("/events?date=someday&sort=weird&price=x&page=99").status_code == 200
     empty = client.get("/events?q=zzzz").get_data(as_text=True)
     assert "No events match" in empty and "Popular right now" in empty
+
+
+def test_event_page_sections_and_schema():
+    client = create_app().test_client()
+    page = client.get("/events/amer-hills-trail-ultra").get_data(as_text=True)
+    for text in ["About this event", "How the day runs", "The course", "Kit and facilities", "Refund and cancellation policy",
+                 "Desert Stride Events", "application/ld+json", '"priceCurrency": "INR"', "You may also like"]:
+        assert text in page, text
+    sold_out = client.get("/events/jodhpur-blue-city-cyclothon").get_data(as_text=True)
+    assert "Notify me" in sold_out and "data-ticket-form" not in sold_out
+    past = client.get("/events/tricity-half-marathon-2026").get_data(as_text=True)
+    assert "How it went" in past and "Harpreet Singh" in past and "Event ended" in past
+    online = client.get("/events/race-day-nutrition-masterclass").get_data(as_text=True)
+    assert "OnlineEventAttendanceMode" in online and "maps?q=" not in online
+
+
+def test_calendar_file_and_organizer_page():
+    client = create_app().test_client()
+    ics = client.get("/events/jaipur-night-run-2026.ics")
+    assert ics.mimetype == "text/calendar"
+    body = ics.get_data(as_text=True)
+    assert "DTSTART:20261122T130000Z" in body  # 6:30 pm IST = 1:00 pm UTC
+    assert "LOCATION:Jawahar Circle Garden\\, Jawahar Circle" in body
+    org = client.get("/organizers/sahitya-sangam").get_data(as_text=True)
+    assert "Sahitya Sangam Ajmer" in org and "Pushkar Sunrise Yoga" in org
+    assert client.get("/organizers/nobody").status_code == 404
+
+
+def test_num_filter():
+    assert create_app().jinja_env.filters["num"](2328) == "2,328"

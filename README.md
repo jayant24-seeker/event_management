@@ -22,10 +22,11 @@ The built CSS (`app/static/css/app.css`) is committed, so the site runs without 
 | Path | What |
 | --- | --- |
 | `app/events.py` | Event model: Upcoming/Past split, badges (Free, Selling fast, Sold out, Event ended), search, filters, search suggestions, city/category counts, publish checks that block blank fields and placeholder text |
-| `app/routes.py` | `/` homepage, `/events` Explore page (search, filters, Upcoming/Past tabs), `/api/suggest` search suggestions, `/events/<slug>` |
-| `app/static/js/` | `hero.js` (homepage slider), `search.js` (live suggestions), `explore.js` (filter bar) |
+| `app/routes.py` | `/` homepage, `/events` Explore page (search, filters, Upcoming/Past tabs), `/api/suggest` search suggestions, `/events/<slug>` event page, `/events/<slug>.ics` calendar file, `/organizers/<slug>` organizer profile |
+| `app/static/js/` | `hero.js` (homepage slider), `search.js` (live suggestions), `explore.js` (filter bar), `event.js` (ticket picker, countdown, save, share, results search) |
 | `app/data/events.json` | 16 dummy events (7 cities incl. Online, 3 past with results) |
 | `app/data/organizers.json` | 9 organizer profiles |
+| `app/seo.py` | Event JSON-LD for Google, calendar helpers |
 | `app/templates/components/_macros.html` | Poster card, badge, date chip, price label |
 | `app/static/src/input.css` | Color tokens and component classes |
 | `tailwind.config.js` | Fonts, colors, shadows |
@@ -37,7 +38,7 @@ The built CSS (`app/static/css/app.css`) is committed, so the site runs without 
 1. ✅ Setup, design system, dummy data
 2. ✅ Homepage
 3. ✅ Explore Events (search, filters, Upcoming/Past tabs)
-4. Event page
+4. ✅ Event page
 5. Account and booking
 6. For Organizers, About, Contact
 7. SEO, speed, mobile testing, launch

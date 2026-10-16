@@ -1,6 +1,8 @@
-from flask import Blueprint, abort, current_app, jsonify, render_template, request, url_for
+from datetime import timezone
 
-from .events import DATE_FILTERS, PRICE_FILTERS, SORTS
+from flask import Blueprint, Response, abort, current_app, jsonify, render_template, request, url_for
+
+from .events import DATE_FILTERS, PRICE_FILTERS, SORTS, now_ist
 
 bp = Blueprint("main", __name__)
 
@@ -20,6 +22,7 @@ def home():
         # Each city tile uses the banner of its next event as the background.
         cities=[(c, n, next(e for e in upcoming if e.city == c)) for c, n in s.counts("city")],
         category_counts=s.counts("category"),
+        past=s.past()[:4],
     )
 
 
@@ -121,7 +124,59 @@ def styleguide():
 
 @bp.route("/events/<slug>")
 def event(slug):
+    s = store()
+    e = s.get(slug)
+    if not e:
+        abort(404)
+    return render_template("event.html", e=e, similar=s.similar(e), org_events=len(s.by_organizer(e.organizer)))
+
+
+@bp.route("/events/<slug>.ics")
+def event_ics(slug):
+    """Add-to-calendar file (works with Apple, Outlook and Google Calendar)."""
     e = store().get(slug)
     if not e:
         abort(404)
-    return render_template("event_stub.html", e=e)
+    fmt = "%Y%m%dT%H%M%S"
+    where = e.venue["name"] if e.is_online else f"{e.venue['name']}, {e.venue['address']}"
+
+    def esc(text):
+        return text.replace("\\", "\\\\").replace(";", "\\;").replace(",", "\\,").replace("\n", "\\n")
+
+    lines = [
+        "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Eventouse//Events//EN", "BEGIN:VEVENT",
+        f"UID:{e.slug}@eventouse.com",
+        f"DTSTAMP:{now_ist().astimezone(timezone.utc).strftime(fmt)}Z",
+        f"DTSTART:{e.start.astimezone(timezone.utc).strftime(fmt)}Z",
+        f"DTEND:{e.end.astimezone(timezone.utc).strftime(fmt)}Z",
+        f"SUMMARY:{esc(e.title)}",
+        f"LOCATION:{esc(where)}",
+        f"DESCRIPTION:{esc(e.tagline)}\\n{url_for('main.event', slug=e.slug, _external=True)}",
+        "END:VEVENT", "END:VCALENDAR",
+    ]
+    return Response("\r\n".join(lines) + "\r\n", mimetype="text/calendar",
+                    headers={"Content-Disposition": f'attachment; filename="{e.slug}.ics"'})
+
+
+@bp.route("/events/<slug>/register")
+def register(slug):
+    # Checkout arrives in phase 5. For now, confirm what was picked.
+    e = store().get(slug)
+    if not e:
+        abort(404)
+    picked = [(t, request.args.get(f"t{i}", 0, type=int)) for i, t in enumerate(e.tickets)]
+    picked = [(t, n) for t, n in picked if n > 0]
+    return render_template("register_stub.html", e=e, picked=picked, notify=bool(request.args.get("notify")))
+
+
+@bp.route("/organizers/<slug>")
+def organizer(slug):
+    s = store()
+    org = s.organizers.get(slug)
+    if not org:
+        abort(404)
+    events = s.by_organizer(slug)
+    upcoming = sorted((e for e in events if not e.is_past()), key=lambda e: e.start)
+    past = sorted((e for e in events if e.is_past()), key=lambda e: e.start, reverse=True)
+    return render_template("organizer.html", org=org, upcoming=upcoming, past=past,
+                           registered=sum(e.registered for e in events))
