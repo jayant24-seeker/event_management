@@ -160,6 +160,33 @@
   <p class="mt-6 rounded-card border border-dashed border-line p-8 text-center text-ink-soft">No upcoming events right now. Check back soon.</p>
   {% endif %}
 </section>
+
+{# ---------- Past events teaser: results and photos are social proof ---------- #}
+{% if past %}
+<section class="container-site mt-20">
+  <div class="rounded-card bg-ink p-6 text-paper sm:p-10">
+    <div class="flex flex-wrap items-end justify-between gap-4">
+      <div>
+        <p class="eyebrow text-marigold">Recently happened</p>
+        <h2 class="mt-1 text-3xl font-extrabold">Results, photos and memories</h2>
+      </div>
+      <a href="{{ url_for('main.explore', when='past') }}" class="btn border border-paper/30 text-paper hover:bg-paper/10">All past events</a>
+    </div>
+    <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      {% for e in past %}
+      <a href="{{ url_for('main.event', slug=e.slug) }}" class="group flex gap-3 rounded-2xl bg-paper/5 p-3 hover:bg-paper/10">
+        <img src="{{ url_for('static', filename=e.poster) }}" alt="" loading="lazy" class="h-24 w-[72px] shrink-0 rounded-lg object-cover grayscale-[40%] group-hover:grayscale-0">
+        <span class="min-w-0">
+          <span class="block text-xs font-bold uppercase tracking-wider text-marigold">{{ e.start.strftime('%d %b %Y') }}</span>
+          <span class="mt-1 block font-bold leading-snug group-hover:underline">{{ e.title }}</span>
+          <span class="mt-1 block text-sm text-paper/60">{{ e.registered|num }} took part{% if e.raw.results %} · results{% endif %}</span>
+        </span>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
 {% endblock %}
 
 {% block scripts %}

@@ -14,8 +14,8 @@ def create_app(config=None):
         app.logger.warning("Hidden event %s: %s", slug, "; ".join(issues))
     app.extensions["events"] = store
 
-    @app.template_filter("inr")
-    def inr(amount):
+    @app.template_filter("num")
+    def num(amount):
         # Indian digit grouping: 1,00,000
         s = str(int(amount))
         if len(s) > 3:
@@ -25,7 +25,14 @@ def create_app(config=None):
                 groups.insert(0, head[-2:])
                 head = head[:-2]
             s = ",".join(([head] if head else []) + groups) + "," + tail
-        return f"₹{s}"
+        return s
+
+    @app.template_filter("inr")
+    def inr(amount):
+        return f"₹{num(amount)}"
+
+    from .seo import event_jsonld, gcal_dates
+    app.jinja_env.globals.update(event_jsonld=event_jsonld, gcal_dates=gcal_dates)
 
     @app.context_processor
     def globals_():
