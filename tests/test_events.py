@@ -180,3 +180,21 @@ def test_calendar_file_and_organizer_page():
 
 def test_num_filter():
     assert create_app().jinja_env.filters["num"](2328) == "2,328"
+
+
+def test_explore_calendar_view():
+    import html as h
+    from app.events import EventStore, now_ist
+
+    client = create_app({"TESTING": True}).test_client()
+    nxt = EventStore().upcoming()[0]
+    month = nxt.start.strftime("%Y-%m")
+    page = h.unescape(client.get(f"/events?view=calendar&month={month}").get_data(as_text=True))
+    assert nxt.start.strftime("%B %Y") in page and nxt.title in page and "Next month" in page
+    # Months before this one aren't browsable, and nonsense falls back to this month.
+    this_month = now_ist().strftime("%B %Y")
+    assert this_month in h.unescape(client.get("/events?view=calendar&month=2001-01").get_data(as_text=True))
+    assert this_month in h.unescape(client.get("/events?view=calendar&month=banana").get_data(as_text=True))
+    # Filters still apply.
+    page = h.unescape(client.get(f"/events?view=calendar&month={month}&city=Nowhere").get_data(as_text=True))
+    assert nxt.title not in page

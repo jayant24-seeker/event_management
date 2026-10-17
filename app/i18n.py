@@ -140,6 +140,13 @@ HI = {
     "Post review": "समीक्षा भेजें",
     "Update review": "समीक्षा बदलें",
     "Booked on": "बुक किया:",
+    # Explore calendar
+    "Grid": "ग्रिड",
+    "Calendar": "कैलेंडर",
+    "Today": "आज",
+    "Continues": "जारी",
+    "Nothing on in this month yet.": "इस महीने अभी कोई इवेंट नहीं।",
+    "Mon": "सोम", "Tue": "मंगल", "Wed": "बुध", "Thu": "गुरु", "Fri": "शुक्र", "Sat": "शनि", "Sun": "रवि",
     # Offline page
     "No internet right now": "अभी इंटरनेट नहीं है",
     "Tickets you've opened on this phone before still work. Show the QR code at the gate.":

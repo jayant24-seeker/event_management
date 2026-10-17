@@ -14,7 +14,7 @@ Every item keeps `pytest` green. Newest at the bottom.
 - [x] Transfer a ticket to someone else
 - [x] Follow organizers; "From organizers you follow" on the homepage
 - [x] Reviews and ratings on past events
-- [ ] Calendar (month) view on Explore
+- [x] Calendar (month) view on Explore
 - [x] Organizer analytics: sales over time chart, ticket mix, check-in rate
 - [x] Site admin: review events, read contact messages
 - [ ] Printable / downloadable ticket
@@ -35,3 +35,4 @@ Every item keeps `pytest` green. Newest at the bottom.
 - Organizer analytics: tickets-per-day bar chart with hover/tap tooltips and a table view, check-in rate, tickets per booking, average ticket, cancellations. Demo sales seeded for three Pink Pace events so the demo dashboard has data (off in tests). Checked no page scrolls sideways at 390px.
 - Site admin (/admin, numbers in ADMIN_PHONES; demo 88888 88888): site totals, every event with Feature/Hide, organizer verification, contact inbox with mark-done. Invisible (404) to everyone else.
 - Link previews: WhatsApp/Facebook ignore SVG, so each event now has a 1200x630 PNG card (its colours, title, date, price) drawn with Pillow and cached; a site-wide card for every other page. Bundled the Mukta font (OFL). Hindi titles fall back to "<category> in <city>" until the server has libraqm for Devanagari shaping.
+- Explore calendar: Grid/Calendar toggle; month grid on tablet+ (times, +N more), day-by-day agenda with posters on phones; filters still apply; multi-day events on each day; months limited to the next two years and marked nofollow.

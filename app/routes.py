@@ -71,6 +71,7 @@ def explore():
         "upcoming": len(s.search(when="upcoming", **base)),
         "past": len(s.search(when="past", **base)),
     }
+    calendar = month_calendar(s, args.get("month"), base) if when == "upcoming" and args.get("view") == "calendar" else None
     page = max(args.get("page", 1, type=int), 1)
     pages = max((len(results) + PER_PAGE - 1) // PER_PAGE, 1)
     page = min(page, pages)
@@ -91,7 +92,41 @@ def explore():
         price_filters=PRICE_FILTERS,
         sorts=SORTS,
         popular=s.search(sort="popular")[:4] if not results else [],
+        calendar=calendar,
     )
+
+
+def month_calendar(s, month_arg, filters):
+    """Weeks (Monday first) of the month, each day with the upcoming events running that day."""
+    import calendar as cal
+    from datetime import date, timedelta
+
+    today = now_ist().date()
+    try:
+        year, month = (int(x) for x in (month_arg or "").split("-"))
+        first = date(year, month, 1)
+    except ValueError:
+        first = today.replace(day=1)
+    # Only this month and the next 23 can be browsed (keeps crawlers out of endless months).
+    first = min(max(first, today.replace(day=1)), (today.replace(day=1) + timedelta(days=31 * 23)).replace(day=1))
+    by_day = {}
+    for e in s.search(when="upcoming", **filters):
+        # A night that ends at 1 am belongs to the day it started; multi-day events show on each day.
+        day, last = e.start.date(), min((e.end - timedelta(hours=6)).date(), e.start.date() + timedelta(days=6))
+        last = max(last, day)
+        while day <= last:
+            by_day.setdefault(day, []).append(e)
+            day += timedelta(days=1)
+    weeks = [[(d, by_day.get(d, [])) for d in week] for week in cal.Calendar().monthdatescalendar(first.year, first.month)]
+    prev_month = (first - timedelta(days=1)).replace(day=1)
+    next_month = (first + timedelta(days=32)).replace(day=1)
+    return {
+        "first": first, "weeks": weeks, "today": today,
+        "prev": prev_month.strftime("%Y-%m") if prev_month >= today.replace(day=1) else None,
+        "next": next_month.strftime("%Y-%m"),
+        "agenda": [(d, evs) for week in weeks for d, evs in week if evs and d.month == first.month and d >= today],
+        "count": len({e.slug for week in weeks for d, evs in week if d.month == first.month for e in evs}),
+    }
 
 
 def _category_counts(events):
