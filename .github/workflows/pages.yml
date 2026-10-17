@@ -1,0 +1,46 @@
+# Publishes a browsable preview of the website on GitHub Pages on every push.
+# The Flask app renders every public page to static files (tools/build_static.py);
+# sign-in, booking and organizer tools need the live server and show an explainer instead.
+name: Website preview (GitHub Pages)
+
+on:
+  push:
+    branches: [auto-improvements, main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Run the tests
+        run: python -m pytest -q
+      - name: Render the site
+        run: python tools/build_static.py --base "/${{ github.event.repository.name }}" --host "${{ github.repository_owner }}.github.io" --out _site
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

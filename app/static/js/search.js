@@ -61,7 +61,7 @@
       controller?.abort();
       controller = new AbortController();
       try {
-        const res = await fetch(`/api/suggest?q=${encodeURIComponent(q)}`, { signal: controller.signal });
+        const res = await fetch(`${document.body.dataset.root || ""}/api/suggest?q=${encodeURIComponent(q)}`, { signal: controller.signal });
         if (!res.ok) return close();
         render(await res.json(), q);
       } catch (err) {

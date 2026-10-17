@@ -16,7 +16,8 @@
   });
 
   // Installable app + tickets that open offline. Signed out: forget any saved ticket pages.
-  if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js").catch(() => {});
+  const root = document.body.dataset.root || "";
+  if ("serviceWorker" in navigator && !document.body.dataset.preview) navigator.serviceWorker.register(`${root}/sw.js`).catch(() => {});
   if (document.body.dataset.auth !== "1") {
     if ("caches" in window) caches.delete("eventouse-pages").catch(() => {});
     return;
@@ -25,7 +26,7 @@
   let guestSaved = [];
   try { guestSaved = JSON.parse(localStorage.getItem(KEY)) || []; } catch {}
   if (!guestSaved.length) return;
-  fetch("/api/saved", {
+  fetch(`${root}/api/saved`, {
     method: "POST",
     headers: { "Content-Type": "application/json", "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]').content },
     body: JSON.stringify({ slugs: guestSaved, saved: true }),
