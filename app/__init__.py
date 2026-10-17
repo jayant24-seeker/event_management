@@ -8,6 +8,12 @@ from flask import Flask, abort, g, render_template, request, session
 from .models import User, add_missing_columns, db
 
 
+# Razorpay Checkout loads a script and opens its own frames.
+RZP_SCRIPT = " https://checkout.razorpay.com"
+RZP_FRAMES = " https://api.razorpay.com https://checkout.razorpay.com"
+RZP_CONNECT = " https://lumberjack.razorpay.com https://api.razorpay.com"
+
+
 def create_app(config=None):
     app = Flask(__name__, instance_relative_config=True)
     Path(app.instance_path).mkdir(parents=True, exist_ok=True)
@@ -32,6 +38,11 @@ def create_app(config=None):
         MAIL_USERNAME=os.environ.get("MAIL_USERNAME", ""),
         MAIL_PASSWORD=os.environ.get("MAIL_PASSWORD", ""),
         MAIL_FROM=os.environ.get("MAIL_FROM", "Eventouse <tickets@eventouse.com>"),
+        # Payments: "test" (the built-in test page) or "razorpay" with the keys below.
+        PAYMENT_PROVIDER=os.environ.get("PAYMENT_PROVIDER", "test"),
+        RAZORPAY_KEY_ID=os.environ.get("RAZORPAY_KEY_ID", ""),
+        RAZORPAY_KEY_SECRET=os.environ.get("RAZORPAY_KEY_SECRET", ""),
+        RAZORPAY_WEBHOOK_SECRET=os.environ.get("RAZORPAY_WEBHOOK_SECRET", ""),
         # Eventouse staff who can open /admin: comma-separated +91 numbers.
         ADMIN_PHONES=os.environ.get("ADMIN_PHONES", ""),
         # Full site address for links in texts sent outside a web request (reminders).
@@ -88,7 +99,7 @@ def create_app(config=None):
     def load_user_and_check_csrf():
         uid = session.get("uid")
         g.user = db.session.get(User, uid) if uid else None
-        if request.method == "POST":
+        if request.method == "POST" and not request.path.startswith("/webhooks/"):  # webhooks are signed instead
             sent = request.form.get("csrf_token") or request.headers.get("X-CSRF-Token")
             if not sent or not secrets.compare_digest(sent, session.get("csrf", "")):
                 abort(400, "Your session expired. Please go back and try again.")
@@ -130,11 +141,13 @@ def create_app(config=None):
         response.headers.setdefault("X-Frame-Options", "SAMEORIGIN")
         # Only our own scripts (plus inline ones carrying this request's nonce) may run.
         # Skipped in debug so the Werkzeug debugger's inline scripts still work.
+        razorpay = app.config["PAYMENT_PROVIDER"] == "razorpay"
         if response.mimetype == "text/html" and not app.debug:
             response.headers.setdefault("Content-Security-Policy", "; ".join([
-                "default-src 'self'", f"script-src 'self' 'nonce-{csp_nonce()}'",
+                "default-src 'self'", f"script-src 'self' 'nonce-{csp_nonce()}'" + (RZP_SCRIPT if razorpay else ""),
                 "style-src 'self' 'unsafe-inline'", "font-src 'self'",
-                "img-src 'self' data: blob:", "frame-src https://www.google.com", "connect-src 'self'", "worker-src 'self'",
+                "img-src 'self' data: blob:", "frame-src https://www.google.com" + (RZP_FRAMES if razorpay else ""),
+                "connect-src 'self'" + (RZP_CONNECT if razorpay else ""), "worker-src 'self'",
                 "manifest-src 'self'", "object-src 'none'", "base-uri 'self'", "form-action 'self'", "frame-ancestors 'self'",
             ]))
         response.headers.setdefault("Permissions-Policy", "camera=(self), microphone=(), geolocation=(self)")

@@ -16,10 +16,13 @@
   <h1 class="mt-1 text-3xl font-extrabold">Pay {{ b.total|inr }}</h1>
   <p class="mt-2 text-ink-soft">{{ _('Your seats are held until ') }}<strong class="text-ink">{{ hold_ends|ist('%-I:%M %p') }}</strong>.</p>
 
+  {% if provider == 'test' %}
   <div class="mt-6 rounded-card border-2 border-dashed border-marigold bg-marigold/10 p-5">
     <p class="font-bold">{{ _('Test mode') }}</p>
-    <p class="mt-1 text-sm">No real money moves. Before launch this page becomes Razorpay checkout (UPI, cards, net banking, wallets).</p>
+    <p class="mt-1 text-sm">No real money moves. Set PAYMENT_PROVIDER=razorpay with your keys to take real payments.</p>
   </div>
+  {% endif %}
+  {% if error %}<p class="mt-6 rounded-card bg-rani/10 p-4 font-semibold text-rani" role="alert">{{ error }}</p>{% endif %}
 
   <ul class="mt-6 divide-y divide-line rounded-card border border-line bg-paper-raised text-sm">
     {% for a in b.attendees %}<li class="flex justify-between p-4"><span>{{ a.ticket_name }} · {{ a.name }}</span><span class="font-semibold">{{ a.price|inr }}</span></li>{% endfor %}
@@ -27,11 +30,45 @@
     <li class="flex justify-between p-4 text-base font-bold"><span>{{ _('Total') }}</span><span>{{ b.total|inr }}</span></li>
   </ul>
 
+  {% if provider == 'razorpay' and b.payment_order %}
+  {# Razorpay Checkout: UPI, cards, net banking, wallets. Its handler posts the signed result to us. #}
+  <button type="button" class="btn-primary btn-lg mt-6 w-full" data-rzp
+          data-key="{{ config.RAZORPAY_KEY_ID }}" data-order="{{ b.payment_order }}" data-amount="{{ b.total * 100 }}"
+          data-name="{{ site_name }}" data-description="{{ e.title }}" data-contact="{{ current_user.phone }}"
+          data-email="{{ current_user.email }}" data-prefill-name="{{ current_user.name }}">Pay {{ b.total|inr }}</button>
+  <form method="post" action="{{ url_for('booking.razorpay_return', ref=b.ref) }}" hidden data-rzp-form>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="razorpay_order_id"><input type="hidden" name="razorpay_payment_id"><input type="hidden" name="razorpay_signature">
+  </form>
+  <form method="post" class="mt-3"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button name="action" value="cancel" class="btn-ghost w-full">{{ _('Cancel and release seats') }}</button></form>
+  {% else %}
   <form method="post" class="mt-6 grid gap-3">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <button name="action" value="pay" class="btn-primary btn-lg w-full">Pay {{ b.total|inr }} (test)</button>
+    {% if provider == 'test' %}<button name="action" value="pay" class="btn-primary btn-lg w-full">Pay {{ b.total|inr }} (test)</button>{% endif %}
     <button name="action" value="cancel" class="btn-ghost w-full">{{ _('Cancel and release seats') }}</button>
   </form>
   {% endif %}
+  {% endif %}
 </div>
+{% endblock %}
+
+{% block scripts %}
+{% if provider == 'razorpay' %}
+<script src="https://checkout.razorpay.com/v1/checkout.js" defer></script>
+<script nonce="{{ csp_nonce() }}">
+  document.querySelector("[data-rzp]")?.addEventListener("click", (ev) => {
+    const d = ev.currentTarget.dataset, form = document.querySelector("[data-rzp-form]");
+    new Razorpay({
+      key: d.key, order_id: d.order, amount: d.amount, currency: "INR", name: d.name, description: d.description,
+      prefill: { name: d.prefillName, email: d.email, contact: d.contact }, theme: { color: "#D6246E" },
+      handler: (r) => {
+        form.razorpay_order_id.value = r.razorpay_order_id;
+        form.razorpay_payment_id.value = r.razorpay_payment_id;
+        form.razorpay_signature.value = r.razorpay_signature;
+        form.submit();
+      },
+    }).open();
+  });
+</script>
+{% endif %}
 {% endblock %}

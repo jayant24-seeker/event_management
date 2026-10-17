@@ -26,7 +26,7 @@ Every item keeps `pytest` green. Newest at the bottom.
 - [x] Optimise uploaded posters (resize + WebP)
 - [ ] Recurring events / series (weekly classes with many dates)
 - [ ] Organizer co-admins (more than one person managing an organizer)
-- [ ] Razorpay integration path behind settings (replace test payment page)
+- [x] Razorpay integration path behind settings (replace test payment page)
 - [x] Accessibility audit and fixes
 - [x] Speed: measured every main page (3-8 queries, under 40 ms); fixed the one N+1
 - [x] Organizers: message all attendees (SMS announcement, e.g. venue change)
@@ -45,7 +45,7 @@ Every item keeps `pytest` green. Newest at the bottom.
 - [x] Optimise uploaded posters (resize + WebP)
 - [ ] Recurring events / series (weekly classes with many dates)
 - [ ] Organizer co-admins (more than one person managing an organizer)
-- [ ] Razorpay integration path behind settings (replace test payment page)
+- [x] Razorpay integration path behind settings (replace test payment page)
 
 ## Done
 - Security: per-IP limits on sign-in codes, waitlist and contact form; blocked `/\host` open redirect; bad coupon expiry no longer crashes. Ownership checks reviewed (all OK).
@@ -101,3 +101,4 @@ Every item keeps `pytest` green. Newest at the bottom.
 - Self-hosted fonts: Bricolage Grotesque, Plus Jakarta Sans and Mukta now load from the site (440 KB total, only the subsets a page needs are fetched, the two main ones preloaded). No requests to Google, faster on slow networks, cached by the offline worker; CSP no longer allows Google Fonts.
 - Uploaded posters are re-encoded on upload: at most 900x1200 (portrait) WebP, rotated per the camera, photo metadata (incl. GPS) removed, unreadable files rejected with a clear message.
 - Saved-event nudges: send-reminders also texts people who saved (but have not booked) an event once, when its registration closes within 48 hours, with spots left and a tagged link.
+- Razorpay payments (switch on with PAYMENT_PROVIDER=razorpay and keys): order per booking, Razorpay Checkout on the pay page, server-side signature check, signed webhook as a backup (idempotent), automatic refunds on cancellation, CSP opened for Razorpay only when enabled. Test mode stays the default. Covered by tests with the API mocked; needs real test keys for a live trial.

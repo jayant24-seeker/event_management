@@ -82,6 +82,7 @@ class Booking(db.Model):
     discount = db.Column(db.Integer, nullable=False, default=0)
     coupon_code = db.Column(db.String(30), nullable=True)
     payment_ref = db.Column(db.String(60), nullable=True)
+    payment_order = db.Column(db.String(60), nullable=True, index=True)  # Razorpay order id
     created_at = db.Column(db.DateTime, nullable=False, default=utcnow)
     confirmed_at = db.Column(db.DateTime, nullable=True)
     cancelled_at = db.Column(db.DateTime, nullable=True)

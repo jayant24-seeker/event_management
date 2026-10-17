@@ -44,12 +44,11 @@ Unique titles and descriptions, Open Graph tags, Event JSON-LD on event pages, F
 | `SECRET_KEY` | Signs the login cookie. Use a long random value. |
 | `DATABASE_URL` | Postgres in production (SQLite is fine for development). |
 | `SMS_PROVIDER` + key | Real OTP SMS (MSG91 or Twilio), wired in `app/sms.py`. |
-| Razorpay keys | Replace the test payment page (`/pay/<ref>`) with Razorpay Checkout + webhook. |
+| `PAYMENT_PROVIDER=razorpay` + `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`, `RAZORPAY_WEBHOOK_SECRET` | Real payments with Razorpay Checkout (UPI, cards, net banking). In the Razorpay dashboard, add a webhook to `https://<your-site>/webhooks/razorpay` for `payment.captured`. Cancellations refund through Razorpay automatically. |
 | `SESSION_COOKIE_SECURE=1` | Cookies over HTTPS only. |
 | `MAIL_PROVIDER=smtp` + `MAIL_*` | Booking confirmation emails (logged to the console in development). |
 | `ADMIN_PHONES` | Eventouse staff numbers that can open `/admin`. |
 | `TRUSTED_PROXY=1` | Behind Nginx/Render, so per-IP rate limits see the real visitor. |
-| Real refunds | `booking.cancel` records the refund; call the payment provider's refund API there. |
 
 ## Layout
 

@@ -216,21 +216,35 @@ def own_booking_or_404(ref):
     return booking
 
 
+def confirm_paid(booking, payment_ref):
+    """Mark a booking paid (once) and send the tickets. Safe to call from callback and webhook."""
+    if booking.status == "confirmed":
+        return False
+    if booking.status == "cancelled":
+        # Paid after the seat hold ran out: the money arrived, so the booking stands.
+        current_app.logger.warning("Booking %s paid after its hold expired; confirming anyway", booking.ref)
+    booking.status, booking.confirmed_at, booking.payment_ref = "confirmed", utcnow(), payment_ref
+    db.session.commit()
+    e = store().get(booking.event_slug)
+    if e:
+        send_confirmation(booking, e)
+    return True
+
+
 @bp.route("/pay/<ref>", methods=["GET", "POST"])
 @login_required
 def pay(ref):
-    """TEST MODE payment page. Swap for Razorpay Checkout before launch (see docs)."""
+    """Payment page: Razorpay Checkout, or the built-in test page when PAYMENT_PROVIDER=test."""
+    from . import payments
+
     booking = own_booking_or_404(ref)
     e = get_event_or_404(booking.event_slug)
     if booking.status == "confirmed":
         return redirect(url_for("booking.show", ref=ref))
     expired = booking.status == "cancelled" or booking.created_at < utcnow() - PAYMENT_HOLD
     if request.method == "POST" and not expired:
-        if request.form.get("action") == "pay":
-            booking.status, booking.confirmed_at = "confirmed", utcnow()
-            booking.payment_ref = "TEST-" + secrets.token_hex(6).upper()
-            db.session.commit()
-            send_confirmation(booking, e)
+        if request.form.get("action") == "pay" and payments.provider() == "test":
+            confirm_paid(booking, "TEST-" + secrets.token_hex(6).upper())
             return redirect(url_for("booking.show", ref=ref, new=1))
         booking.status = "cancelled"
         db.session.commit()
@@ -239,8 +253,47 @@ def pay(ref):
     if expired and booking.status == "pending":
         booking.status = "cancelled"
         db.session.commit()
-    return render_template("booking/pay.html", b=booking, e=e, expired=expired,
-                           hold_ends=booking.created_at + PAYMENT_HOLD)
+    error = None
+    if not expired and payments.provider() == "razorpay" and not booking.payment_order:
+        try:
+            booking.payment_order = payments.create_order(booking)
+            db.session.commit()
+        except payments.PaymentError as err:
+            error = str(err)
+    return render_template("booking/pay.html", b=booking, e=e, expired=expired, error=error,
+                           hold_ends=booking.created_at + PAYMENT_HOLD, provider=payments.provider())
+
+
+@bp.route("/pay/<ref>/razorpay", methods=["POST"])
+@login_required
+def razorpay_return(ref):
+    """Razorpay Checkout's handler posts here after a successful payment."""
+    from . import payments
+
+    booking = own_booking_or_404(ref)
+    order, payment, signature = (request.form.get(k, "") for k in
+                                 ("razorpay_order_id", "razorpay_payment_id", "razorpay_signature"))
+    if not booking.payment_order or order != booking.payment_order or not payments.verify_payment(order, payment, signature):
+        flash("We couldn't verify that payment. If money left your account, it will be refunded automatically.")
+        return redirect(url_for("booking.pay", ref=ref))
+    confirm_paid(booking, payment)
+    return redirect(url_for("booking.show", ref=ref, new=1))
+
+
+@bp.route("/webhooks/razorpay", methods=["POST"])
+def razorpay_webhook():
+    """Server-to-server notice from Razorpay (payment.captured / order.paid). Signed, not CSRF-protected."""
+    from . import payments
+
+    if not payments.verify_webhook(request.get_data(), request.headers.get("X-Razorpay-Signature", "")):
+        abort(400)
+    data = request.get_json(silent=True) or {}
+    entity = ((data.get("payload") or {}).get("payment") or {}).get("entity") or {}
+    if data.get("event") in ("payment.captured", "order.paid") and entity.get("order_id"):
+        booking = Booking.query.filter_by(payment_order=entity["order_id"]).first()
+        if booking is not None and booking.total * 100 == entity.get("amount"):
+            confirm_paid(booking, entity.get("id", ""))
+    return jsonify(ok=True)
 
 
 def ticket_qr(attendee):
@@ -273,8 +326,14 @@ def cancel(ref):
         abort(400)
     refund = booking.total * percent // 100
     was_sold_out = e.sold_out
+    from . import payments
+
+    try:
+        payments.refund(booking, refund)  # Razorpay refund; nothing to do for test payments
+    except payments.PaymentError as err:
+        flash(str(err))
+        return redirect(url_for("booking.show", ref=ref))
     booking.status, booking.cancelled_at, booking.refund_amount = "cancelled", utcnow(), refund
-    # TEST MODE: a real refund goes through the payment provider here (Razorpay refunds API).
     db.session.commit()
     if was_sold_out:
         notify_waitlist(e, len(booking.attendees))
