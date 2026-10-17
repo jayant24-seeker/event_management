@@ -45,20 +45,28 @@ Unique titles and descriptions, Open Graph tags, Event JSON-LD on event pages, F
 | `SMS_PROVIDER` + key | Real OTP SMS (MSG91 or Twilio), wired in `app/sms.py`. |
 | Razorpay keys | Replace the test payment page (`/pay/<ref>`) with Razorpay Checkout + webhook. |
 | `SESSION_COOKIE_SECURE=1` | Cookies over HTTPS only. |
+| `MAIL_PROVIDER=smtp` + `MAIL_*` | Booking confirmation emails (logged to the console in development). |
+| `ADMIN_PHONES` | Eventouse staff numbers that can open `/admin`. |
+| `TRUSTED_PROXY=1` | Behind Nginx/Render, so per-IP rate limits see the real visitor. |
+| Real refunds | `booking.cancel` records the refund; call the payment provider's refund API there. |
 
 ## Layout
 
 | Path | What |
 | --- | --- |
 | `app/events.py` | Event model: Upcoming/Past split, badges (Free, Selling fast, Sold out, Event ended), search, filters, search suggestions, city/category counts, publish checks that block blank fields and placeholder text |
-| `app/routes.py` | `/` homepage, `/events` Explore page (search, filters, Upcoming/Past tabs), `/api/suggest` search suggestions, `/events/<slug>` event page, `/events/<slug>.ics` calendar file, `/organizers/<slug>` organizer profile |
-| `app/static/js/` | `hero.js` (homepage slider), `search.js` (live suggestions), `explore.js` (filter bar), `event.js` (ticket picker, countdown, save, share, results search) |
+| `app/routes.py` | `/` homepage, `/events` Explore page (search, filters, Upcoming/Past tabs, Grid/Calendar), `/api/suggest` search suggestions, `/events/<slug>` event page, `/events/<slug>.ics` calendar file, `/events/<slug>/share.png` link preview, `/organizers/<slug>` organizer profile (+ follow), PWA files (`/manifest.webmanifest`, `/sw.js`, `/offline`) |
+| `app/static/js/` | `hero.js` (homepage slider), `search.js` (live suggestions), `explore.js` (filter bar), `event.js` (ticket picker, countdown, save, share, results search), `near.js` (Near me, on-device), `sw.js` (offline tickets), `site.js` |
 | `app/data/events.json` | 16 dummy events (7 cities incl. Online, 3 past with results) |
 | `app/data/organizers.json` | 9 organizer profiles |
-| `app/models.py` | Database tables: organizers, events, users, OTP codes, bookings, attendees (tickets), coupons, saved events, waitlist |
+| `app/models.py` | Database tables: organizers, events, users, OTP codes, bookings, attendees (tickets), coupons, saved events, waitlist, follows, reviews, organizer updates, contact messages. New nullable columns are added to older databases on startup |
 | `app/auth.py` | Phone + OTP sign-in, profile, sign out |
-| `app/booking.py` | Checkout with attendee details and coupons, test payment, QR tickets, My tickets, waitlist, saved events |
-| `app/organizer.py` | Organizer profile, dashboard, create/edit events (publish checks), attendee list + CSV, coupons, waitlist, QR check-in |
+| `app/booking.py` | Checkout with attendee details, coupons and group discounts, test payment, confirmations (SMS + email), QR tickets and per-ticket passes, transfers, cancellations with refunds, waitlist (with SMS when seats open), reviews, saved events |
+| `app/organizer.py` | Organizer profile, dashboard, create/edit/duplicate events (publish checks), sales chart and key numbers, attendee list + CSV, coupons, waitlist, messages to ticket holders, QR check-in |
+| `app/admin.py` | `/admin` for the Eventouse team: totals, feature/hide events, verify organizers, contact inbox |
+| `app/share.py` | 1200x630 PNG link previews (Pillow, Mukta font in `app/fonts/`) |
+| `app/mailer.py` | Email sending (console in development, SMTP in production) |
+| `app/ratelimit.py` | Per-IP limits on OTP, waitlist and contact form |
 | `app/posters.py` | Original SVG posters/banners for demo events and organizer events without artwork |
 | `app/sms.py` | SMS sending (console in development) |
 | `app/seed.py` | Loads `data/*.json` into an empty database; `flask seed --reset` |
@@ -69,6 +77,10 @@ Unique titles and descriptions, Open Graph tags, Event JSON-LD on event pages, F
 | `tailwind.config.js` | Fonts, colors, shadows |
 | `tools/make_posters.py` | Regenerates the demo events' posters and banners |
 | `/styleguide` | Live design-system page |
+
+## Overnight improvements
+
+Branch `auto-improvements` adds reviews, follows, refunds, transfers, offline tickets, analytics, an admin area and more. The full list, newest last, is in [docs/IMPROVEMENTS.md](docs/IMPROVEMENTS.md).
 
 ## Build plan
 
