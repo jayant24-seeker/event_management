@@ -163,6 +163,20 @@
   </section>
 
   <div class="mt-10 grid gap-6 lg:grid-cols-2">
+    {# More dates of the same event #}
+    <section id="repeat" class="scroll-mt-24 rounded-card border border-line bg-paper-raised p-5">
+      <h2 class="text-xl font-bold">Add more dates</h2>
+      <p class="mt-1 text-sm text-ink-soft">For classes, meetups and shows that repeat. Each date gets its own tickets; visitors see the other dates on the event page.</p>
+      <form method="post" action="{{ url_for('org.repeat_event', slug=row.slug) }}" class="mt-3 flex flex-wrap items-end gap-2">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label class="block"><span class="mb-1 block text-sm font-semibold">Repeat</span>
+          <select name="every" class="select"><option value="weekly">Every week</option><option value="fortnightly">Every 2 weeks</option><option value="every4weeks">Every 4 weeks</option></select></label>
+        <label class="block"><span class="mb-1 block text-sm font-semibold">More dates</span>
+          <input name="count" type="number" min="1" max="12" value="4" class="input w-24 py-2.5"></label>
+        <button class="btn-dark py-2.5">Add dates</button>
+      </form>
+    </section>
+
     {# Share links that remember where bookings came from #}
     <section id="sources" class="scroll-mt-24 rounded-card border border-line bg-paper-raised p-5">
       <h2 class="text-xl font-bold">Where bookings come from</h2>

@@ -293,3 +293,25 @@ def test_uploaded_poster_is_resized_to_webp(app, client, tmp_path):
                                                            poster=(_io.BytesIO(b"\x89PNG not really"), "x.png")),
                        content_type="multipart/form-data")
     assert "couldn't be read" in text(junk)
+
+
+def test_repeat_event_creates_a_series(app, client):
+    sign_in(client, phone="9999999999")
+    post(client, "/organizer/events/race-day-nutrition-masterclass/repeat", every="weekly", count="3")
+    with app.app_context():
+        rows = EventRow.query.filter(EventRow.slug.like("race-day-nutrition-masterclass%")).all()
+        assert len(rows) == 4 and {r.data.get("series") for r in rows} == {"race-day-nutrition-masterclass"}
+        starts = sorted(r.data["start"] for r in rows)
+        assert starts[1][:10] == "2026-11-15" and all(t["sold"] == 0 for r in rows if r.slug != "race-day-nutrition-masterclass" for t in r.data["tickets"])
+        assert all(r.status == "published" for r in rows)
+    page = text(client.get("/events/race-day-nutrition-masterclass"))
+    assert "Other dates" in page and "15 Nov" in page
+    assert post(client, "/organizer/events/race-day-nutrition-masterclass/repeat", every="daily", count="3").status_code == 302
+
+
+def test_series_shows_once_in_listings(client):
+    sign_in(client, phone="9999999999")
+    post(client, "/organizer/events/race-day-nutrition-masterclass/repeat", every="weekly", count="2")
+    home = text(client.get("/"))
+    assert home.split("Don't miss these")[1].count("Race-Day Nutrition Masterclass</h3>") == 1
+    assert "+2 more dates" in text(client.get("/events"))

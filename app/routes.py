@@ -5,7 +5,7 @@ from html import escape
 from flask import (Blueprint, Response, abort, current_app, flash, g, jsonify, redirect, render_template, request,
                    send_from_directory, url_for)
 
-from .events import DATE_FILTERS, PRICE_FILTERS, SORTS, EventStore, now_ist
+from .events import DATE_FILTERS, PRICE_FILTERS, SORTS, EventStore, collapse_series, now_ist
 from .models import rating_summary
 from .ratelimit import hit
 
@@ -22,7 +22,7 @@ def store():
 @bp.route("/")
 def home():
     s = store()
-    upcoming = s.upcoming()
+    upcoming = collapse_series(s.upcoming())
     followed = set(followed_slugs())
     return render_template(
         "home.html",
@@ -67,11 +67,11 @@ def explore():
         "sort": args.get("sort") if args.get("sort") in dict(SORTS) else "date",
     }
     base = {k: f[k] for k in ("q", "city", "category", "price")}
-    results = s.search(when=when, sort=f["sort"], date=f["date"], **base)
+    results = collapse_series(s.search(when=when, sort=f["sort"], date=f["date"], **base))
     # Tab counts use the same search, city, category and price, but ignore the date filter.
     tab_counts = {
-        "upcoming": len(s.search(when="upcoming", **base)),
-        "past": len(s.search(when="past", **base)),
+        "upcoming": len(collapse_series(s.search(when="upcoming", **base))),
+        "past": len(collapse_series(s.search(when="past", **base))),
     }
     calendar = month_calendar(s, args.get("month"), base) if when == "upcoming" and args.get("view") == "calendar" else None
     per_page = 10_000 if current_app.config.get("STATIC_PREVIEW") else PER_PAGE  # no paging in the static preview
@@ -180,8 +180,12 @@ def event(slug):
 
     remember_source(slug)
     org_slugs = [x.slug for x in s.by_organizer(e.organizer)]
+    series = e.raw.get("series")
+    other_dates = sorted((x for x in s.upcoming() if series and x.raw.get("series") == series and x.slug != e.slug),
+                         key=lambda x: x.start)[:8]
     return render_template("event.html", e=e, similar=s.similar(e), org_events=len(org_slugs),
-                           org_rating=rating_summary(org_slugs), **review_context(e), **questions_context(e))
+                           org_rating=rating_summary(org_slugs), other_dates=other_dates,
+                           **review_context(e), **questions_context(e))
 
 
 @bp.app_template_global()
@@ -401,7 +405,7 @@ def city(slug):
     name = next((c for c in s.cities() if city_slug(c) == slug and c != "Online"), None)
     if name is None:
         abort(404)
-    upcoming = [e for e in s.upcoming() if e.city == name]
+    upcoming = collapse_series([e for e in s.upcoming() if e.city == name])
     weekend = s.search(city=name, date="weekend")
     return render_template("city.html", city=name, upcoming=upcoming, weekend=weekend,
                            past=[e for e in s.past() if e.city == name][:4],

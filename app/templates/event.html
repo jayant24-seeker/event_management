@@ -466,6 +466,15 @@
           <p class="font-display text-2xl font-extrabold">{{ _('Free') if e.is_free else price_label(e) }}</p>
           {% if e.registered %}<p class="text-sm text-ink-soft"><strong class="text-ink">{{ e.registered|num }}</strong> {{ _('registered') }}</p>{% endif %}
         </div>
+        {% if other_dates %}
+        <div class="mt-3">
+          <p class="text-xs font-semibold text-ink-soft">{{ _('Other dates') }}</p>
+          <div class="no-scrollbar mt-1.5 flex gap-2 overflow-x-auto">
+            <span class="shrink-0 rounded-xl bg-ink px-3 py-1.5 text-center text-xs font-bold text-paper" aria-current="true">{{ e.start.strftime('%a') }}<br>{{ e.start.strftime('%d %b') }}</span>
+            {% for x in other_dates %}<a href="{{ url_for('main.event', slug=x.slug) }}" class="shrink-0 rounded-xl border border-line px-3 py-1.5 text-center text-xs font-semibold hover:border-ink {{ 'opacity-50' if x.sold_out }}">{{ x.start.strftime('%a') }}<br>{{ x.start.strftime('%d %b') }}</a>{% endfor %}
+          </div>
+        </div>
+        {% endif %}
         {% set recent = booked_recently(e.slug) %}
         {% if recent >= 3 %}<p class="mt-2 flex items-center gap-1.5 text-sm font-semibold text-rani-dark"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2c1 3.5-2 5-2 8a2 2 0 0 0 4 0c0-1 .5-2 1-2.5C17 9 19 11.5 19 14a7 7 0 0 1-14 0c0-4 3-6.5 7-12z"/></svg>{{ _('%d booked in the last day')|format(recent) }}</p>{% endif %}
         <div class="mt-3 grid grid-cols-4 gap-2 text-center" data-countdown="{{ e.start.isoformat() }}" aria-label="Time until the event starts">

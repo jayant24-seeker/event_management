@@ -56,6 +56,7 @@ class Event:
     raw: dict
     tickets: list = field(default_factory=list)
     org: dict = field(default_factory=dict)  # organizer profile, filled in by EventStore
+    more_dates: int = 0  # set by collapse_series for listings
 
     def __getattr__(self, name):
         # Plain JSON fields (title, city, faqs, ...) read straight from raw.
@@ -285,6 +286,22 @@ def _build(raw, organizers, sales):
         ticket.sold += sales.get((raw["slug"], ticket.name), 0)
         tickets.append(ticket)
     return Event(raw=raw, tickets=tickets, org=organizers.get(raw.get("organizer"), {}))
+
+
+def collapse_series(events):
+    """Show a repeating event once, at its first date in the list, noting how many more dates it has."""
+    out, seen = [], {}
+    for e in events:
+        key = e.raw.get("series")
+        if not key:
+            out.append(e)
+        elif key in seen:
+            seen[key].more_dates += 1
+        else:
+            e.more_dates = 0
+            seen[key] = e
+            out.append(e)
+    return out
 
 
 class EventStore:

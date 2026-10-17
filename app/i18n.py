@@ -284,6 +284,9 @@ HI = {
     "Also within reach": "आस-पास के शहरों में",
     "Worth the trip from %s.": "%s से जाने लायक।",
     "%(km)d km from %(city)s": "%(city)s से %(km)d किमी",
+    "Other dates": "दूसरी तारीखें",
+    "+%d more dates": "+%d और तारीखें",
+    "+1 more date": "+1 और तारीख",
     # Offline page
     "No internet right now": "अभी इंटरनेट नहीं है",
     "Tickets you've opened on this phone before still work. Show the QR code at the gate.":

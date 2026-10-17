@@ -393,27 +393,66 @@ def edit_event(slug):
     return render_template("organizer/event_form.html", **form_context(row.data, None, row))
 
 
-@bp.route("/events/<slug>/duplicate", methods=["POST"])
-@organizer_required
-def duplicate_event(slug):
-    """Start the next edition: same details as a draft, a year later (same weekday), no sales."""
-
-    row = own_event_or_404(slug)
-    raw = {k: v for k, v in row.data.items() if k not in ("results", "featured")}
-    shift = timedelta(days=364)  # 52 weeks keeps the weekday
+def shifted_copy(data, shift):
+    """A fresh copy of an event's details moved by `shift`: no sales, results or featuring."""
+    raw = {k: v for k, v in data.items() if k not in ("results", "featured")}
     for key in ("start", "end", "reg_closes"):
         if raw.get(key):
             try:
                 raw[key] = (datetime.fromisoformat(raw[key]) + shift).strftime("%Y-%m-%dT%H:%M")
             except ValueError:
                 pass  # left as is; the publish checks will ask for a valid date
+    raw["tickets"] = [dict(t, sold=0) for t in raw.get("tickets", [])]
+    if raw.get("poster", "").startswith("uploads/art/"):
+        raw.pop("poster", None)  # generated posters show the date, so draw a new one
+        raw.pop("banner", None)
+        if raw.get("start") and raw.get("city"):
+            raw["poster"], raw["banner"] = write_art(raw, current_app.config["MEDIA_ROOT"], folder="uploads/art")
+    return raw
+
+
+REPEATS = {"weekly": 7, "fortnightly": 14, "every4weeks": 28}
+
+
+@bp.route("/events/<slug>/repeat", methods=["POST"])
+@organizer_required
+def repeat_event(slug):
+    """Add more dates: copies every week / 2 weeks / 4 weeks, linked as one series."""
+    row = own_event_or_404(slug)
+    step = REPEATS.get(request.form.get("every"))
+    count = request.form.get("count", type=int) or 0
+    if not step or not 1 <= count <= 12:
+        flash("Pick how often and how many more dates (1 to 12).")
+        return redirect(url_for("org.event_admin", slug=slug) + "#repeat")
+    series = row.data.get("series") or row.slug
+    if row.data.get("series") != series:
+        row.data = dict(row.data, series=series)
+    made, drafts = 0, 0
+    for i in range(1, count + 1):
+        raw = shifted_copy(row.data, timedelta(days=step * i))
+        raw["series"] = series
+        raw["slug"] = unique_slug(EventRow, slugify(f"{raw['title']} {raw.get('start', '')[:10]}"))
+        raw["organizer"] = g.org.slug
+        live = row.status == "published" and not checks_for(raw)
+        db.session.add(EventRow(slug=raw["slug"], organizer_slug=g.org.slug, status="published" if live else "draft", data=raw))
+        made += 1
+        drafts += not live
+    db.session.commit()
+    flash(f"Added {made} more date{'s' if made != 1 else ''}." + (f" {drafts} saved as drafts to check." if drafts else ""))
+    return redirect(url_for("org.dashboard"))
+
+
+@bp.route("/events/<slug>/duplicate", methods=["POST"])
+@organizer_required
+def duplicate_event(slug):
+    """Start the next edition: same details as a draft, a year later (same weekday), no sales."""
+
+    row = own_event_or_404(slug)
+    raw = shifted_copy(row.data, timedelta(days=364))  # 52 weeks keeps the weekday
+    raw.pop("series", None)
     old_year, new_year = row.data.get("start", "")[:4], raw.get("start", "")[:4]
     if old_year.isdigit() and old_year in raw.get("title", ""):
         raw["title"] = raw["title"].replace(old_year, new_year)
-    raw["tickets"] = [dict(t, sold=0) for t in raw.get("tickets", [])]
-    if raw.get("poster", "").startswith("uploads/art/"):
-        raw.pop("poster", None)  # the generated poster shows the old date; a new one is drawn on save
-        raw.pop("banner", None)
     year = raw.get("start", "")[:4]
     raw["slug"] = unique_slug(EventRow, slugify(raw["title"] if year in raw["title"] else f"{raw['title']} {year}"))
     db.session.add(EventRow(slug=raw["slug"], organizer_slug=g.org.slug, status="draft", data=raw))

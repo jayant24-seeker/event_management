@@ -38,7 +38,7 @@
     <p class="text-xs font-bold uppercase tracking-wider text-rani">{{ e.category }}</p>
     <h3 class="mt-1 text-lg font-bold leading-snug group-hover:text-rani">{{ e.title }}</h3>
     <p class="mt-1 text-sm text-ink-soft">{{ e.venue.name if e.is_online else e.city ~ ' · ' ~ e.venue.name }}</p>
-    <p class="mt-1.5 text-sm font-semibold">{{ _('Event ended') if past else price_label(e) }}</p>
+    <p class="mt-1.5 text-sm font-semibold">{{ _('Event ended') if past else price_label(e) }}{% if e.more_dates %} <span class="ml-1 rounded-full bg-ink/5 px-2 py-0.5 text-xs font-semibold text-ink-soft">{{ _('+%d more dates')|format(e.more_dates) if e.more_dates > 1 else _('+1 more date') }}</span>{% endif %}</p>
   </div>
 </a>
 {%- endmacro %}
