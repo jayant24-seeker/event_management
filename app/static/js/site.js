@@ -5,6 +5,13 @@
   document.addEventListener("click", (ev) => menus.forEach((m) => { if (m.open && !m.contains(ev.target)) m.open = false; }));
   document.addEventListener("keydown", (ev) => { if (ev.key === "Escape") menus.forEach((m) => { m.open = false; }); });
 
+  // Toasts: dismiss on tap, and on their own after 6 seconds (longer messages get a bit more time).
+  document.querySelectorAll("[data-toasts] .toast").forEach((t) => {
+    const leave = () => { t.classList.add("is-leaving"); setTimeout(() => t.remove(), 260); };
+    t.querySelector("[data-toast-close]")?.addEventListener("click", leave);
+    setTimeout(leave, 6000 + t.textContent.length * 30);
+  });
+
   // Confirm before destructive actions: <form data-confirm="..."> or <button data-confirm="...">.
   document.addEventListener("submit", (ev) => {
     const msg = ev.submitter?.dataset.confirm || ev.target.dataset.confirm;

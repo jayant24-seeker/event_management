@@ -97,8 +97,14 @@
   </header>
 
   {% with messages = get_flashed_messages() %}{% if messages %}
-  <div class="container-site mt-4 print:hidden" role="status">
-    {% for m in messages %}<p class="rounded-xl bg-night px-4 py-3 text-sm font-semibold text-day">{{ m }}</p>{% endfor %}
+  {# Toasts: float above the content (and the phone tab bar), dismiss themselves after a while. #}
+  <div class="pointer-events-none fixed inset-x-0 bottom-[calc(5rem+env(safe-area-inset-bottom))] z-50 flex flex-col items-center gap-2 px-4 md:bottom-6 print:hidden" role="status" data-toasts>
+    {% for m in messages %}
+    <p class="toast pointer-events-auto flex w-full max-w-md items-start gap-3 rounded-2xl bg-night px-4 py-3 text-sm font-semibold text-day shadow-poster">
+      <span class="flex-1">{{ m }}</span>
+      <button type="button" class="-my-1 -mr-1 grid h-7 w-7 shrink-0 place-items-center rounded-full text-lg text-day/70 hover:bg-day/10 hover:text-day" aria-label="Dismiss" data-toast-close>×</button>
+    </p>
+    {% endfor %}
   </div>
   {% endif %}{% endwith %}
 
