@@ -36,6 +36,8 @@
     </div>
   </div>
 
+  {% set has_events = upcoming or past %}
+  {% if has_events %}
   <dl class="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
     {% for label, value in [('Revenue', totals[1]|inr), ('Tickets sold on ' ~ site_name, totals[0]|num), ('Checked in', totals[2]|num), ('On waitlists', waitlist|num), ('Followers', followers|num)] %}
     {# The two money numbers lead; the rest stay quiet. #}
@@ -89,12 +91,29 @@
     </form>
   </details>
 
-  <h2 class="mt-10 text-xl font-bold">Upcoming and drafts</h2>
+  {% endif %}
+
+  {% if has_events %}<h2 class="mt-10 text-xl font-bold">Upcoming and drafts</h2>{% endif %}
   <div class="mt-4 space-y-3">
     {% for r, e in upcoming %}{{ event_row(r, e) }}{% else %}
-    <div class="rounded-card border border-dashed border-line p-10 text-center">
-      <p class="font-semibold">No events yet.</p>
-      <a href="{{ url_for('org.new_event') }}" class="btn-primary mt-4">Create your first event</a>
+    {# First visit: the four steps from nothing to people at the gate. #}
+    <div class="rounded-card border border-line bg-paper-raised p-6 sm:p-8">
+      <p class="font-display text-2xl font-extrabold">Let's get your first event live</p>
+      <p class="mt-1 text-ink-soft">Most organizers are done in about ten minutes.</p>
+      <ol class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {% for title, text in [
+          ('Create the event', 'Title, date, venue, tickets and a few lines about it. No poster? We make one.'),
+          ('Publish', 'We check for blanks and "TBD" so the page never looks unfinished.'),
+          ('Share the link', 'Tagged links for Instagram and WhatsApp show which ones sell, and you can print a flyer with a QR code.'),
+          ('Check people in', 'Scan tickets with your phone camera, or add volunteers to your team.'),
+        ] %}
+        <li class="flex gap-3">
+          <span class="grid h-8 w-8 shrink-0 place-items-center rounded-full {{ 'bg-rani text-white' if loop.first else 'bg-ink/5 text-ink-soft' }} font-bold">{{ loop.index }}</span>
+          <span><span class="block font-semibold">{{ title }}</span><span class="mt-0.5 block text-sm text-ink-soft">{{ text }}</span></span>
+        </li>
+        {% endfor %}
+      </ol>
+      <a href="{{ url_for('org.new_event') }}" class="btn-primary btn-lg mt-6">Create your first event</a>
     </div>
     {% endfor %}
   </div>
