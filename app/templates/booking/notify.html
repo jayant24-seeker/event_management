@@ -5,21 +5,21 @@
 <div class="container-site max-w-md py-12">
   <a href="{{ url_for('main.event', slug=e.slug) }}" class="text-sm font-semibold text-rani hover:underline">← {{ e.title }}</a>
   {% if done %}
-  <h1 class="mt-3 text-3xl font-extrabold">You're on the list</h1>
-  {% if position %}<p class="mt-4 inline-flex items-baseline gap-2 rounded-card bg-ink px-5 py-3 text-paper"><span class="font-display text-4xl font-extrabold">#{{ position }}</span><span class="text-sm text-paper/80">in line</span></p>{% endif %}
+  <h1 class="mt-3 text-3xl font-extrabold">{{ _("You're on the list") }}</h1>
+  {% if position %}<p class="mt-4 inline-flex items-baseline gap-2 rounded-card bg-ink px-5 py-3 text-paper"><span class="font-display text-4xl font-extrabold">#{{ position }}</span><span class="text-sm text-paper/80">{{ _('in line') }}</span></p>{% endif %}
   <p class="mt-2 text-ink-soft">We'll send an SMS if seats open up for {{ e.title }}. Seats go to whoever books first, so be quick!</p>
-  <a href="{{ url_for('main.explore', category=e.category) }}" class="btn-primary mt-6">See similar events</a>
+  <a href="{{ url_for('main.explore', category=e.category) }}" class="btn-primary mt-6">{{ _('See similar events') }}</a>
   {% else %}
-  <h1 class="mt-3 text-3xl font-extrabold">Get a message when tickets open up</h1>
+  <h1 class="mt-3 text-3xl font-extrabold">{{ _('Get a message when tickets open up') }}</h1>
   <p class="mt-2 text-ink-soft">{{ e.title }} is sold out. People cancel, and organizers sometimes add seats.</p>
   <form method="post" class="mt-6 space-y-4">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <label class="block"><span class="mb-1.5 block text-sm font-semibold">Name</span>
+    <label class="block"><span class="mb-1.5 block text-sm font-semibold">{{ _('Name') }}</span>
       <input name="name" value="{{ name }}" class="input" autocomplete="name"></label>
-    <label class="block"><span class="mb-1.5 block text-sm font-semibold">Mobile number</span>
+    <label class="block"><span class="mb-1.5 block text-sm font-semibold">{{ _('Mobile number') }}</span>
       <input name="phone" value="{{ phone }}" type="tel" inputmode="numeric" class="input" placeholder="98765 43210" required autocomplete="tel-national"></label>
     {% if error %}<p class="text-sm font-semibold text-rani" role="alert">{{ error }}</p>{% endif %}
-    <button class="btn-primary btn-lg w-full">Notify me</button>
+    <button class="btn-primary btn-lg w-full">{{ _('Notify me') }}</button>
   </form>
   {% endif %}
 </div>

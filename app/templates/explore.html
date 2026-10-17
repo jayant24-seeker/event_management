@@ -30,7 +30,7 @@
   <div class="container-site py-3">
     <div class="flex flex-wrap gap-2 lg:flex-nowrap">
       <div class="relative flex-1 lg:max-w-xs">
-        <label for="explore-q" class="sr-only">Search events</label>
+        <label for="explore-q" class="sr-only">{{ _('Search events') }}</label>
         <svg class="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-soft" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
         <input id="explore-q" name="q" type="search" value="{{ f.q }}" class="input py-2.5 pl-10" placeholder="{{ _('Search events or cities') }}">
       </div>
@@ -56,7 +56,7 @@
         {{ select('price', 'Price', price_filters, f.price, 'Any price') }}
         {% if not past %}{{ select('sort', 'Sort by', sorts, f.sort, None, default='date') }}{% endif %}
         <button type="submit" class="btn-dark col-span-2 lg:hidden" data-apply>{{ _('Show results') }}</button>
-        <noscript><button type="submit" class="btn-dark">Apply</button></noscript>
+        <noscript><button type="submit" class="btn-dark">{{ _('Apply') }}</button></noscript>
       </div>
     </div>
   </div>
@@ -165,22 +165,22 @@
 
   {% if pages > 1 %}
   <nav class="mt-12 flex items-center justify-center gap-2" aria-label="Pages">
-    {% if page > 1 %}<a href="{{ explore_url(page=page - 1) }}" class="btn-outline" rel="prev">Previous</a>{% endif %}
+    {% if page > 1 %}<a href="{{ explore_url(page=page - 1) }}" class="btn-outline" rel="prev">{{ _('Previous') }}</a>{% endif %}
     {% for n in range(1, pages + 1) %}
     <a href="{{ explore_url(page=n) }}" class="grid h-10 w-10 place-items-center rounded-full text-sm font-semibold {{ 'bg-ink text-paper' if n == page else 'hover:bg-ink/5' }}" {% if n == page %}aria-current="page"{% endif %}>{{ n }}</a>
     {% endfor %}
-    {% if page < pages %}<a href="{{ explore_url(page=page + 1) }}" class="btn-outline" rel="next">Next</a>{% endif %}
+    {% if page < pages %}<a href="{{ explore_url(page=page + 1) }}" class="btn-outline" rel="next">{{ _('Next') }}</a>{% endif %}
   </nav>
   {% endif %}
 
   {% else %}
   <div class="mt-8 rounded-card border border-dashed border-line px-6 py-12 text-center">
     <p class="font-display text-xl font-bold">{{ _('No events match these filters') }}</p>
-    <p class="mt-1 text-sm text-ink-soft">Try a different date or city, or clear the filters.</p>
+    <p class="mt-1 text-sm text-ink-soft">{{ _('Try a different date or city, or clear the filters.') }}</p>
     <div class="mt-5 flex flex-wrap justify-center gap-2">
-      {% if f.date %}<a href="{{ explore_url(date=None) }}" class="btn-outline">Any date</a>{% endif %}
-      {% if f.city %}<a href="{{ explore_url(city=None) }}" class="btn-outline">All cities</a>{% endif %}
-      <a href="{{ url_for('main.explore', when='past' if past else None) }}" class="btn-primary">Clear all filters</a>
+      {% if f.date %}<a href="{{ explore_url(date=None) }}" class="btn-outline">{{ _('Any date') }}</a>{% endif %}
+      {% if f.city %}<a href="{{ explore_url(city=None) }}" class="btn-outline">{{ _('All cities') }}</a>{% endif %}
+      <a href="{{ url_for('main.explore', when='past' if past else None) }}" class="btn-primary">{{ _('Clear all filters') }}</a>
     </div>
   </div>
   {% if popular %}

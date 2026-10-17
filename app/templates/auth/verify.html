@@ -1,9 +1,9 @@
 {% extends "auth/_shell.html" %}
 {% block title %}Enter code · {{ site_name }}{% endblock %}
 {% block card %}
-<h1 class="text-3xl font-extrabold">Enter the code</h1>
-<p class="mt-2 text-ink-soft">We sent a 6-digit code to <strong class="text-ink">{{ phone[:3] }} {{ phone[3:8] }} {{ phone[8:] }}</strong>.
-  <a href="{{ url_for('auth.login', next=next or None) }}" class="font-semibold text-rani hover:underline">Change</a></p>
+<h1 class="text-3xl font-extrabold">{{ _('Enter the code') }}</h1>
+<p class="mt-2 text-ink-soft">{{ _('We sent a 6-digit code to ') }}<strong class="text-ink">{{ phone[:3] }} {{ phone[3:8] }} {{ phone[8:] }}</strong>.
+  <a href="{{ url_for('auth.login', next=next or None) }}" class="font-semibold text-rani hover:underline">{{ _('Change') }}</a></p>
 {% if dev_code %}
 <p class="mt-4 rounded-xl border border-dashed border-marigold bg-marigold/10 p-3 text-sm"><strong>Development mode:</strong> no SMS is sent. Your code is <code class="font-mono text-base font-bold">{{ dev_code }}</code>.</p>
 {% endif %}
@@ -11,18 +11,18 @@
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <input type="hidden" name="next" value="{{ next }}">
   <label class="block">
-    <span class="sr-only">6-digit code</span>
+    <span class="sr-only">{{ _('6-digit code') }}</span>
     <input name="code" data-otp inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" required autofocus
            class="input text-center font-mono text-2xl tracking-[0.5em] {{ 'border-rani' if error }}" placeholder="••••••"
            {% if error %}aria-invalid="true" aria-describedby="code-error"{% endif %}>
   </label>
   {% if error %}<p id="code-error" class="text-sm font-semibold text-rani" role="alert">{{ error }}</p>{% endif %}
-  <button class="btn-primary btn-lg w-full">Verify and continue</button>
+  <button class="btn-primary btn-lg w-full">{{ _('Verify and continue') }}</button>
 </form>
 <form method="post" action="{{ url_for('auth.login') }}" class="mt-4 text-center text-sm">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <input type="hidden" name="next" value="{{ next }}">
   <input type="hidden" name="phone" value="{{ phone[3:] }}">
-  <button class="font-semibold text-ink-soft hover:text-ink">Didn't get it? Send a new code</button>
+  <button class="font-semibold text-ink-soft hover:text-ink">{{ _("Didn't get it? Send a new code") }}</button>
 </form>
 {% endblock %}

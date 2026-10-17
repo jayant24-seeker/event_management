@@ -14,15 +14,15 @@
       {% if valid %}
       <div class="mx-auto mt-4 w-fit rounded-2xl bg-white p-3 [&_svg]:h-52 [&_svg]:w-52">{{ qr(a)|safe }}</div>
       <p class="mt-2 font-mono font-semibold tracking-widest">{{ a.code }}</p>
-      <p class="mt-3 text-sm text-ink-soft">Show this QR code at the entry. A screenshot works too.</p>
+      <p class="mt-3 text-sm text-ink-soft">{{ _('Show this QR code at the entry. A screenshot works too.') }}</p>
       {% else %}
-      <p class="mt-6 rounded-xl bg-ink/5 p-4 font-semibold">This ticket isn't valid any more (the booking was cancelled).</p>
+      <p class="mt-6 rounded-xl bg-ink/5 p-4 font-semibold">{{ _("This ticket isn't valid any more (the booking was cancelled).") }}</p>
       {% endif %}
     </div>
   </article>
   <div class="mt-6 flex flex-wrap justify-center gap-2 print:hidden">
-    <a href="{{ url_for('main.event_ics', slug=e.slug) }}" class="btn-outline">Add to calendar</a>
-    <a href="{{ url_for('main.event', slug=e.slug) }}" class="btn-outline">Event details</a>
+    <a href="{{ url_for('main.event_ics', slug=e.slug) }}" class="btn-outline">{{ _('Add to calendar') }}</a>
+    <a href="{{ url_for('main.event', slug=e.slug) }}" class="btn-outline">{{ _('Event details') }}</a>
   </div>
 </div>
 {% endblock %}
