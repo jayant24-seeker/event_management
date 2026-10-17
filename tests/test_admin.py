@@ -31,3 +31,22 @@ def test_admin_overview_and_actions(app, client):
         assert db.session.get(Organizer, "campus-beats").data["verified"] is True
         assert db.session.get(ContactMessage, 1).handled_at is not None
     assert client.get("/events/jaipur-night-run-2026").status_code == 404
+
+
+def test_admin_finds_bookings_and_resends(app, client):
+    from app.models import Booking
+
+    sign_in(client)
+    post(client, "/events/deepotsav-kavi-sammelan/register", t0="1", action="book", **{"a0-name": "Asha", "a0-age": "30"})
+    with app.app_context():
+        b = Booking.query.one()
+        ref, code = b.ref, b.attendees[0].code
+    with client.session_transaction() as s:
+        s.pop("uid")
+    sign_in(client, phone=ADMIN, name="Staff Member")
+    for q in (ref, code.lower(), "98765 43210"):
+        assert ref in text(client.get(f"/admin/?q={q}"))
+    assert "No booking matches" in text(client.get("/admin/?q=NOPE1234"))
+    res = post(client, f"/admin/bookings/{ref}/resend")
+    assert res.status_code == 302
+    assert "sent again" in text(client.get(res.headers["Location"]))

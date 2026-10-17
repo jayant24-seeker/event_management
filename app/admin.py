@@ -46,11 +46,44 @@ def home():
         ("Organizers", Organizer.query.count(), f"{sum(1 for o in Organizer.query if o.data.get('verified'))} verified"),
         ("Open messages", ContactMessage.query.filter_by(handled_at=None).count(), "in the inbox"),
     ]
+    q = request.args.get("q", "").strip()
+    found = find_bookings(q) if q else None
     rows = EventRow.query.order_by(EventRow.updated_at.desc()).all()
     orgs = {o.slug: o for o in Organizer.query}
-    return render_template("admin/home.html", numbers=numbers, rows=rows, orgs=orgs,
+    return render_template("admin/home.html", numbers=numbers, rows=rows, orgs=orgs, q=q, found=found,
                            messages=ContactMessage.query.order_by(ContactMessage.handled_at.isnot(None),
                                                                   ContactMessage.created_at.desc()).limit(50).all())
+
+
+def find_bookings(q, limit=20):
+    """Bookings by reference, ticket code or the booker's phone number."""
+    from .auth import normalize_phone
+
+    code = q.upper().replace(" ", "")
+    phone = normalize_phone(q)
+    query = Booking.query.join(User)
+    if phone:
+        query = query.filter(User.phone == phone)
+    else:
+        attendee = Attendee.query.filter_by(code=code).first()
+        query = query.filter(Booking.id == attendee.booking_id) if attendee else query.filter(Booking.ref == code)
+    return query.order_by(Booking.created_at.desc()).limit(limit).all()
+
+
+@bp.route("/bookings/<ref>/resend", methods=["POST"])
+@admin_required
+def resend(ref):
+    from .booking import send_confirmation
+    from .routes import store
+
+    b = Booking.query.filter_by(ref=ref).first_or_404()
+    e = store().get(b.event_slug)
+    if b.status != "confirmed" or e is None:
+        flash("Only confirmed bookings for live events can be resent.")
+    else:
+        send_confirmation(b, e)
+        flash(f"Tickets for {b.ref} sent again to {b.user.phone}.")
+    return redirect(url_for("admin.home", q=ref) + "#support")
 
 
 @bp.route("/events/<slug>", methods=["POST"])

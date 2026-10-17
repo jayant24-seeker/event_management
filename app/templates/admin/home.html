@@ -23,6 +23,37 @@
     {% endfor %}
   </dl>
 
+  <section id="support" class="mt-8 scroll-mt-24 rounded-card border border-line bg-paper-raised p-5">
+    <h2 class="text-xl font-bold">Find a booking</h2>
+    <form method="get" class="mt-3 flex flex-wrap gap-2">
+      <label class="sr-only" for="admin-q">Booking reference, ticket code or phone</label>
+      <input id="admin-q" name="q" value="{{ q }}" class="input max-w-sm py-2" placeholder="Booking ref, ticket code or phone number">
+      <button class="btn-dark py-2">Search</button>
+    </form>
+    {% if found is not none %}
+    {% if found %}
+    <div class="mt-4 overflow-x-auto">
+      <table class="w-full min-w-[640px] text-left text-sm">
+        <thead class="text-xs uppercase tracking-wider text-ink-soft"><tr><th class="py-2">Ref</th><th>Event</th><th>Booked by</th><th>Tickets</th><th>Total</th><th>Status</th><th><span class="sr-only">Actions</span></th></tr></thead>
+        <tbody class="divide-y divide-line">
+          {% for b in found %}
+          <tr>
+            <td class="py-2 font-mono">{{ b.ref }}</td>
+            <td>{{ b.event_slug }}</td>
+            <td>{{ b.user.name or '—' }} <span class="text-ink-soft">{{ b.user.phone }}</span></td>
+            <td>{{ b.attendees|map(attribute='name')|join(', ') }}</td>
+            <td>{{ b.total|inr }}{% if b.refund_amount %} <span class="text-ink-soft">(refunded {{ b.refund_amount|inr }})</span>{% endif %}</td>
+            <td><span class="badge {{ {'confirmed': 'badge-free', 'cancelled': 'badge-muted', 'pending': 'badge-hot'}[b.status] }}">{{ b.status }}</span></td>
+            <td class="text-right">{% if b.status == 'confirmed' %}{{ post_button(url_for('admin.resend', ref=b.ref), 'Resend tickets') }}{% endif %}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}<p class="mt-3 text-sm text-ink-soft">No booking matches “{{ q }}”.</p>{% endif %}
+    {% endif %}
+  </section>
+
   <nav class="mt-8 flex flex-wrap gap-2 text-sm font-semibold" aria-label="Admin sections">
     <a href="#events" class="btn-outline py-1.5">Events</a>
     <a href="#organizers" class="btn-outline py-1.5">Organizers</a>
