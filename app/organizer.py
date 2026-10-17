@@ -613,6 +613,22 @@ def staff():
     return redirect(url_for("org.dashboard") + "#staff")
 
 
+@bp.route("/events/<slug>/flyer")
+@organizer_required
+def flyer(slug):
+    """A4 flyer to print and pin up: artwork, details and a QR code to the event page."""
+    import segno
+
+    own_event_or_404(slug)
+    e = store().get(slug)
+    if e is None:
+        flash("Publish the event first, so the QR code leads somewhere.")
+        return redirect(url_for("org.event_admin", slug=slug))
+    link = url_for("main.event", slug=slug, src="flyer", _external=True)
+    qr = segno.make(link, error="m").svg_inline(scale=6, border=1, dark="#1A1423", omitsize=True)
+    return render_template("organizer/flyer.html", e=e, qr=qr, link=url_for("main.event", slug=slug, _external=True))
+
+
 # ---------- Check-in ----------
 def ticket_code(text):
     """The code from what was typed or scanned: a bare code, or the /t/<code> link in the QR."""

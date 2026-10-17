@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="{{ lang }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Flyer · {{ e.title }}</title>
+  <link rel="icon" href="{{ url_for('static', filename='favicon.svg') }}" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Mukta:wght@600;800&family=Plus+Jakarta+Sans:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+  <style>
+    @page { size: A4; margin: 0; }
+    body { background: #e9e4de; }
+    .sheet { width: 210mm; min-height: 297mm; margin: 12px auto; background: #fff; display: flex; flex-direction: column; }
+    @media print { body { background: #fff; } .sheet { margin: 0; } .no-print { display: none; } }
+  </style>
+</head>
+<body class="text-night">
+  <p class="no-print mx-auto max-w-[210mm] px-2 pt-4 text-sm">
+    <button type="button" class="btn-primary" data-print>Print or save as PDF</button>
+    <span class="ml-2 text-night/70">A4, prints best with background graphics on. Bookings from this QR show up as “flyer”.</span>
+  </p>
+  <main class="sheet">
+    <div class="relative h-[150mm] overflow-hidden" style="background-color: {{ e.tint }}">
+      <img src="{{ url_for('static', filename=e.banner) }}" alt="" class="absolute inset-0 h-full w-full object-cover">
+      <div class="absolute inset-0 bg-gradient-to-t from-night via-night/40 to-transparent"></div>
+      <div class="absolute inset-x-0 bottom-0 p-[12mm] text-day">
+        <p class="text-lg font-bold uppercase tracking-[0.2em] text-marigold">{{ e.category }} · {{ e.city }}</p>
+        <h1 class="mt-2 font-display text-[54px] font-extrabold leading-[1.02]">{{ e.title }}</h1>
+        {% if e.tagline %}<p class="mt-3 text-2xl text-day/85">{{ e.tagline }}</p>{% endif %}
+      </div>
+    </div>
+    <div class="grid flex-1 grid-cols-[1fr_auto] gap-[10mm] p-[12mm]">
+      <div class="space-y-5 text-xl">
+        <p><span class="block text-sm font-bold uppercase tracking-widest text-night/60">When</span><span class="font-bold">{{ e.start.strftime('%A, %d %B %Y') }}</span><br>{{ e.start.strftime('%-I:%M %p') }}</p>
+        <p><span class="block text-sm font-bold uppercase tracking-widest text-night/60">Where</span><span class="font-bold">{{ e.venue.name }}</span>{% if not e.is_online %}<br><span class="text-lg">{{ e.venue.address }}</span>{% endif %}</p>
+        <p><span class="block text-sm font-bold uppercase tracking-widest text-night/60">Tickets</span><span class="font-bold">{{ 'Free' if e.is_free else ('From ₹' ~ (e.price_from|num) if e.tickets|length > 1 else '₹' ~ (e.price_from|num)) }}</span></p>
+        <p class="text-base text-night/70">By {{ e.org.name }}</p>
+      </div>
+      <div class="flex w-[62mm] flex-col items-center text-center">
+        <div class="w-[62mm] rounded-2xl border-4 border-night p-2 [&_svg]:h-auto [&_svg]:w-full">{{ qr|safe }}</div>
+        <p class="mt-3 font-display text-2xl font-extrabold">Scan to book</p>
+        <p class="mt-1 break-all text-xs text-night/60">{{ link }}</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-2 bg-night px-[12mm] py-4 text-day">
+      <span class="grid h-8 w-8 place-items-center rounded-lg bg-rani font-display text-lg font-extrabold text-white">e</span>
+      <span class="font-display text-xl font-extrabold">eventouse</span>
+      <span class="ml-auto text-sm text-day/70">Events near you, booked in a minute</span>
+    </div>
+  </main>
+  <script src="{{ url_for('static', filename='js/site.js') }}" defer></script>
+</body>
+</html>

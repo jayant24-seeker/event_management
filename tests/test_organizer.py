@@ -258,3 +258,11 @@ def test_booking_source_from_share_link(app, client):
     post(client, "/events/deepotsav-kavi-sammelan/register", t0="1", action="book", **{"a0-name": "Asha", "a0-age": "30"})
     with app.app_context():
         assert Booking.query.filter_by(event_slug="deepotsav-kavi-sammelan").one().source == "instagram"
+
+
+def test_printable_flyer(client):
+    sign_in(client, phone="9999999999")
+    page = text(client.get("/organizer/events/jaipur-night-run-2026/flyer"))
+    assert "Scan to book" in page and "<svg" in page and "Jaipur Night Run 2026" in page
+    become = client.get("/organizer/events/kota-campus-beats/flyer")
+    assert become.status_code == 404  # not this organizer's event

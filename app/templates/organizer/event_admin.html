@@ -16,6 +16,7 @@
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <button class="btn-outline">Duplicate for next year</button>
       </form>
+      {% if row.status == 'published' %}<a href="{{ url_for('org.flyer', slug=row.slug) }}" class="btn-outline" target="_blank" rel="noopener">Print a flyer</a>{% endif %}
       <a href="{{ url_for('org.attendees_csv', slug=row.slug) }}" class="btn-dark">Download CSV</a>
     </div>
   </div>
