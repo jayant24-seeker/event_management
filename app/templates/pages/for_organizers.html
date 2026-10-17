@@ -40,19 +40,21 @@
 
 {# ---------- Features ---------- #}
 <section class="container-site py-16 sm:py-20">
-  <p class="eyebrow">Everything you need</p>
-  <h2 class="mt-1 max-w-2xl text-3xl font-extrabold sm:text-4xl">Built for the events India actually runs</h2>
+  <h2 class="max-w-2xl text-3xl font-extrabold sm:text-4xl">Built for the events India actually runs</h2>
+  <p class="mt-2 max-w-2xl text-lg text-ink-soft">From the first share on WhatsApp to the last bib at the finish line.</p>
   <div class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-    {% for title, text in [
-      ('Event pages people want to share', 'Big poster, schedule, route, map, kit, prizes and FAQs on one page that looks great on WhatsApp and Google.'),
-      ('Tickets your way', 'Multiple ticket types (5K, 10K, 21K, VIP, couple, group), early-bird codes, seat limits and registration deadlines.'),
-      ('Collect the right details', 'T-shirt size, age, gender, emergency contact, FIDE ID and more. Pick per event; download as CSV.'),
-      ('QR check-in at the gate', 'Every attendee gets a QR ticket. Scan with any phone camera, tap Check in. No app to install.'),
-      ('Never oversell', 'Live seat counts, a Sold out badge the moment you are full, and a waitlist that tells people when seats open.'),
-      ('Results and photos', 'Publish finisher results with bib search and a photo gallery. Past events keep bringing in new people.'),
+    {% for title, text, icon in [
+      ('Event pages people share', 'Poster, schedule, route, map, kit, prizes, FAQs and answers to questions, on a page that previews beautifully on WhatsApp and ranks on Google.', 'M4 5h16v14H4zM4 9h16M8 13h5'),
+      ('Tickets your way', '5K, 10K, VIP, couple or student tiers. Discount codes, group discounts, seat limits and registration deadlines.', 'M3 9V6h18v3a3 3 0 0 0 0 6v3H3v-3a3 3 0 0 0 0-6zM14 6v12'),
+      ('Gate scanner and team', 'Scan QR tickets with any phone camera. Add volunteers who can check people in and see nothing else. Works when the signal is weak.', 'M4 7V5a1 1 0 0 1 1-1h2M17 4h2a1 1 0 0 1 1 1v2M20 17v2a1 1 0 0 1-1 1h-2M7 20H5a1 1 0 0 1-1-1v-2M7 12h10'),
+      ('Live sales, not spreadsheets', 'Tickets per day, revenue, check-in rate and a to-do list of what needs you. Attendee details download as CSV.', 'M4 20V10M10 20V4M16 20v-7M22 20H2'),
+      ('Talk to your attendees', 'Text every ticket holder when the venue gate or start time changes, and answer questions right on your event page.', 'M4 5h16v11H8l-4 4z'),
+      ('Refunds and waitlists that run themselves', 'Attendees cancel within your refund rules and get money back automatically; the freed seats are texted to the waitlist.', 'M4 12a8 8 0 1 0 2.3-5.7M4 4v4h4'),
     ] %}
     <div class="rounded-card border border-line bg-paper-raised p-6">
-      <span class="grid h-10 w-10 place-items-center rounded-xl bg-rani/10 font-display text-lg font-extrabold text-rani">{{ loop.index }}</span>
+      <span class="grid h-11 w-11 place-items-center rounded-xl bg-rani/10 text-rani">
+        <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ icon }}"/></svg>
+      </span>
       <h3 class="mt-4 text-lg font-bold">{{ title }}</h3>
       <p class="mt-1 text-ink-soft">{{ text }}</p>
     </div>
