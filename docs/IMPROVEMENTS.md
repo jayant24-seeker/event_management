@@ -119,3 +119,4 @@ Every item keeps `pytest` green. Newest at the bottom.
 - Gzip: pages, CSS, JS, SVG posters and JSON are compressed when the browser accepts it: homepage 64 KB → 8 KB, stylesheet 65 KB → 11 KB, event page → 9 KB.
 - Admin support tool: "Find a booking" by booking reference, ticket code or phone number, with status, attendees, refunds and a "Resend tickets" action.
 - Organizer calendar feed: "Add to my calendar" on organizer profiles subscribes Google/Apple/Outlook to their upcoming events (webcal feed that refreshes every 6 hours).
+- Homepage greets signed-in people who have a ticket coming up: a slim green bar with the event, "In N days" and "Show tickets".

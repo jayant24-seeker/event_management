@@ -250,3 +250,11 @@ def test_booked_recently_social_proof(app, client):
     post(client, "/events/deepotsav-kavi-sammelan/register", t0="3", action="book",
          **{f"a{i}-{k}": v for i in range(3) for k, v in (("name", f"Guest {i}"), ("age", "30"))})
     assert "3 booked in the last day" in text(client.get("/events/deepotsav-kavi-sammelan"))
+
+
+def test_homepage_reminds_you_of_your_next_event(client):
+    sign_in(client)
+    assert "You're going" not in text(client.get("/"))
+    post(client, "/events/deepotsav-kavi-sammelan/register", t0="1", action="book", **{"a0-name": "Asha", "a0-age": "30"})
+    home = text(client.get("/"))
+    assert "You're going" in home and "दीपोत्सव कवि सम्मेलन" in home.split("You're going")[0][-400:]

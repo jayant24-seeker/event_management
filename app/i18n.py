@@ -290,6 +290,7 @@ HI = {
     "Photos": "फ़ोटो",
     "Add to my calendar": "मेरे कैलेंडर में जोड़ें",
     "Their events appear in your calendar and stay up to date": "उनके इवेंट आपके कैलेंडर में आते रहेंगे",
+    "You're going": "आप जा रहे हैं",
     # Offline page
     "No internet right now": "अभी इंटरनेट नहीं है",
     "Tickets you've opened on this phone before still work. Show the QR code at the gate.":

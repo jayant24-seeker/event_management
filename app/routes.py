@@ -26,6 +26,7 @@ def home():
     followed = set(followed_slugs())
     return render_template(
         "home.html",
+        next_booking=next_booking_for(g.get("user"), s),
         from_followed=[e for e in upcoming if e.organizer in followed][:4],
         featured=s.featured() or upcoming[:4],
         upcoming=upcoming,
@@ -205,6 +206,17 @@ def remember_source(slug):
     if src:
         session.setdefault("sources", {})[slug] = src
         session.modified = True
+
+
+def next_booking_for(user, s):
+    """(booking, event) for this person's soonest upcoming confirmed booking, or None."""
+    if user is None:
+        return None
+    from .models import Booking
+
+    upcoming = [(b, s.get(b.event_slug)) for b in Booking.query.filter_by(user_id=user.id, status="confirmed")]
+    upcoming = [(b, e) for b, e in upcoming if e is not None and not e.is_past()]
+    return min(upcoming, key=lambda x: x[1].start, default=None)
 
 
 @bp.app_template_global()

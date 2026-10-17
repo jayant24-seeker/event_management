@@ -7,6 +7,20 @@
 
 
 {% block content %}
+{% if next_booking %}
+{% set nb, ne = next_booking %}
+{% set days = (ne.start.date() - ne.start.now(ne.start.tzinfo).date()).days %}
+<a href="{{ url_for('booking.show', ref=nb.ref) }}" class="flex items-center gap-3 bg-leaf px-4 py-2.5 text-sm font-semibold text-white hover:bg-leaf/90">
+  <span class="container-site flex items-center gap-3 !px-0">
+    <img src="{{ url_for('static', filename=ne.poster) }}" alt="" class="h-9 w-7 shrink-0 rounded object-cover" style="background-color: {{ ne.tint }}">
+    <span class="min-w-0 flex-1 leading-tight">
+      <span class="block truncate">{{ ne.title }}</span>
+      <span class="block text-xs font-medium text-white/85">{{ _("You're going") }} · {{ _('Today') if days <= 0 else (_('Tomorrow') if days == 1 else _('In %d days')|format(days)) }}</span>
+    </span>
+    <span class="shrink-0 rounded-full bg-white/15 px-3 py-1">{{ _('Show tickets') }}</span>
+  </span>
+</a>
+{% endif %}
 {# ---------- Hero slider ----------
    Works without JS as a swipeable scroll-snap row. hero.js adds arrows, dots and autoplay. #}
 {% if featured %}
