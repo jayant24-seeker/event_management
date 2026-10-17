@@ -182,6 +182,10 @@ HI = {
     "Past and cancelled": "पिछले और रद्द",
     "Cancelled": "रद्द",
     "You might like": "आपको पसंद आ सकते हैं",
+    "Home": "होम",
+    "Tickets": "टिकट",
+    "Saved": "सेव",
+    "Main": "मुख्य",
     # Offline page
     "No internet right now": "अभी इंटरनेट नहीं है",
     "Tickets you've opened on this phone before still work. Show the QR code at the gate.":

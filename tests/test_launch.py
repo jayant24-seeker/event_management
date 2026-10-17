@@ -86,3 +86,10 @@ def test_near_me_button_data(client):
 def test_health_check(client):
     res = client.get("/healthz")
     assert res.status_code == 200 and res.json == {"status": "ok"}
+
+
+def test_phone_tab_bar(client):
+    home = client.get("/").get_data(as_text=True)
+    assert 'aria-label="Main"' in home and "Tickets" in home
+    # Event and checkout pages have their own bottom bar instead.
+    assert 'grid grid-cols-5' not in client.get("/events/jaipur-night-run-2026").get_data(as_text=True)

@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% block title %}Scan tickets · {{ g.org.data.name }} · {{ site_name }}{% endblock %}
 {% block head %}<meta name="robots" content="noindex">{% endblock %}
+{% block tabbar %}{% endblock %}
+
 {% block content %}
 <div class="container-site max-w-xl py-6">
   {% if current_user.organizer_slug %}<a href="{{ url_for('org.dashboard') }}" class="text-sm font-semibold text-rani hover:underline">← Dashboard</a>{% else %}<p class="text-sm font-semibold text-ink-soft">Gate team · {{ g.org.data.name }}</p>{% endif %}

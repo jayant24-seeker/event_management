@@ -4,6 +4,8 @@
 
 {% block footer %}{% include "components/_footer_min.html" %}{% endblock %}
 
+{% block tabbar %}{% endblock %}
+
 {% block content %}
 <div class="container-site py-8 sm:py-12">
   <a href="{{ url_for('main.event', slug=e.slug) }}#tickets" class="text-sm font-semibold text-rani hover:underline">← Change tickets</a>

@@ -3,7 +3,7 @@
 <html lang="{{ lang }}">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>{% block title %}{{ site_name }}: discover events near you{% endblock %}</title>
   <meta name="description" content="{% block description %}Find runs, concerts, workshops and festivals in Jaipur, Kota, Jodhpur, Ajmer, Surat and Chandigarh. Book tickets in a minute.{% endblock %}">
   <meta name="theme-color" content="#1A1423">
@@ -102,6 +102,30 @@
   {% endif %}{% endwith %}
 
   <main id="main">{% block content %}{% endblock %}</main>
+
+  {# Phones: app-style tab bar. Pages with their own bottom bar (event, checkout) turn it off. #}
+  {% block tabbar %}
+  {% set ep = request.endpoint or '' %}
+  {% set tabs = [
+      ('main.home', url_for('main.home'), _('Home'), 'M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z'),
+      ('main.explore', url_for('main.explore'), _('Explore'), 'M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM20 20l-4-4'),
+      ('booking.tickets', url_for('booking.tickets'), _('Tickets'), 'M3 9V6h18v3a3 3 0 0 0 0 6v3H3v-3a3 3 0 0 0 0-6zM14 6v12'),
+      ('booking.saved', url_for('booking.saved'), _('Saved'), 'M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z'),
+      ('auth.account', url_for('auth.account') if current_user else url_for('auth.login'), _('Profile') if current_user else _('Sign in'), 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21a8 8 0 0 1 16 0'),
+  ] %}
+  <nav class="fixed inset-x-0 bottom-0 z-40 border-t border-line/80 bg-paper-raised/95 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden print:hidden" aria-label="{{ _('Main') }}">
+    <ul class="grid grid-cols-5">
+      {% for endpoint, href, label, icon in tabs %}
+      {% set on = ep == endpoint or (endpoint == 'main.explore' and ep in ('main.city',)) or (endpoint == 'auth.account' and ep.startswith('auth.')) %}
+      <li><a href="{{ href }}" class="flex flex-col items-center gap-0.5 pb-2 pt-2.5 text-[11px] font-semibold {{ 'text-rani' if on else 'text-ink-soft' }}" {% if on %}aria-current="page"{% endif %}>
+        <svg class="h-6 w-6" viewBox="0 0 24 24" fill="{{ 'currentColor' if on and endpoint in ('booking.saved',) else 'none' }}" stroke="currentColor" stroke-width="{{ '2.2' if on else '1.8' }}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ icon }}"/></svg>
+        {{ label }}
+      </a></li>
+      {% endfor %}
+    </ul>
+  </nav>
+  <div class="h-[calc(4rem+env(safe-area-inset-bottom))] md:hidden" aria-hidden="true"></div>
+  {% endblock %}
 
   {% block footer %}
   <footer class="mt-24 bg-ink text-paper/80 print:hidden">
