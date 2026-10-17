@@ -142,8 +142,7 @@ def register(slug):
                 errors.append(error)
             elif booking.status == "confirmed":
                 send_confirmation(booking, e)
-                flash("You're in! Your tickets are below.")
-                return redirect(url_for("booking.show", ref=booking.ref))
+                return redirect(url_for("booking.show", ref=booking.ref, new=1))
             else:
                 return redirect(url_for("booking.pay", ref=booking.ref))
 
@@ -230,8 +229,7 @@ def pay(ref):
             booking.payment_ref = "TEST-" + secrets.token_hex(6).upper()
             db.session.commit()
             send_confirmation(booking, e)
-            flash("Payment received. You're in!")
-            return redirect(url_for("booking.show", ref=ref))
+            return redirect(url_for("booking.show", ref=ref, new=1))
         booking.status = "cancelled"
         db.session.commit()
         flash("Payment cancelled. Your seats were released.")
@@ -254,7 +252,9 @@ def show(ref):
     booking = own_booking_or_404(ref)
     e = get_event_or_404(booking.event_slug)
     percent = 100 if booking.total == 0 else e.refund_percent()
+    days = (e.start.date() - now_ist().date()).days
     return render_template("booking/booking.html", b=booking, e=e, qr=ticket_qr, refund_percent=percent,
+                           just_booked=request.args.get("new") == "1" and booking.status == "confirmed", days_to_go=days,
                            can_transfer=transfers_allowed(e) and not e.is_past() and booking.status == "confirmed",
                            refund_amount=booking.total * percent // 100)
 

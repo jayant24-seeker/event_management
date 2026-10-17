@@ -5,8 +5,17 @@
 {% set page_url = url_for('main.event', slug=e.slug, _external=True) %}
 <div class="container-site max-w-3xl py-10">
   {% if b.status == 'confirmed' %}
-  <div class="rounded-card bg-leaf p-6 text-white sm:p-8">
-    <p class="text-sm font-bold uppercase tracking-wider text-white/80">Booking {{ b.ref }} · confirmed</p>
+  <div class="relative overflow-hidden rounded-card bg-leaf p-6 text-white sm:p-8">
+    {% if just_booked %}
+    {# One celebratory moment, only right after booking (and never with reduced motion). #}
+    <div class="confetti" aria-hidden="true">
+      {% for i in range(22) %}<span style="--x: {{ (i * 37) % 100 }}%; --d: {{ (i % 7) * 0.06 }}s; --r: {{ (i * 53) % 360 }}deg; --c: {{ ['#FFB627', '#FFF8F0', '#D6246E', '#FFE08A'][i % 4] }}"></span>{% endfor %}
+    </div>
+    {% endif %}
+    <div class="flex flex-wrap items-center justify-between gap-2">
+      <p class="text-sm font-semibold text-white/85">Booking {{ b.ref }} · confirmed</p>
+      {% if days_to_go > 0 %}<span class="rounded-full bg-white/15 px-3 py-1 text-xs font-bold">{{ 'Tomorrow' if days_to_go == 1 else 'In %d days'|format(days_to_go) }}</span>{% elif days_to_go == 0 %}<span class="rounded-full bg-marigold px-3 py-1 text-xs font-bold text-ink">Today</span>{% endif %}
+    </div>
     <h1 class="mt-1 text-3xl font-extrabold sm:text-4xl">You're going to {{ e.title }}!</h1>
     <p class="mt-2 text-white/90">{{ e.start.strftime('%a, %d %b %Y · %-I:%M %p') }} · {{ e.venue.name }}</p>
     <div class="mt-5 flex flex-wrap gap-2">
@@ -31,7 +40,7 @@
   <p class="mt-1 text-sm text-ink-soft">Show the QR code at the entry. A screenshot works too.</p>
   <div class="mt-5 space-y-4">
     {% for a in b.attendees %}
-    <article id="ticket-{{ a.id }}" class="grid scroll-mt-24 overflow-hidden rounded-card border border-line bg-paper-raised sm:grid-cols-[1fr_auto] print:break-inside-avoid print:grid-cols-[1fr_auto]">
+    <article id="ticket-{{ a.id }}" class="ticket-stub grid scroll-mt-24 rounded-card border border-line bg-paper-raised sm:grid-cols-[1fr_auto] print:break-inside-avoid print:grid-cols-[1fr_auto]">
       <div class="p-5">
         <p class="text-xs font-bold uppercase tracking-wider text-rani">{{ a.ticket_name }}</p>
         <p class="mt-1 font-display text-2xl font-extrabold">{{ a.name }}</p>
@@ -62,7 +71,7 @@
         {% if a.details.transferred_from %}<p class="mt-2 text-xs text-ink-soft">Transferred from {{ a.details.transferred_from }}.</p>{% endif %}
         {% endif %}
       </div>
-      <div class="grid place-items-center border-t border-dashed border-line bg-white p-5 sm:border-l sm:border-t-0 [&_svg]:h-36 [&_svg]:w-36">
+      <div class="grid place-items-center rounded-b-card border-t border-dashed border-line bg-white p-5 sm:rounded-none sm:rounded-r-card sm:border-l sm:border-t-0 [&_svg]:h-36 [&_svg]:w-36">
         {% if b.status == 'confirmed' %}{{ qr(a)|safe }}{% else %}<p class="w-36 text-center text-sm text-ink-soft">QR appears once confirmed</p>{% endif %}
       </div>
     </article>

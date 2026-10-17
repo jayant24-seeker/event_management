@@ -70,6 +70,37 @@
   [data-star-input] input:focus-visible + label { @apply rounded outline outline-2 outline-offset-2 outline-ink; }
 }
 
+/* Booking confirmed: a short burst of confetti over the green card. */
+.confetti { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.confetti span {
+  position: absolute; top: -12px; left: var(--x); width: 8px; height: 14px; border-radius: 2px;
+  background: var(--c); opacity: 0; transform: rotate(var(--r));
+  animation: confetti-fall 1.6s cubic-bezier(.2, .7, .3, 1) var(--d) forwards;
+}
+.confetti span:nth-child(3n) { width: 10px; height: 10px; border-radius: 50%; }
+@keyframes confetti-fall {
+  0% { opacity: 1; transform: translateY(0) rotate(var(--r)); }
+  100% { opacity: 0; transform: translateY(260px) rotate(calc(var(--r) + 540deg)); }
+}
+@media (prefers-reduced-motion: reduce) { .confetti { display: none; } }
+
+/* Tickets look like tickets: notches where the stub tears off (between details and QR). */
+.ticket-stub { position: relative; }
+.ticket-stub::before, .ticket-stub::after {
+  content: ""; position: absolute; width: 22px; height: 22px; border-radius: 50%;
+  background: rgb(var(--paper)); border: 1px solid rgb(var(--line));
+}
+@media (max-width: 639px) {
+  .ticket-stub::before, .ticket-stub::after { bottom: calc(11.5rem - 11px); }
+  .ticket-stub::before { left: -12px; clip-path: inset(0 0 0 50%); }
+  .ticket-stub::after { right: -12px; clip-path: inset(0 50% 0 0); }
+}
+@media (min-width: 640px) {
+  .ticket-stub::before, .ticket-stub::after { right: calc(11.5rem - 11px); }
+  .ticket-stub::before { top: -12px; clip-path: inset(50% 0 0 0); }
+  .ticket-stub::after { bottom: -12px; clip-path: inset(0 0 50% 0); }
+}
+
 /* Printed tickets: keep the coloured header and QR codes, white page, no shadows. */
 @media print {
   body { background: #fff; }
