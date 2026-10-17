@@ -141,7 +141,7 @@
         {% if raw.poster %}<img src="{{ url_for('static', filename=raw.poster) }}" alt="Current poster" class="h-40 w-[120px] rounded-xl object-cover shadow-poster">{% endif %}
         <label class="block flex-1">
           <span class="mb-1.5 block text-sm font-semibold">Upload a portrait poster <span class="font-normal text-ink-soft">(optional)</span></span>
-          <input type="file" name="poster" accept="image/jpeg,image/png,image/webp" class="block w-full text-sm file:mr-4 file:rounded-full file:border-0 file:bg-ink file:px-4 file:py-2 file:font-semibold file:text-paper">
+          <input type="file" name="poster" accept="image/jpeg,image/png,image/webp" class="block w-full text-sm file:mr-4 file:rounded-full file:border-0 file:bg-night file:px-4 file:py-2 file:font-semibold file:text-day">
           <span class="mt-1 block text-xs text-ink-soft">JPG, PNG or WebP, under 5 MB, ideally 3:4 (e.g. 900 × 1200). Without one, we make an original poster from your title, date and city.</span>
         </label>
       </div>
@@ -163,9 +163,9 @@
     <aside class="hidden lg:sticky lg:top-24 lg:block" aria-label="Preview" data-preview>
       <p class="text-sm font-semibold text-ink-soft">How it looks on {{ site_name }}</p>
       <div class="mt-3">
-        <div class="relative aspect-[3/4] overflow-hidden rounded-card bg-gradient-to-br from-ink via-rani-dark to-rani shadow-poster">
+        <div class="relative aspect-[3/4] overflow-hidden rounded-card bg-gradient-to-br from-night via-rani-dark to-rani shadow-poster">
           <img alt="" class="absolute inset-0 h-full w-full object-cover {{ '' if raw.poster else 'hidden' }}" src="{{ url_for('static', filename=raw.poster) if raw.poster else '' }}" data-pv-img>
-          <div class="absolute inset-x-0 bottom-0 p-5 text-paper {{ 'hidden' if raw.poster }}" data-pv-art>
+          <div class="absolute inset-x-0 bottom-0 p-5 text-day {{ 'hidden' if raw.poster }}" data-pv-art>
             <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-marigold" data-pv-cat2>{{ raw.category or 'Category' }}</p>
             <p class="mt-1 font-display text-2xl font-extrabold uppercase leading-none" data-pv-title2>{{ raw.title or 'Your event' }}</p>
           </div>

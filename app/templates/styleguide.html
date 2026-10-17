@@ -5,21 +5,21 @@
 
 {% block content %}
 {% set hero = featured[0] %}
-<section class="relative isolate overflow-hidden bg-ink text-paper">
+<section class="relative isolate overflow-hidden bg-night text-day">
   <img src="{{ url_for('static', filename=hero.banner) }}" alt="" class="absolute inset-0 -z-10 h-full w-full object-cover opacity-90">
-  <div class="absolute inset-0 -z-10 bg-gradient-to-r from-ink via-ink/70 to-transparent"></div>
+  <div class="absolute inset-0 -z-10 bg-gradient-to-r from-night via-night/70 to-transparent"></div>
   <div class="container-site py-20 sm:py-28">
     <p class="eyebrow text-marigold">Hero preview · {{ hero.category }}</p>
     <h1 class="mt-3 max-w-2xl text-4xl font-extrabold leading-[1.05] sm:text-6xl">{{ hero.title }}</h1>
-    <p class="mt-4 max-w-lg text-lg text-paper/80">{{ hero.tagline }}</p>
+    <p class="mt-4 max-w-lg text-lg text-day/80">{{ hero.tagline }}</p>
     <div class="mt-6 flex flex-wrap items-center gap-3 text-sm font-semibold">
-      <span class="rounded-full bg-paper/10 px-4 py-2">{{ hero.start.strftime('%a, %d %b · %I:%M %p') }}</span>
-      <span class="rounded-full bg-paper/10 px-4 py-2">{{ hero.city }}</span>
-      <span class="rounded-full bg-paper/10 px-4 py-2">{{ price_label(hero) }}</span>
+      <span class="rounded-full bg-day/10 px-4 py-2">{{ hero.start.strftime('%a, %d %b · %I:%M %p') }}</span>
+      <span class="rounded-full bg-day/10 px-4 py-2">{{ hero.city }}</span>
+      <span class="rounded-full bg-day/10 px-4 py-2">{{ price_label(hero) }}</span>
     </div>
     <div class="mt-8 flex gap-3">
       <a href="{{ url_for('main.event', slug=hero.slug) }}" class="btn-primary btn-lg">Register</a>
-      <a href="{{ url_for('main.event', slug=hero.slug) }}" class="btn btn-lg border border-paper/30 text-paper hover:bg-paper/10">View details</a>
+      <a href="{{ url_for('main.event', slug=hero.slug) }}" class="btn btn-lg border border-day/30 text-day hover:bg-day/10">View details</a>
     </div>
   </div>
 </section>
@@ -35,7 +35,7 @@
     <h3 class="text-xl font-bold">Colors</h3>
     <div class="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
       {% for name, cls, use in [
-        ('Ink', 'bg-ink', 'Text, dark surfaces'), ('Ink soft', 'bg-ink-soft', 'Secondary text'),
+        ('Ink', 'bg-night', 'Text, dark surfaces'), ('Ink soft', 'bg-ink-soft', 'Secondary text'),
         ('Paper', 'bg-paper', 'Page background'), ('Line', 'bg-line', 'Borders'),
         ('Rani', 'bg-rani', 'Primary actions'), ('Marigold', 'bg-marigold', 'Dates, Selling fast'),
         ('Leaf', 'bg-leaf', 'Free, success')] %}

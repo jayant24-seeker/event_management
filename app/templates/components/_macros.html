@@ -3,7 +3,7 @@
 {%- endmacro %}
 
 {% macro date_chip(dt, dark=False) -%}
-<span class="flex w-14 flex-col items-center rounded-xl {{ 'bg-ink text-paper' if dark else 'bg-paper-raised text-ink' }} py-1.5 leading-none shadow-sm">
+<span class="flex w-14 flex-col items-center rounded-xl {{ 'bg-night text-day' if dark else 'bg-paper-raised text-ink' }} py-1.5 leading-none shadow-sm">
   <span class="font-display text-xl font-extrabold">{{ dt.strftime('%d') }}</span>
   <span class="mt-0.5 text-[10px] font-bold uppercase tracking-widest text-rani">{{ dt.strftime('%b') }}</span>
 </span>
@@ -30,7 +30,7 @@
         {% for label, style in e.badges() %}{{ badge(label, style) }}{% endfor %}
       </div>
     </div>
-    <div class="absolute inset-x-0 bottom-0 translate-y-full bg-gradient-to-t from-ink/90 to-transparent p-4 pt-10 transition duration-300 group-hover:translate-y-0">
+    <div class="absolute inset-x-0 bottom-0 translate-y-full bg-gradient-to-t from-night/90 to-transparent p-4 pt-10 transition duration-300 group-hover:translate-y-0">
       <span class="btn-primary w-full">{{ _('See photos and results') if past else (_('Notify me') if e.sold_out else _('Register now')) }}</span>
     </div>
   </div>
@@ -65,7 +65,7 @@
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <input type="hidden" name="next" value="{{ request.full_path.rstrip('?') }}">
   <input type="hidden" name="follow" value="{{ '0' if on else '1' }}">
-  <button class="btn {{ ('border border-paper/30 text-paper hover:bg-paper/10' if on else 'bg-marigold text-ink hover:bg-marigold/90') if dark else ('btn-outline' if on else 'btn-dark') }}" aria-pressed="{{ 'true' if on else 'false' }}">
+  <button class="btn {{ ('border border-day/30 text-day hover:bg-day/10' if on else 'bg-marigold text-night hover:bg-marigold/90') if dark else ('btn-outline' if on else 'btn-dark') }}" aria-pressed="{{ 'true' if on else 'false' }}">
     {{ _('Following') if on else _('Follow') }}
   </button>
 </form>

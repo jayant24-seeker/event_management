@@ -28,7 +28,7 @@
   <div class="flex flex-wrap items-end justify-between gap-4">
     <div>
       <p class="text-sm font-semibold text-ink-soft">Organizer dashboard</p>
-      <h1 class="mt-1 text-3xl font-extrabold sm:text-4xl">{{ g.org.data.name }}{% if g.org.data.verified %} <span class="badge bg-marigold align-middle text-ink">Verified</span>{% endif %}</h1>
+      <h1 class="mt-1 text-3xl font-extrabold sm:text-4xl">{{ g.org.data.name }}{% if g.org.data.verified %} <span class="badge bg-marigold align-middle text-night">Verified</span>{% endif %}</h1>
     </div>
     <div class="flex gap-2">
       <a href="{{ url_for('main.organizer', slug=g.org.slug) }}" class="btn-outline">Public profile</a>
@@ -39,8 +39,8 @@
   <dl class="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
     {% for label, value in [('Revenue', totals[1]|inr), ('Tickets sold on ' ~ site_name, totals[0]|num), ('Checked in', totals[2]|num), ('On waitlists', waitlist|num), ('Followers', followers|num)] %}
     {# The two money numbers lead; the rest stay quiet. #}
-    <div class="rounded-card p-5 {{ 'bg-ink text-paper' if loop.index <= 2 else 'border border-line bg-paper-raised' }} {{ 'col-span-2 sm:col-span-1' if loop.first }}">
-      <dt class="text-sm {{ 'text-paper/70' if loop.index <= 2 else 'text-ink-soft' }}">{{ label }}</dt>
+    <div class="rounded-card p-5 {{ 'bg-night text-day' if loop.index <= 2 else 'border border-line bg-paper-raised' }} {{ 'col-span-2 sm:col-span-1' if loop.first }}">
+      <dt class="text-sm {{ 'text-day/70' if loop.index <= 2 else 'text-ink-soft' }}">{{ label }}</dt>
       <dd class="mt-1 font-display text-3xl font-extrabold">{{ value }}</dd>
     </div>
     {% endfor %}

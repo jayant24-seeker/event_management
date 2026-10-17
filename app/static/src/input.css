@@ -14,6 +14,23 @@
     --rani-dark: 168 20 82;
     --marigold: 255 182 39;   /* accent: dates, highlights */
     --leaf: 16 122 79;        /* free / success (5:1 with white text) */
+    --night: 26 20 35;        /* always-dark surfaces */
+    --day: 255 248 240;       /* text on night surfaces */
+    color-scheme: light;
+  }
+  /* Dark theme follows the phone or computer setting. Night surfaces stay as they are. */
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ink: 243 236 229;
+      --ink-soft: 184 173 196;
+      --paper: 18 13 24;
+      --paper-raised: 31 24 40;
+      --line: 56 46 68;
+      --rani-dark: 244 114 168;  /* pink text on dark: 6:1; buttons keep --rani (white text 4.8:1) */
+      --leaf: 22 135 88;
+      --night: 36 28 47;
+      color-scheme: dark;
+    }
   }
   html { -webkit-tap-highlight-color: transparent; }
   /* Devanagari letters join up; wide letter spacing breaks them. */
@@ -37,8 +54,8 @@
   .chip-active { @apply border-ink bg-ink text-paper hover:border-ink; }
 
   .badge { @apply inline-flex items-center gap-1 whitespace-nowrap rounded-full px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider shadow-sm; }
-  .badge-hot { @apply bg-marigold text-ink; }
-  .badge-soldout { @apply bg-ink text-paper; }
+  .badge-hot { @apply bg-marigold text-night; }
+  .badge-soldout { @apply bg-night text-day; }
   .badge-free { @apply bg-leaf text-white; }
   .badge-live { @apply bg-rani text-white; }
   .badge-muted { @apply bg-paper-raised/90 text-ink-soft; }
@@ -114,6 +131,12 @@
   body { background: #fff; }
   * { -webkit-print-color-adjust: exact; print-color-adjust: exact; box-shadow: none !important; }
   @page { margin: 12mm; }
+}
+
+/* Dark theme: pink text uses the lighter tone; pink buttons darken (not lighten) on hover. */
+@media (prefers-color-scheme: dark) {
+  .text-rani { color: rgb(var(--rani-dark)); }
+  .btn-primary:hover { background-color: rgb(190 28 96); }
 }
 
 @layer utilities {

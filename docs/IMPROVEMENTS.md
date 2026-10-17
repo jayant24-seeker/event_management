@@ -20,7 +20,7 @@ Every item keeps `pytest` green. Newest at the bottom.
 - [x] Printable / downloadable ticket
 - [x] Social share image per event (Open Graph)
 - [x] Typo-tolerant search
-- [ ] Dark mode
+- [x] Dark mode
 - [x] Accessibility audit and fixes
 - [x] Speed: measured every main page (3-8 queries, under 40 ms); fixed the one N+1
 - [x] Organizers: message all attendees (SMS announcement, e.g. venue change)
@@ -33,7 +33,7 @@ Every item keeps `pytest` green. Newest at the bottom.
 - [x] Gate scanner page (camera QR scanning on phones)
 - [x] Check-in staff: organizer adds volunteer phone numbers who can scan tickets
 - [x] Questions & answers on event pages (attendees ask, organizer answers)
-- [ ] Dark mode
+- [x] Dark mode
 
 ## Done
 - Security: per-IP limits on sign-in codes, waitlist and contact form; blocked `/\host` open redirect; bad coupon expiry no longer crashes. Ownership checks reviewed (all OK).
@@ -80,3 +80,4 @@ Every item keeps `pytest` green. Newest at the bottom.
 - Hindi: booking confirmation and payment pages translated.
 - Hindi: sign-in, profile, Explore, city, organizer profile, saved, waitlist, ticket pass and 404 pages translated (about 230 phrases in total now).
 - "Pick up where you left off": homepage row of events you recently opened (kept in this browser only, finished events dropped).
+- Dark mode: follows the phone/computer setting. New always-dark night/day tokens keep hero, footer and dark cards consistent; pages, cards, text and lines swap; pink text gets a lighter tone while pink buttons keep white text at 4.8:1; yellow badges and white buttons keep dark text; QR codes stay on white. axe reports no contrast issues on 10 pages in both themes at phone and desktop widths.

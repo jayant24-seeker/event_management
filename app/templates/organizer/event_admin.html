@@ -23,17 +23,17 @@
   {# Per-tier sales #}
   {% if e %}
   <div class="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-    <div class="rounded-card bg-ink p-5 text-paper">
-      <p class="text-xs uppercase tracking-wider text-paper/60">Revenue on {{ site_name }}</p>
+    <div class="rounded-card bg-night p-5 text-day">
+      <p class="text-xs uppercase tracking-wider text-day/60">Revenue on {{ site_name }}</p>
       <p class="mt-1 font-display text-3xl font-extrabold">{{ sales[1]|inr }}</p>
-      <p class="mt-1 text-sm text-paper/70">{{ sales[0] }} tickets · {{ sales[2] }} checked in</p>
+      <p class="mt-1 text-sm text-day/70">{{ sales[0] }} tickets · {{ sales[2] }} checked in</p>
     </div>
     {% for t in e.tickets %}
     {% set pct = (t.sold / t.capacity * 100)|round|int if t.capacity else 0 %}
     <div class="rounded-card border border-line bg-paper-raised p-5">
       <p class="font-semibold">{{ t.name }} <span class="text-sm font-normal text-ink-soft">· {{ 'Free' if t.price == 0 else t.price|inr }}</span></p>
       <p class="mt-1 font-display text-2xl font-extrabold">{{ t.sold }} <span class="text-base font-semibold text-ink-soft">/ {{ t.capacity }}</span></p>
-      <div class="mt-2 h-2 overflow-hidden rounded-full bg-line" role="img" aria-label="{{ pct }}% sold"><div class="h-full rounded-full {{ 'bg-ink' if pct >= 100 else 'bg-rani' }}" style="width: {{ [pct, 100]|min }}%"></div></div>
+      <div class="mt-2 h-2 overflow-hidden rounded-full bg-line" role="img" aria-label="{{ pct }}% sold"><div class="h-full rounded-full {{ 'bg-night' if pct >= 100 else 'bg-rani' }}" style="width: {{ [pct, 100]|min }}%"></div></div>
     </div>
     {% endfor %}
   </div>
@@ -84,7 +84,7 @@
           {% endfor %}
           <line x1="{{ pad_l }}" x2="{{ W }}" y1="{{ H - pad_b }}" y2="{{ H - pad_b }}" stroke="rgb(var(--ink) / 0.25)" stroke-width="1"/>
         </svg>
-        <figcaption class="pointer-events-none absolute left-0 top-0 hidden whitespace-nowrap rounded-lg bg-ink px-2.5 py-1.5 text-xs font-semibold text-paper shadow-poster" data-chart-tip></figcaption>
+        <figcaption class="pointer-events-none absolute left-0 top-0 hidden whitespace-nowrap rounded-lg bg-night px-2.5 py-1.5 text-xs font-semibold text-day shadow-poster" data-chart-tip></figcaption>
       </figure>
       </div>
       <details class="mt-3 text-sm">

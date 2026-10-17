@@ -9,6 +9,9 @@ module.exports = {
         ink: { DEFAULT: "rgb(var(--ink) / <alpha-value>)", soft: "rgb(var(--ink-soft) / <alpha-value>)" },
         paper: { DEFAULT: "rgb(var(--paper) / <alpha-value>)", raised: "rgb(var(--paper-raised) / <alpha-value>)" },
         line: "rgb(var(--line) / <alpha-value>)",
+        // Always-dark surfaces (hero, footer, dark cards) and the light text on them; same in both themes.
+        night: "rgb(var(--night) / <alpha-value>)",
+        day: "rgb(var(--day) / <alpha-value>)",
         rani: { DEFAULT: "rgb(var(--rani) / <alpha-value>)", dark: "rgb(var(--rani-dark) / <alpha-value>)" },
         marigold: "rgb(var(--marigold) / <alpha-value>)",
         leaf: "rgb(var(--leaf) / <alpha-value>)",

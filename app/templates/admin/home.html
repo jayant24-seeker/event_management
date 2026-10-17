@@ -15,10 +15,10 @@
 
   <dl class="mt-8 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-6">
     {% for label, value, note in numbers %}
-    <div class="rounded-card bg-ink p-4 text-paper">
-      <dt class="text-xs uppercase tracking-wider text-paper/60">{{ label }}</dt>
+    <div class="rounded-card bg-night p-4 text-day">
+      <dt class="text-xs uppercase tracking-wider text-day/60">{{ label }}</dt>
       <dd class="mt-1 font-display text-2xl font-extrabold">{{ value|inr if note == 'inr' else value|num }}</dd>
-      {% if note != 'inr' %}<dd class="text-xs text-paper/60">{{ note }}</dd>{% endif %}
+      {% if note != 'inr' %}<dd class="text-xs text-day/60">{{ note }}</dd>{% endif %}
     </div>
     {% endfor %}
   </dl>

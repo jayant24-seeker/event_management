@@ -46,7 +46,7 @@
                 {% for opt in spec.options %}
                 <label class="cursor-pointer">
                   <input type="radio" name="{{ fname }}" value="{{ opt }}" class="peer sr-only" {{ 'checked' if value == opt }} {{ 'required' if spec.required }}>
-                  <span class="inline-flex min-w-[3.25rem] justify-center rounded-full border border-line bg-paper px-4 py-2.5 text-sm font-semibold transition hover:border-ink/50 peer-checked:border-ink peer-checked:bg-ink peer-checked:text-paper peer-focus-visible:ring-2 peer-focus-visible:ring-rani peer-focus-visible:ring-offset-2">{{ _(opt) }}</span>
+                  <span class="inline-flex min-w-[3.25rem] justify-center rounded-full border border-line bg-paper px-4 py-2.5 text-sm font-semibold transition hover:border-ink/50 peer-checked:border-ink peer-checked:bg-night peer-checked:text-day peer-focus-visible:ring-2 peer-focus-visible:ring-rani peer-focus-visible:ring-offset-2">{{ _(opt) }}</span>
                 </label>
                 {% endfor %}
               </div>

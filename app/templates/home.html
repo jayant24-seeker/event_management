@@ -10,7 +10,7 @@
 {# ---------- Hero slider ----------
    Works without JS as a swipeable scroll-snap row. hero.js adds arrows, dots and autoplay. #}
 {% if featured %}
-<section class="relative bg-ink text-paper" aria-roledescription="carousel" aria-label="Featured events" data-hero>
+<section class="relative bg-night text-day" aria-roledescription="carousel" aria-label="Featured events" data-hero>
   <div class="no-scrollbar flex snap-x snap-mandatory overflow-x-auto scroll-smooth" data-hero-track>
     {% for e in featured %}
     {% set url = url_for('main.event', slug=e.slug) %}
@@ -18,7 +18,7 @@
              role="group" aria-roledescription="slide" aria-label="{{ loop.index }} of {{ featured|length }}: {{ e.title }}" data-hero-slide>
       <img src="{{ url_for('static', filename=e.banner) }}" alt="" class="absolute inset-0 -z-20 h-full w-full object-cover"
            {% if loop.first %}fetchpriority="high"{% else %}loading="lazy"{% endif %}>
-      <div class="absolute inset-0 -z-10 bg-gradient-to-t from-ink via-ink/60 to-ink/10 lg:bg-gradient-to-r lg:from-ink lg:via-ink/70 lg:to-transparent"></div>
+      <div class="absolute inset-0 -z-10 bg-gradient-to-t from-night via-night/60 to-night/10 lg:bg-gradient-to-r lg:from-night lg:via-night/70 lg:to-transparent"></div>
 
       <div class="container-site flex items-end pb-28 sm:pb-36 lg:items-center lg:pb-20">
         <div class="grid w-full items-center gap-10 lg:grid-cols-[1fr_auto]">
@@ -30,20 +30,20 @@
             <h2 class="mt-3 text-4xl font-extrabold leading-[1.02] sm:text-6xl lg:text-7xl">
               <a href="{{ url }}" class="hover:text-marigold">{{ e.title }}</a>
             </h2>
-            <p class="mt-4 max-w-lg text-lg text-paper/80 sm:text-xl">{{ e.tagline }}</p>
+            <p class="mt-4 max-w-lg text-lg text-day/80 sm:text-xl">{{ e.tagline }}</p>
 
             <dl class="mt-6 flex flex-wrap gap-2 text-sm font-semibold">
-              <div class="flex items-center gap-2 rounded-full bg-paper/10 px-4 py-2 backdrop-blur">
+              <div class="flex items-center gap-2 rounded-full bg-day/10 px-4 py-2 backdrop-blur">
                 <dt class="sr-only">When</dt>
                 <svg class="h-4 w-4 text-marigold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
                 <dd><time datetime="{{ e.start.isoformat() }}">{{ e.start.strftime('%a, %d %b · %-I:%M %p') }}</time></dd>
               </div>
-              <div class="flex items-center gap-2 rounded-full bg-paper/10 px-4 py-2 backdrop-blur">
+              <div class="flex items-center gap-2 rounded-full bg-day/10 px-4 py-2 backdrop-blur">
                 <dt class="sr-only">Where</dt>
                 <svg class="h-4 w-4 text-marigold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 1 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>
                 <dd>{{ e.venue.name }}, {{ e.city }}</dd>
               </div>
-              <div class="flex items-center gap-2 rounded-full bg-paper/10 px-4 py-2 backdrop-blur">
+              <div class="flex items-center gap-2 rounded-full bg-day/10 px-4 py-2 backdrop-blur">
                 <dt class="sr-only">Price</dt>
                 <svg class="h-4 w-4 text-marigold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 9a2 2 0 0 0 0 6v3h18v-3a2 2 0 0 1 0-6V6H3z"/><path d="M14 6v12" stroke-dasharray="2 2"/></svg>
                 <dd>{{ price_label(e) }}</dd>
@@ -52,14 +52,14 @@
 
             <div class="mt-8 flex flex-wrap items-center gap-3">
               <a href="{{ url }}" class="btn-primary btn-lg">{{ _('Notify me') if e.sold_out else _('Register now') }}</a>
-              <a href="{{ url }}" class="btn btn-lg border border-paper/30 text-paper hover:bg-paper/10">{{ _('View details') }}</a>
+              <a href="{{ url }}" class="btn btn-lg border border-day/30 text-day hover:bg-day/10">{{ _('View details') }}</a>
               {% if e.selling_fast %}<span class="text-sm font-semibold text-marigold">{{ _('Only %d spots left')|format(e.spots_left) }}</span>{% endif %}
             </div>
           </div>
 
           <a href="{{ url }}" class="hidden lg:block" tabindex="-1" aria-hidden="true">
             <img src="{{ url_for('static', filename=e.poster) }}" alt="" loading="lazy"
-                 class="w-72 rotate-2 rounded-card shadow-poster ring-1 ring-paper/20 transition duration-500 hover:rotate-0 xl:w-80">
+                 class="w-72 rotate-2 rounded-card shadow-poster ring-1 ring-day/20 transition duration-500 hover:rotate-0 xl:w-80">
           </a>
         </div>
       </div>
@@ -75,19 +75,19 @@
         <button type="button" role="tab" class="group flex-1 text-left lg:max-w-[14rem]" data-hero-dot
                 aria-label="Show {{ e.title }}" aria-selected="{{ 'true' if loop.first else 'false' }}">
           <span class="block h-1 overflow-hidden rounded-full bg-paper/25"><span class="block h-full w-0 bg-marigold" data-hero-bar></span></span>
-          <span class="mt-2 hidden truncate text-xs font-semibold text-paper/60 group-aria-selected:text-paper sm:block">{{ e.title }}</span>
+          <span class="mt-2 hidden truncate text-xs font-semibold text-day/60 group-aria-selected:text-day sm:block">{{ e.title }}</span>
         </button>
         {% endfor %}
       </div>
       <div class="pointer-events-auto flex gap-2">
-        <button type="button" class="grid h-11 w-11 place-items-center rounded-full border border-paper/30 hover:bg-paper/10" data-hero-pause aria-label="Pause slideshow">
+        <button type="button" class="grid h-11 w-11 place-items-center rounded-full border border-day/30 hover:bg-day/10" data-hero-pause aria-label="Pause slideshow">
           <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" data-icon="pause"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
           <svg class="hidden h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" data-icon="play"><path d="M7 5v14l12-7z"/></svg>
         </button>
-        <button type="button" class="hidden h-11 w-11 place-items-center rounded-full border border-paper/30 hover:bg-paper/10 sm:grid" data-hero-prev aria-label="Previous event">
+        <button type="button" class="hidden h-11 w-11 place-items-center rounded-full border border-day/30 hover:bg-day/10 sm:grid" data-hero-prev aria-label="Previous event">
           <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
         </button>
-        <button type="button" class="hidden h-11 w-11 place-items-center rounded-full border border-paper/30 hover:bg-paper/10 sm:grid" data-hero-next aria-label="Next event">
+        <button type="button" class="hidden h-11 w-11 place-items-center rounded-full border border-day/30 hover:bg-day/10 sm:grid" data-hero-next aria-label="Next event">
           <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
         </button>
       </div>
@@ -104,9 +104,9 @@
     <div class="mt-3">{{ search_box('home-q', large=True) }}</div>
     <nav class="no-scrollbar -mx-4 mt-4 flex gap-2 overflow-x-auto px-4 sm:mx-0 sm:px-0" aria-label="{{ _('When are you free?') }}">
       {% for key, label, n in when_counts + [(None, 'All upcoming', upcoming|length)] if n %}
-      <a href="{{ url_for('main.explore', date=key) }}" class="group flex shrink-0 items-center gap-2 rounded-2xl border border-line px-4 py-2.5 transition hover:border-ink hover:bg-ink hover:text-paper">
+      <a href="{{ url_for('main.explore', date=key) }}" class="group flex shrink-0 items-center gap-2 rounded-2xl border border-line px-4 py-2.5 transition hover:border-ink hover:bg-night hover:text-day">
         <span class="font-semibold">{{ _(label) }}</span>
-        <span class="rounded-full bg-rani/10 px-2 py-0.5 text-xs font-bold text-rani-dark group-hover:bg-paper/15 group-hover:text-paper">{{ n }}</span>
+        <span class="rounded-full bg-rani/10 px-2 py-0.5 text-xs font-bold text-rani-dark group-hover:bg-day/15 group-hover:text-day">{{ n }}</span>
       </a>
       {% endfor %}
     </nav>
@@ -134,11 +134,11 @@
   <div class="no-scrollbar -mx-4 mt-6 flex snap-x gap-4 overflow-x-auto px-4 pb-2 sm:mx-0 sm:grid sm:grid-cols-3 sm:px-0 lg:auto-cols-fr lg:grid-flow-col lg:grid-cols-none">
     {% for city, n, e in cities %}
     <a href="{{ city_url(city) }}"
-       class="group relative isolate flex aspect-[4/5] w-36 shrink-0 snap-start flex-col justify-end overflow-hidden rounded-card p-4 text-paper shadow-poster sm:w-auto" style="background-color: {{ e.tint }}">
+       class="group relative isolate flex aspect-[4/5] w-36 shrink-0 snap-start flex-col justify-end overflow-hidden rounded-card p-4 text-day shadow-poster sm:w-auto" style="background-color: {{ e.tint }}">
       <img src="{{ url_for('static', filename=e.banner) }}" alt="" loading="lazy" class="absolute inset-0 -z-20 h-full w-full object-cover transition duration-500 group-hover:scale-110">
-      <span class="absolute inset-0 -z-10 bg-gradient-to-t from-ink/90 via-ink/30 to-transparent"></span>
+      <span class="absolute inset-0 -z-10 bg-gradient-to-t from-night/90 via-night/30 to-transparent"></span>
       <span class="font-display text-xl font-extrabold">{{ city }}</span>
-      <span class="text-sm text-paper/75">{{ n }} {{ _('event' if n == 1 else 'events') }}</span>
+      <span class="text-sm text-day/75">{{ n }} {{ _('event' if n == 1 else 'events') }}</span>
     </a>
     {% endfor %}
   </div>
@@ -149,7 +149,7 @@
   <h2 class="text-lg font-bold">{{ _('Browse by category') }}</h2>
   <div class="no-scrollbar -mx-4 mt-3 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:px-0">
     {% for cat, n in category_counts %}
-    <a href="{{ url_for('main.explore', category=cat) }}" class="chip shrink-0 py-2 hover:bg-ink hover:text-paper">
+    <a href="{{ url_for('main.explore', category=cat) }}" class="chip shrink-0 py-2 hover:bg-night hover:text-day">
       {{ cat }} <span class="rounded-full bg-ink/5 px-1.5 text-xs text-ink-soft">{{ n }}</span>
     </a>
     {% endfor %}
@@ -184,22 +184,22 @@
 {# ---------- Past events teaser: results and photos are social proof ---------- #}
 {% if past %}
 <section class="container-site mt-20">
-  <div class="rounded-card bg-ink p-6 text-paper sm:p-10">
+  <div class="rounded-card bg-night p-6 text-day sm:p-10">
     <div class="flex flex-wrap items-end justify-between gap-4">
       <div>
         <h2 class="text-3xl font-extrabold">{{ _('Results, photos and memories') }}</h2>
-        <p class="mt-1 text-paper/70">{{ _('From events that just happened') }}</p>
+        <p class="mt-1 text-day/70">{{ _('From events that just happened') }}</p>
       </div>
-      <a href="{{ url_for('main.explore', when='past') }}" class="btn border border-paper/30 text-paper hover:bg-paper/10">{{ _('All past events') }}</a>
+      <a href="{{ url_for('main.explore', when='past') }}" class="btn border border-day/30 text-day hover:bg-day/10">{{ _('All past events') }}</a>
     </div>
     <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
       {% for e in past %}
-      <a href="{{ url_for('main.event', slug=e.slug) }}" class="group flex gap-3 rounded-2xl bg-paper/5 p-3 hover:bg-paper/10">
+      <a href="{{ url_for('main.event', slug=e.slug) }}" class="group flex gap-3 rounded-2xl bg-day/5 p-3 hover:bg-day/10">
         <img src="{{ url_for('static', filename=e.poster) }}" alt="" loading="lazy" class="h-24 w-[72px] shrink-0 rounded-lg object-cover grayscale-[40%] group-hover:grayscale-0" style="background-color: {{ e.tint }}">
         <span class="min-w-0">
           <span class="block text-xs font-bold uppercase tracking-wider text-marigold">{{ e.start.strftime('%d %b %Y') }}</span>
           <span class="mt-1 block font-bold leading-snug group-hover:underline">{{ e.title }}</span>
-          <span class="mt-1 block text-sm text-paper/60">{{ e.registered|num }} took part{% if e.raw.results %} · results{% endif %}</span>
+          <span class="mt-1 block text-sm text-day/60">{{ e.registered|num }} took part{% if e.raw.results %} · results{% endif %}</span>
         </span>
       </a>
       {% endfor %}

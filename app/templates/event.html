@@ -38,18 +38,18 @@
 
 {% block content %}
 {# ---------- Banner ---------- #}
-<section data-recent="{{ _seen|tojson|forceescape }}" class="relative isolate overflow-hidden bg-ink text-paper">
+<section data-recent="{{ _seen|tojson|forceescape }}" class="relative isolate overflow-hidden bg-night text-day">
   <img src="{{ url_for('static', filename=e.banner) }}" alt="" fetchpriority="high"
        data-morph-banner class="absolute inset-0 -z-20 h-full w-full object-cover {{ 'grayscale-[50%]' if past }}">
-  <div class="absolute inset-0 -z-10 bg-gradient-to-t from-ink via-ink/70 to-ink/20"></div>
+  <div class="absolute inset-0 -z-10 bg-gradient-to-t from-night via-night/70 to-night/20"></div>
   <div class="container-site pb-10 pt-6 sm:pb-14">
-    <nav class="text-sm text-paper/70" aria-label="Breadcrumb">
+    <nav class="text-sm text-day/70" aria-label="Breadcrumb">
       <ol class="flex flex-wrap items-center gap-1.5">
-        <li><a href="{{ url_for('main.home') }}" class="hover:text-paper">{{ _('Home') }}</a></li>
+        <li><a href="{{ url_for('main.home') }}" class="hover:text-day">{{ _('Home') }}</a></li>
         <li aria-hidden="true">/</li>
-        <li><a href="{{ city_url(e.city) }}" class="hover:text-paper">{{ e.city }}</a></li>
+        <li><a href="{{ city_url(e.city) }}" class="hover:text-day">{{ e.city }}</a></li>
         <li aria-hidden="true">/</li>
-        <li><a href="{{ url_for('main.explore', category=e.category) }}" class="hover:text-paper">{{ e.category }}</a></li>
+        <li><a href="{{ url_for('main.explore', category=e.category) }}" class="hover:text-day">{{ e.category }}</a></li>
       </ol>
     </nav>
 
@@ -57,7 +57,7 @@
       <div class="max-w-3xl">
         <div class="flex flex-wrap gap-2">{% for label, style in e.badges() %}{{ badge(label, style) }}{% endfor %}</div>
         <h1 class="mt-3 text-4xl font-extrabold leading-[1.05] sm:text-6xl">{{ e.title }}</h1>
-        <p class="mt-3 text-lg text-paper/80 sm:text-xl">{{ e.tagline }}</p>
+        <p class="mt-3 text-lg text-day/80 sm:text-xl">{{ e.tagline }}</p>
         <div class="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm font-semibold sm:text-base">
           <p class="flex items-center gap-2">
             <svg class="h-5 w-5 text-marigold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
@@ -69,22 +69,22 @@
           </p>
         </div>
         <div class="mt-6 flex flex-wrap items-center gap-3 text-sm">
-          <a href="{{ url_for('main.organizer', slug=e.organizer) }}" class="flex items-center gap-2 rounded-full bg-paper/10 py-1 pl-1 pr-4 backdrop-blur hover:bg-paper/20">
-            <span class="grid h-8 w-8 place-items-center rounded-full bg-marigold font-bold text-ink">{{ e.org.name[:1] }}</span>
+          <a href="{{ url_for('main.organizer', slug=e.organizer) }}" class="flex items-center gap-2 rounded-full bg-day/10 py-1 pl-1 pr-4 backdrop-blur hover:bg-day/20">
+            <span class="grid h-8 w-8 place-items-center rounded-full bg-marigold font-bold text-night">{{ e.org.name[:1] }}</span>
             <span>{{ _('By') }} <strong>{{ e.org.name }}</strong></span>
             {% if e.org.verified %}<svg class="h-4 w-4 text-marigold" viewBox="0 0 24 24" fill="currentColor" aria-label="Verified organizer"><path d="M12 2l2.4 2.1 3.2-.3.9 3.1 2.8 1.6-1.2 3 1.2 3-2.8 1.6-.9 3.1-3.2-.3L12 22l-2.4-2.1-3.2.3-.9-3.1-2.8-1.6 1.2-3-1.2-3 2.8-1.6.9-3.1 3.2.3z"/><path d="M8.5 12l2.5 2.5 4.5-5" fill="none" stroke="#1A1423" stroke-width="2"/></svg>{% endif %}
           </a>
-          <button type="button" class="flex items-center gap-2 rounded-full border border-paper/30 px-4 py-2 font-semibold hover:bg-paper/10" data-save="{{ e.slug }}" data-label-on="{{ _('Saved') }}" data-label-off="{{ _('Save') }}" data-saved="{{ '1' if e.slug in saved_slugs() else '0' }}" aria-pressed="false">
+          <button type="button" class="flex items-center gap-2 rounded-full border border-day/30 px-4 py-2 font-semibold hover:bg-day/10" data-save="{{ e.slug }}" data-label-on="{{ _('Saved') }}" data-label-off="{{ _('Save') }}" data-saved="{{ '1' if e.slug in saved_slugs() else '0' }}" aria-pressed="false">
             <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>
             <span data-save-label>{{ _('Save') }}</span>
           </button>
-          <a href="#share" class="flex items-center gap-2 rounded-full border border-paper/30 px-4 py-2 font-semibold hover:bg-paper/10" data-share data-title="{{ e.title }}" data-url="{{ page_url }}">
+          <a href="#share" class="flex items-center gap-2 rounded-full border border-day/30 px-4 py-2 font-semibold hover:bg-day/10" data-share data-title="{{ e.title }}" data-url="{{ page_url }}">
             <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>
             {{ _('Share') }}
           </a>
         </div>
       </div>
-      <img src="{{ url_for('static', filename=e.poster) }}" alt="{{ e.title }} poster" data-morph-poster class="hidden w-56 rounded-card shadow-poster ring-1 ring-paper/20 lg:block xl:w-64">
+      <img src="{{ url_for('static', filename=e.poster) }}" alt="{{ e.title }} poster" data-morph-poster class="hidden w-56 rounded-card shadow-poster ring-1 ring-day/20 lg:block xl:w-64">
     </div>
   </div>
 </section>
@@ -92,7 +92,7 @@
 {% if past %}
 <div class="border-b border-line bg-paper-raised">
   <div class="container-site flex flex-col items-start gap-3 py-4 sm:flex-row sm:items-center sm:justify-between">
-    <p class="font-semibold"><span class="mr-2 rounded-full bg-ink px-2.5 py-1 text-xs uppercase tracking-wider text-paper">Event ended</span>This event happened on {{ e.start.strftime('%d %b %Y') }}.{% if e.raw.results %} See the results and photos below.{% endif %}</p>
+    <p class="font-semibold"><span class="mr-2 rounded-full bg-night px-2.5 py-1 text-xs uppercase tracking-wider text-day">Event ended</span>This event happened on {{ e.start.strftime('%d %b %Y') }}.{% if e.raw.results %} See the results and photos below.{% endif %}</p>
     <a href="{{ url_for('main.explore', category=e.category) }}" class="btn-primary shrink-0">Find upcoming {{ e.category|lower }} events</a>
   </div>
 </div>
@@ -123,7 +123,7 @@
 {% set _x = sections.append(('questions', _('Questions'))) %}
 <nav class="sticky top-16 z-30 border-b border-line/70 bg-paper/95 backdrop-blur" aria-label="Sections">
   <div class="container-site no-scrollbar flex gap-1 overflow-x-auto py-2 text-sm font-semibold">
-    {% for id, label in sections %}<a href="#{{ id }}" class="shrink-0 rounded-full px-3.5 py-1.5 text-ink-soft hover:bg-ink/5 hover:text-ink aria-[current=true]:bg-ink aria-[current=true]:text-paper" data-section-link>{{ label }}</a>{% endfor %}
+    {% for id, label in sections %}<a href="#{{ id }}" class="shrink-0 rounded-full px-3.5 py-1.5 text-ink-soft hover:bg-ink/5 hover:text-ink aria-[current=true]:bg-night aria-[current=true]:text-day" data-section-link>{{ label }}</a>{% endfor %}
   </div>
 </nav>
 
@@ -170,7 +170,7 @@
       <h3 class="mt-8 text-lg font-bold">Photos</h3>
       <div class="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
         {% for photo in r.photos %}
-        <a href="{{ url_for('static', filename=photo) }}" class="group block overflow-hidden rounded-xl bg-ink" target="_blank" rel="noopener">
+        <a href="{{ url_for('static', filename=photo) }}" class="group block overflow-hidden rounded-xl bg-night" target="_blank" rel="noopener">
           <img src="{{ url_for('static', filename=photo) }}" alt="Photo {{ loop.index }} from {{ e.title }}" loading="lazy" class="aspect-[4/3] w-full object-cover transition duration-500 group-hover:scale-105">
         </a>
         {% endfor %}
@@ -422,21 +422,21 @@
     </section>
 
     {# Organizer #}
-    <section class="rounded-card bg-ink p-6 text-paper sm:p-8">
+    <section class="rounded-card bg-night p-6 text-day sm:p-8">
       <div class="flex flex-wrap items-center gap-4">
-        <span class="grid h-14 w-14 place-items-center rounded-2xl bg-marigold font-display text-2xl font-extrabold text-ink">{{ e.org.name[:1] }}</span>
+        <span class="grid h-14 w-14 place-items-center rounded-2xl bg-marigold font-display text-2xl font-extrabold text-night">{{ e.org.name[:1] }}</span>
         <div class="min-w-0 flex-1">
-          <p class="text-xs font-bold uppercase tracking-wider text-paper/60">{{ _('Organised by') }}</p>
-          <p class="font-display text-xl font-extrabold">{{ e.org.name }}{% if e.org.verified %} <span class="ml-1 rounded-full bg-marigold px-2 py-0.5 align-middle font-sans text-[11px] font-bold uppercase tracking-wider text-ink">{{ _('Verified') }}</span>{% endif %}</p>
-          <p class="text-sm text-paper/70">{{ e.org.city }} · {{ _('hosting since %s')|format(e.org.since) }} · {{ _('%(n)d events on %(site)s')|format(n=org_events, site=site_name) if org_events != 1 else _('1 event on %(site)s')|format(site=site_name) }}</p>
-          {% if org_rating %}<p class="mt-1 flex items-center gap-2 text-sm">{{ stars(org_rating.avg) }} <strong>{{ '%.1f'|format(org_rating.avg) }}</strong> <span class="text-paper/70">{{ _('from %d reviews of past events')|format(org_rating.count) if org_rating.count != 1 else _('from 1 review of past events') }}</span></p>{% endif %}
+          <p class="text-xs font-bold uppercase tracking-wider text-day/60">{{ _('Organised by') }}</p>
+          <p class="font-display text-xl font-extrabold">{{ e.org.name }}{% if e.org.verified %} <span class="ml-1 rounded-full bg-marigold px-2 py-0.5 align-middle font-sans text-[11px] font-bold uppercase tracking-wider text-night">{{ _('Verified') }}</span>{% endif %}</p>
+          <p class="text-sm text-day/70">{{ e.org.city }} · {{ _('hosting since %s')|format(e.org.since) }} · {{ _('%(n)d events on %(site)s')|format(n=org_events, site=site_name) if org_events != 1 else _('1 event on %(site)s')|format(site=site_name) }}</p>
+          {% if org_rating %}<p class="mt-1 flex items-center gap-2 text-sm">{{ stars(org_rating.avg) }} <strong>{{ '%.1f'|format(org_rating.avg) }}</strong> <span class="text-day/70">{{ _('from %d reviews of past events')|format(org_rating.count) if org_rating.count != 1 else _('from 1 review of past events') }}</span></p>{% endif %}
         </div>
         <div class="flex w-full gap-2 sm:w-auto">
           {{ follow_button(e.organizer) }}
-          <a href="{{ url_for('main.organizer', slug=e.organizer) }}" class="btn border border-paper/30 text-paper hover:bg-paper/10">{{ _('View profile') }}</a>
+          <a href="{{ url_for('main.organizer', slug=e.organizer) }}" class="btn border border-day/30 text-day hover:bg-day/10">{{ _('View profile') }}</a>
         </div>
       </div>
-      <p class="mt-4 text-paper/80">{{ e.org.about }}</p>
+      <p class="mt-4 text-day/80">{{ e.org.about }}</p>
     </section>
 
     {# Share #}
@@ -468,7 +468,7 @@
         </div>
         <div class="mt-3 grid grid-cols-4 gap-2 text-center" data-countdown="{{ e.start.isoformat() }}" aria-label="Time until the event starts">
           {% for unit in ['days', 'hrs', 'min', 'sec'] %}
-          <div class="rounded-xl bg-ink py-2 text-paper"><p class="font-display text-xl font-extrabold tabular-nums" data-unit="{{ unit }}">--</p><p class="text-[10px] uppercase tracking-wider text-paper/60">{{ _(unit) }}</p></div>
+          <div class="rounded-xl bg-night py-2 text-day"><p class="font-display text-xl font-extrabold tabular-nums" data-unit="{{ unit }}">--</p><p class="text-[10px] uppercase tracking-wider text-day/60">{{ _(unit) }}</p></div>
           {% endfor %}
         </div>
 

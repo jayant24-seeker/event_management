@@ -85,15 +85,15 @@
   <div class="mt-5 flex flex-wrap items-center gap-2 text-sm">
     <p class="mr-1 font-semibold" role="status">{{ total }} event{{ 's' if total != 1 }}</p>
     {% for label, url in active %}
-    <a href="{{ url }}" class="inline-flex items-center gap-1 rounded-full bg-ink px-3 py-1 text-xs font-semibold text-paper hover:bg-ink/80" aria-label="Remove filter {{ label }}">
+    <a href="{{ url }}" class="inline-flex items-center gap-1 rounded-full bg-night px-3 py-1 text-xs font-semibold text-day hover:bg-night/80" aria-label="Remove filter {{ label }}">
       {{ label }} <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
     </a>
     {% endfor %}
     {% if active|length > 1 %}<a href="{{ url_for('main.explore', when='past' if past else None) }}" class="text-xs font-semibold text-rani hover:underline">{{ _('Clear all') }}</a>{% endif %}
     {% if not past %}
     <div class="ml-auto inline-flex rounded-full border border-line bg-paper-raised p-1 text-xs font-semibold" role="group" aria-label="View">
-      <a href="{{ explore_url(view=None, month=None) }}" class="rounded-full px-3 py-1.5 {{ 'bg-ink text-paper' if not calendar else 'text-ink-soft hover:text-ink' }}" {% if not calendar %}aria-current="true"{% endif %}>{{ _('Grid') }}</a>
-      <a href="{{ explore_url(view='calendar', date=None) }}" rel="nofollow" class="rounded-full px-3 py-1.5 {{ 'bg-ink text-paper' if calendar else 'text-ink-soft hover:text-ink' }}" {% if calendar %}aria-current="true"{% endif %}>{{ _('Calendar') }}</a>
+      <a href="{{ explore_url(view=None, month=None) }}" class="rounded-full px-3 py-1.5 {{ 'bg-night text-day' if not calendar else 'text-ink-soft hover:text-ink' }}" {% if not calendar %}aria-current="true"{% endif %}>{{ _('Grid') }}</a>
+      <a href="{{ explore_url(view='calendar', date=None) }}" rel="nofollow" class="rounded-full px-3 py-1.5 {{ 'bg-night text-day' if calendar else 'text-ink-soft hover:text-ink' }}" {% if calendar %}aria-current="true"{% endif %}>{{ _('Calendar') }}</a>
     </div>
     {% endif %}
   </div>
@@ -167,7 +167,7 @@
   <nav class="mt-12 flex items-center justify-center gap-2" aria-label="Pages">
     {% if page > 1 %}<a href="{{ explore_url(page=page - 1) }}" class="btn-outline" rel="prev">{{ _('Previous') }}</a>{% endif %}
     {% for n in range(1, pages + 1) %}
-    <a href="{{ explore_url(page=n) }}" class="grid h-10 w-10 place-items-center rounded-full text-sm font-semibold {{ 'bg-ink text-paper' if n == page else 'hover:bg-ink/5' }}" {% if n == page %}aria-current="page"{% endif %}>{{ n }}</a>
+    <a href="{{ explore_url(page=n) }}" class="grid h-10 w-10 place-items-center rounded-full text-sm font-semibold {{ 'bg-night text-day' if n == page else 'hover:bg-ink/5' }}" {% if n == page %}aria-current="page"{% endif %}>{{ n }}</a>
     {% endfor %}
     {% if page < pages %}<a href="{{ explore_url(page=page + 1) }}" class="btn-outline" rel="next">{{ _('Next') }}</a>{% endif %}
   </nav>

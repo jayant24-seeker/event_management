@@ -4,28 +4,28 @@
 {% block description %}{{ org.about }} See upcoming and past events by {{ org.name }} on {{ site_name }}.{% endblock %}
 
 {% block content %}
-<section class="bg-ink text-paper">
+<section class="bg-night text-day">
   <div class="container-site py-12 sm:py-16">
     <div class="flex flex-col gap-6 sm:flex-row sm:items-center">
-      <span class="grid h-24 w-24 shrink-0 place-items-center rounded-3xl bg-marigold font-display text-5xl font-extrabold text-ink">{{ org.name[:1] }}</span>
+      <span class="grid h-24 w-24 shrink-0 place-items-center rounded-3xl bg-marigold font-display text-5xl font-extrabold text-night">{{ org.name[:1] }}</span>
       <div class="min-w-0">
         <p class="eyebrow text-marigold">Organizer · {{ org.city }}</p>
         <h1 class="mt-1 text-4xl font-extrabold sm:text-5xl">{{ org.name }}</h1>
         <div class="mt-3 flex flex-wrap items-center gap-2 text-sm">
-          {% if org.verified %}<span class="badge bg-marigold text-ink">{{ _('Verified organizer') }}</span>{% endif %}
-          <span class="text-paper/70">Hosting since {{ org.since }}</span>
-          <span class="text-paper/70">· {{ followers|num }} follower{{ 's' if followers != 1 }}</span>
-          {% if rating %}<span class="flex items-center gap-1.5">· {{ stars(rating.avg) }} <strong>{{ '%.1f'|format(rating.avg) }}</strong> <span class="text-paper/70">({{ rating.count }} review{{ 's' if rating.count != 1 }})</span></span>{% endif %}
+          {% if org.verified %}<span class="badge bg-marigold text-night">{{ _('Verified organizer') }}</span>{% endif %}
+          <span class="text-day/70">Hosting since {{ org.since }}</span>
+          <span class="text-day/70">· {{ followers|num }} follower{{ 's' if followers != 1 }}</span>
+          {% if rating %}<span class="flex items-center gap-1.5">· {{ stars(rating.avg) }} <strong>{{ '%.1f'|format(rating.avg) }}</strong> <span class="text-day/70">({{ rating.count }} review{{ 's' if rating.count != 1 }})</span></span>{% endif %}
         </div>
       </div>
       <div class="sm:ml-auto">{{ follow_button(org.slug) }}</div>
     </div>
-    <p class="mt-6 max-w-2xl text-lg text-paper/80">{{ org.about }}</p>
+    <p class="mt-6 max-w-2xl text-lg text-day/80">{{ org.about }}</p>
 
     <dl class="mt-8 grid max-w-xl grid-cols-3 gap-3">
       {% for label, value in [('Upcoming', upcoming|length), ('Past events', past|length), ('People hosted', registered)] %}
-      <div class="rounded-2xl bg-paper/10 p-4">
-        <dt class="text-xs uppercase tracking-wider text-paper/60">{{ label }}</dt>
+      <div class="rounded-2xl bg-day/10 p-4">
+        <dt class="text-xs uppercase tracking-wider text-day/60">{{ label }}</dt>
         <dd class="mt-1 font-display text-2xl font-extrabold">{{ value|num }}</dd>
       </div>
       {% endfor %}
@@ -34,7 +34,7 @@
     {% if org.socials %}
     <div class="mt-6 flex flex-wrap gap-2">
       {% for name, url in org.socials.items() %}
-      <a href="{{ url }}" target="_blank" rel="noopener" class="btn border border-paper/30 py-2 text-paper hover:bg-paper/10">{{ name|capitalize }}</a>
+      <a href="{{ url }}" target="_blank" rel="noopener" class="btn border border-day/30 py-2 text-day hover:bg-day/10">{{ name|capitalize }}</a>
       {% endfor %}
     </div>
     {% endif %}

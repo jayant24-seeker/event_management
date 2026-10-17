@@ -9,10 +9,10 @@
   <h1 class="mt-2 text-3xl font-extrabold">Scan tickets</h1>
   <p class="mt-1 text-sm text-ink-soft">Point the camera at a ticket's QR code. Works for all your events{% if events %}: {{ events|map(attribute='title')|join(', ') }}{% endif %}.</p>
 
-  <div class="relative mt-5 aspect-square overflow-hidden rounded-card bg-ink" data-scanner>
+  <div class="relative mt-5 aspect-square overflow-hidden rounded-card bg-night" data-scanner>
     <video class="h-full w-full object-cover" playsinline muted data-video></video>
     <div class="pointer-events-none absolute inset-[18%] rounded-3xl border-4 border-white/70" aria-hidden="true"></div>
-    <div class="absolute inset-0 grid place-items-center p-6 text-center text-paper" data-camera-message>
+    <div class="absolute inset-0 grid place-items-center p-6 text-center text-day" data-camera-message>
       <div>
         <p class="font-semibold">Camera is off</p>
         <button type="button" class="btn-primary mt-3" data-start>Start scanning</button>
@@ -42,8 +42,8 @@
   const box = document.querySelector("[data-result]");
   const csrf = document.querySelector('meta[name="csrf-token"]').content;
   const STYLES = {
-    ok: ["bg-leaf", "Checked in"], already: ["bg-marigold !text-ink", "Already checked in"],
-    invalid: ["bg-rani", "Not valid"], unknown: ["bg-rani", "Not one of your tickets"], error: ["bg-ink", "No connection"],
+    ok: ["bg-leaf", "Checked in"], already: ["bg-marigold !text-night", "Already checked in"],
+    invalid: ["bg-rani", "Not valid"], unknown: ["bg-rani", "Not one of your tickets"], error: ["bg-night", "No connection"],
   };
   let busy = false, lastCode = "", lastAt = 0;
 

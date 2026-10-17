@@ -5,27 +5,27 @@
 {% block content %}
 {% set cta = url_for('org.start') if current_user else url_for('auth.login', next=url_for('org.start')) %}
 {# ---------- Hero ---------- #}
-<section class="relative isolate overflow-hidden bg-ink text-paper">
+<section class="relative isolate overflow-hidden bg-night text-day">
   <div class="absolute -right-24 -top-24 -z-10 h-[28rem] w-[28rem] rounded-full bg-rani/40 blur-3xl"></div>
   <div class="absolute -bottom-32 left-1/3 -z-10 h-80 w-80 rounded-full bg-marigold/25 blur-3xl"></div>
   <div class="container-site grid items-center gap-12 py-16 sm:py-24 lg:grid-cols-[1.1fr_1fr]">
     <div>
       <p class="eyebrow text-marigold">For organizers</p>
       <h1 class="mt-3 text-4xl font-extrabold leading-[1.02] sm:text-6xl">Fill every slot at your next race, show or workshop.</h1>
-      <p class="mt-5 max-w-xl text-lg text-paper/80">A beautiful event page, ticketing with UPI and cards, attendee details your way, and QR check-in at the gate. Set up in 10 minutes.</p>
+      <p class="mt-5 max-w-xl text-lg text-day/80">A beautiful event page, ticketing with UPI and cards, attendee details your way, and QR check-in at the gate. Set up in 10 minutes.</p>
       <div class="mt-8 flex flex-wrap gap-3">
         <a href="{{ cta }}" class="btn-primary btn-lg">Create your event, it's free</a>
-        <a href="#how" class="btn btn-lg border border-paper/30 text-paper hover:bg-paper/10">See how it works</a>
+        <a href="#how" class="btn btn-lg border border-day/30 text-day hover:bg-day/10">See how it works</a>
       </div>
       <dl class="mt-10 grid max-w-md grid-cols-3 gap-4">
-        <div><dt class="text-xs uppercase tracking-wider text-paper/60">Events</dt><dd class="font-display text-3xl font-extrabold">{{ n_events }}+</dd></div>
-        <div><dt class="text-xs uppercase tracking-wider text-paper/60">Cities</dt><dd class="font-display text-3xl font-extrabold">{{ n_cities }}</dd></div>
-        <div><dt class="text-xs uppercase tracking-wider text-paper/60">Attendees</dt><dd class="font-display text-3xl font-extrabold">{{ (n_people // 100 * 100)|num }}+</dd></div>
+        <div><dt class="text-xs uppercase tracking-wider text-day/60">Events</dt><dd class="font-display text-3xl font-extrabold">{{ n_events }}+</dd></div>
+        <div><dt class="text-xs uppercase tracking-wider text-day/60">Cities</dt><dd class="font-display text-3xl font-extrabold">{{ n_cities }}</dd></div>
+        <div><dt class="text-xs uppercase tracking-wider text-day/60">Attendees</dt><dd class="font-display text-3xl font-extrabold">{{ (n_people // 100 * 100)|num }}+</dd></div>
       </dl>
     </div>
     <div class="relative mx-auto h-[420px] w-full max-w-md" aria-hidden="true">
       {% for e in sample %}
-      <img src="{{ url_for('static', filename=e.poster) }}" alt="" class="absolute w-56 rounded-card shadow-poster ring-1 ring-paper/20
+      <img src="{{ url_for('static', filename=e.poster) }}" alt="" class="absolute w-56 rounded-card shadow-poster ring-1 ring-day/20
         {{ ['left-0 top-10 -rotate-6', 'left-1/2 top-0 z-10 -translate-x-1/2', 'right-0 top-16 rotate-6'][loop.index0] }}">
       {% endfor %}
       <div class="absolute bottom-0 left-1/2 z-20 w-72 -translate-x-1/2 rounded-2xl bg-paper-raised p-4 text-ink shadow-lift">
@@ -75,7 +75,7 @@
         ('Check people in', 'Scan QR tickets at the gate, then post results and photos.'),
       ] %}
       <li class="relative pl-14">
-        <span class="absolute left-0 top-0 grid h-10 w-10 place-items-center rounded-full bg-ink font-display font-extrabold text-paper">{{ loop.index }}</span>
+        <span class="absolute left-0 top-0 grid h-10 w-10 place-items-center rounded-full bg-night font-display font-extrabold text-day">{{ loop.index }}</span>
         <h3 class="text-lg font-bold">{{ title }}</h3>
         <p class="mt-1 text-ink-soft">{{ text }}</p>
       </li>
@@ -95,9 +95,9 @@
       ('Paid events', '3%', 'per ticket sold + payment charges', ['Everything in Free', 'UPI, cards, net banking', 'Discount codes and waitlist', 'Payouts to your bank'], True),
       ('Featured', '₹2,999', 'per event', ['Homepage hero slider for 7 days', 'Top of your city page', 'Instagram story shout-out'], False),
     ] %}
-    <div class="rounded-card p-6 {{ 'bg-ink text-paper shadow-lift' if highlight else 'border border-line bg-paper-raised' }}">
+    <div class="rounded-card p-6 {{ 'bg-night text-day shadow-lift' if highlight else 'border border-line bg-paper-raised' }}">
       <h3 class="text-lg font-bold">{{ name }}</h3>
-      <p class="mt-3"><span class="font-display text-4xl font-extrabold">{{ price }}</span> <span class="text-sm {{ 'text-paper/70' if highlight else 'text-ink-soft' }}">{{ unit }}</span></p>
+      <p class="mt-3"><span class="font-display text-4xl font-extrabold">{{ price }}</span> <span class="text-sm {{ 'text-day/70' if highlight else 'text-ink-soft' }}">{{ unit }}</span></p>
       <ul class="mt-5 space-y-2 text-sm">{% for p in points %}<li>✓ {{ p }}</li>{% endfor %}</ul>
     </div>
     {% endfor %}
@@ -129,7 +129,7 @@
   <div class="rounded-card bg-rani p-8 text-center text-white sm:p-12">
     <h2 class="text-3xl font-extrabold sm:text-4xl">Your next event deserves a full house</h2>
     <p class="mx-auto mt-2 max-w-xl text-white">Create your page now. It stays a draft until you publish.</p>
-    <a href="{{ cta }}" class="btn btn-lg mt-6 bg-white text-ink hover:bg-white/90">Start hosting</a>
+    <a href="{{ cta }}" class="btn btn-lg mt-6 bg-white text-night hover:bg-white/90">Start hosting</a>
   </div>
 </section>
 {% endblock %}

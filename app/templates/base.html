@@ -6,7 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>{% block title %}{{ site_name }}: discover events near you{% endblock %}</title>
   <meta name="description" content="{% block description %}Find runs, concerts, workshops and festivals in Jaipur, Kota, Jodhpur, Ajmer, Surat and Chandigarh. Book tickets in a minute.{% endblock %}">
-  <meta name="theme-color" content="#1A1423">
+  <meta name="theme-color" content="#FFF8F0" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#120D18" media="(prefers-color-scheme: dark)">
   <link rel="icon" href="{{ url_for('static', filename='favicon.svg') }}" type="image/svg+xml">
   {% if not config.STATIC_PREVIEW %}<link rel="manifest" href="{{ url_for('main.manifest') }}">{% endif %}
   <link rel="apple-touch-icon" href="{{ url_for('static', filename='icons/apple-touch-icon.png') }}">
@@ -29,7 +30,7 @@
 </head>
 <body class="min-h-screen" data-auth="{{ '1' if current_user else '0' }}" data-root="{{ request.script_root }}"{% if config.STATIC_PREVIEW %} data-preview="1"{% endif %}>
   {% if config.STATIC_PREVIEW %}
-  <div class="bg-marigold px-4 py-2 text-center text-xs font-semibold text-ink">Preview of the Eventouse website. Browsing works fully; sign-in, booking and organizer tools need the live app.</div>
+  <div class="bg-marigold px-4 py-2 text-center text-xs font-semibold text-night">Preview of the Eventouse website. Browsing works fully; sign-in, booking and organizer tools need the live app.</div>
   {% endif %}
   <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 btn-dark">Skip to content</a>
 
@@ -48,7 +49,7 @@
         {% if current_user %}
         <a href="{{ url_for('booking.tickets') }}" class="btn-ghost">{{ _('My tickets') }}</a>
         <details class="relative" data-menu>
-          <summary class="grid h-10 w-10 cursor-pointer list-none place-items-center rounded-full bg-ink font-bold text-paper" aria-label="Account menu">{{ (current_user.name or 'U')[:1]|upper }}</summary>
+          <summary class="grid h-10 w-10 cursor-pointer list-none place-items-center rounded-full bg-night font-bold text-day" aria-label="Account menu">{{ (current_user.name or 'U')[:1]|upper }}</summary>
           <div class="absolute right-0 top-12 w-56 rounded-2xl border border-line bg-paper-raised p-2 shadow-poster">
             <p class="truncate px-3 py-2 text-xs text-ink-soft">{{ current_user.name or current_user.phone }}</p>
             <a href="{{ url_for('auth.account') }}" class="block rounded-xl px-3 py-2 hover:bg-ink/5">{{ _('Profile') }}</a>
@@ -97,7 +98,7 @@
 
   {% with messages = get_flashed_messages() %}{% if messages %}
   <div class="container-site mt-4 print:hidden" role="status">
-    {% for m in messages %}<p class="rounded-xl bg-ink px-4 py-3 text-sm font-semibold text-paper">{{ m }}</p>{% endfor %}
+    {% for m in messages %}<p class="rounded-xl bg-night px-4 py-3 text-sm font-semibold text-day">{{ m }}</p>{% endfor %}
   </div>
   {% endif %}{% endwith %}
 
@@ -128,31 +129,31 @@
   {% endblock %}
 
   {% block footer %}
-  <footer class="mt-24 bg-ink text-paper/80 print:hidden">
+  <footer class="mt-24 bg-night text-day/80 print:hidden">
     <div class="container-site grid gap-8 py-12 text-sm sm:grid-cols-2 lg:grid-cols-4">
       <div>
-        <p class="font-display text-lg font-extrabold text-paper">{{ site_name|lower }}</p>
+        <p class="font-display text-lg font-extrabold text-day">{{ site_name|lower }}</p>
         <p class="mt-2 max-w-xs">{{ _('Discover and book runs, concerts, workshops and festivals across Rajasthan, Gujarat and Punjab.') }}</p>
       </div>
       <div class="space-y-2">
-        <p class="font-semibold text-paper">{{ _('Explore') }}</p>
-        <p><a href="{{ url_for('main.explore') }}" class="hover:text-paper">{{ _('Upcoming events') }}</a></p>
-        <p><a href="{{ url_for('main.explore', when='past') }}" class="hover:text-paper">{{ _('Past events and results') }}</a></p>
-        <p><a href="{{ url_for('main.explore', city='Online') }}" class="hover:text-paper">{{ _('Online events') }}</a></p>
+        <p class="font-semibold text-day">{{ _('Explore') }}</p>
+        <p><a href="{{ url_for('main.explore') }}" class="hover:text-day">{{ _('Upcoming events') }}</a></p>
+        <p><a href="{{ url_for('main.explore', when='past') }}" class="hover:text-day">{{ _('Past events and results') }}</a></p>
+        <p><a href="{{ url_for('main.explore', city='Online') }}" class="hover:text-day">{{ _('Online events') }}</a></p>
       </div>
       <div class="space-y-2">
-        <p class="font-semibold text-paper">{{ _('Organizers') }}</p>
-        <p><a href="{{ url_for('main.for_organizers') }}" class="hover:text-paper">{{ _('Host your event') }}</a></p>
-        <p><a href="{{ url_for('main.for_organizers') }}#pricing" class="hover:text-paper">{{ _('Pricing') }}</a></p>
+        <p class="font-semibold text-day">{{ _('Organizers') }}</p>
+        <p><a href="{{ url_for('main.for_organizers') }}" class="hover:text-day">{{ _('Host your event') }}</a></p>
+        <p><a href="{{ url_for('main.for_organizers') }}#pricing" class="hover:text-day">{{ _('Pricing') }}</a></p>
       </div>
       <div class="space-y-2">
-        <p class="font-semibold text-paper">{{ _('Company') }}</p>
-        <p><a href="{{ url_for('main.page', name='about') }}" class="hover:text-paper">{{ _('About') }}</a> · <a href="{{ url_for('main.contact') }}" class="hover:text-paper">{{ _('Contact') }}</a></p>
-        <p><a href="{{ url_for('main.page', name='terms') }}" class="hover:text-paper">{{ _('Terms') }}</a> · <a href="{{ url_for('main.page', name='privacy') }}" class="hover:text-paper">{{ _('Privacy') }}</a> · <a href="{{ url_for('main.page', name='refunds') }}" class="hover:text-paper">{{ _('Refunds') }}</a></p>
+        <p class="font-semibold text-day">{{ _('Company') }}</p>
+        <p><a href="{{ url_for('main.page', name='about') }}" class="hover:text-day">{{ _('About') }}</a> · <a href="{{ url_for('main.contact') }}" class="hover:text-day">{{ _('Contact') }}</a></p>
+        <p><a href="{{ url_for('main.page', name='terms') }}" class="hover:text-day">{{ _('Terms') }}</a> · <a href="{{ url_for('main.page', name='privacy') }}" class="hover:text-day">{{ _('Privacy') }}</a> · <a href="{{ url_for('main.page', name='refunds') }}" class="hover:text-day">{{ _('Refunds') }}</a></p>
       </div>
     </div>
-    <div class="border-t border-paper/10">
-      <p class="container-site py-5 text-xs text-paper/50">© 2026 N Square Digital Solutions. Built by Shree Soft Technologies.</p>
+    <div class="border-t border-day/10">
+      <p class="container-site py-5 text-xs text-day/50">© 2026 N Square Digital Solutions. Built by Shree Soft Technologies.</p>
     </div>
   </footer>
   {% endblock %}

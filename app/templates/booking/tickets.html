@@ -29,13 +29,13 @@
   {% if upcoming %}
   {% set b, e = upcoming[0] %}
   {# The next thing this person is going to: big, with the tickets one tap away. #}
-  <a href="{{ url_for('booking.show', ref=b.ref) }}" class="group relative isolate mt-6 block overflow-hidden rounded-card p-6 text-paper shadow-poster sm:p-8" style="background-color: {{ e.tint }}">
+  <a href="{{ url_for('booking.show', ref=b.ref) }}" class="group relative isolate mt-6 block overflow-hidden rounded-card p-6 text-day shadow-poster sm:p-8" style="background-color: {{ e.tint }}">
     <img src="{{ url_for('static', filename=e.banner) }}" alt="" class="absolute inset-0 -z-20 h-full w-full object-cover transition duration-700 group-hover:scale-105">
-    <span class="absolute inset-0 -z-10 bg-gradient-to-t from-ink via-ink/70 to-ink/20"></span>
-    <span class="inline-flex rounded-full bg-marigold px-3 py-1 text-xs font-bold text-ink">{{ _('Next up') }} · {{ when(e) }}</span>
+    <span class="absolute inset-0 -z-10 bg-gradient-to-t from-night via-night/70 to-night/20"></span>
+    <span class="inline-flex rounded-full bg-marigold px-3 py-1 text-xs font-bold text-night">{{ _('Next up') }} · {{ when(e) }}</span>
     <p class="mt-16 font-display text-3xl font-extrabold leading-tight sm:mt-24 sm:text-4xl">{{ e.title }}</p>
-    <p class="mt-1 text-paper/85">{{ e.start.strftime('%a, %d %b · %-I:%M %p') }} · {{ e.venue.name }}</p>
-    <span class="btn mt-5 bg-paper text-ink group-hover:bg-white">{{ _('Show tickets') }} ({{ b.attendees|length }})</span>
+    <p class="mt-1 text-day/85">{{ e.start.strftime('%a, %d %b · %-I:%M %p') }} · {{ e.venue.name }}</p>
+    <span class="btn mt-5 bg-paper text-night group-hover:bg-white">{{ _('Show tickets') }} ({{ b.attendees|length }})</span>
   </a>
   {% if upcoming|length > 1 %}
   <h2 class="mt-10 text-xl font-bold">{{ _('Also coming up') }}</h2>
