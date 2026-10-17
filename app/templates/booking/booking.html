@@ -24,6 +24,9 @@
   <div class="rounded-card bg-marigold/20 p-6"><p class="font-bold">Waiting for payment.</p><a href="{{ url_for('booking.pay', ref=b.ref) }}" class="btn-primary mt-3">Pay now</a></div>
   {% endif %}
 
+  {% if b.status == 'confirmed' %}{% for u in announcements_for(e.slug) %}
+  <p class="mt-4 flex gap-2 rounded-card bg-marigold/15 p-4 text-sm"><span aria-hidden="true">📣</span><span class="shrink-0 font-bold">{{ u.created_at|ist('%d %b') }}</span><span>{{ e.org.name }}: {{ u.text }}</span></p>
+  {% endfor %}{% endif %}
   <h2 class="mt-10 text-2xl font-extrabold">Tickets ({{ b.attendees|length }})</h2>
   <p class="mt-1 text-sm text-ink-soft">Show the QR code at the entry. A screenshot works too.</p>
   <div class="mt-5 space-y-4">

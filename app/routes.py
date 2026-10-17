@@ -180,6 +180,14 @@ def event(slug):
                            org_rating=rating_summary(org_slugs), **review_context(e))
 
 
+@bp.app_template_global()
+def announcements_for(slug, limit=3):
+    """Latest organizer updates for an event, newest first."""
+    from .models import Announcement
+
+    return Announcement.query.filter_by(event_slug=slug).order_by(Announcement.created_at.desc()).limit(limit).all()
+
+
 @bp.route("/share.png")
 def site_share_image():
     from flask import send_file

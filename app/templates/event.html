@@ -88,6 +88,17 @@
 </div>
 {% endif %}
 
+{% set updates = announcements_for(e.slug) %}
+{% if updates and not e.is_past() %}
+<div class="border-b border-marigold/40 bg-marigold/15 print:border print:bg-white">
+  <div class="container-site py-3" role="region" aria-label="{{ _('Updates from the organizer') }}">
+    {% for u in updates %}
+    <p class="flex gap-2 text-sm {{ 'mt-1.5' if not loop.first }}"><span aria-hidden="true">📣</span><span class="shrink-0 font-bold">{{ u.created_at|ist('%d %b') }}</span><span>{{ u.text }}</span></p>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
 {# ---------- Section nav ---------- #}
 {% set sections = [] %}
 {% if past and e.raw.results %}{% set _x = sections.append(('results', _('Results'))) %}{% endif %}

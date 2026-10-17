@@ -15,7 +15,7 @@ from sqlalchemy import func
 from .auth import login_required
 from .booking import FIELDS, field_keys
 from .events import EventStore, now_ist, problems
-from .models import Attendee, Booking, Coupon, EventRow, Organizer, User, WaitlistEntry, db, utcnow
+from .models import Announcement, Attendee, Booking, Coupon, EventRow, Organizer, User, WaitlistEntry, db, utcnow
 from .posters import write_art
 from .routes import follower_count, store
 
@@ -373,7 +373,9 @@ def event_admin(slug):
     return render_template("organizer/event_admin.html", row=row, e=e, attendees=attendees, coupons=coupons,
                            used=used, waitlist=waitlist, keys=keys, fields=FIELDS,
                            sales=sales_by_event([slug]).get(slug, (0, 0, 0)), daily=daily_sales(slug),
-                           bookings=bookings, cancelled=cancelled)
+                           bookings=bookings, cancelled=cancelled,
+                           announcements=Announcement.query.filter_by(event_slug=slug)
+                           .order_by(Announcement.created_at.desc()).all())
 
 
 def csv_safe(value):
@@ -442,6 +444,45 @@ def notify_waitlist_now(slug):
         n = notify_waitlist(e, e.spots_left)
         flash(f"Texted {n} {'person' if n == 1 else 'people'} on the waitlist." if n else "Everyone on the waitlist has already been texted.")
     return redirect(url_for("org.event_admin", slug=slug) + "#waitlist")
+
+
+MAX_ANNOUNCEMENTS_PER_DAY = 3
+
+
+@bp.route("/events/<slug>/announce", methods=["POST"])
+@organizer_required
+def announce(slug):
+    """Text every ticket holder (the person who booked) and pin the update on the event page."""
+    from datetime import timedelta
+
+    from .sms import SmsNotConfigured, send_sms
+
+    row = own_event_or_404(slug)
+    text = " ".join(request.form.get("text", "").split())[:300]
+    back = redirect(url_for("org.event_admin", slug=slug) + "#announce")
+    if len(text) < 10:
+        flash("Write a short message (at least 10 characters).")
+        return back
+    today = Announcement.query.filter(Announcement.event_slug == slug,
+                                      Announcement.created_at > utcnow() - timedelta(days=1)).count()
+    if today >= MAX_ANNOUNCEMENTS_PER_DAY:
+        flash(f"You can send {MAX_ANNOUNCEMENTS_PER_DAY} updates a day. Try again tomorrow.")
+        return back
+    phones = sorted({p for (p,) in db.session.query(User.phone).join(Booking, Booking.user_id == User.id)
+                     .filter(Booking.event_slug == slug, Booking.status == "confirmed")})
+    title = row.data.get("title", "your event")
+    sent = 0
+    for phone in phones:
+        try:
+            send_sms(phone, f"{title}: {text} - {g.org.data['name']}")
+            sent += 1
+        except SmsNotConfigured:
+            current_app.logger.exception("Announcement SMS not sent")
+            break
+    db.session.add(Announcement(event_slug=slug, text=text, sent_to=sent))
+    db.session.commit()
+    flash(f"Update posted on the event page and texted to {sent} ticket holder{'s' if sent != 1 else ''}.")
+    return back
 
 
 # ---------- Check-in ----------

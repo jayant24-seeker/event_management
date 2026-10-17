@@ -95,3 +95,32 @@ def test_organizer_can_text_the_waitlist(app, client):
     assert "Texted 1 person" in text(client.get("/organizer/events/jaipur-night-run-2026"))
     post(client, "/organizer/events/jaipur-night-run-2026/waitlist/notify")
     assert "already been texted" in text(client.get("/organizer/events/jaipur-night-run-2026"))
+
+
+def test_organizer_update_is_texted_and_shown(app, client, caplog):
+    import logging
+
+    from app.models import Announcement
+
+    sign_in(client)
+    ref = paid_booking(app, "jaipur-night-run-2026")
+    with client.session_transaction() as s:
+        s.pop("uid")
+    sign_in(client, phone="9999999999")
+    with caplog.at_level(logging.INFO):
+        post(client, "/organizer/events/jaipur-night-run-2026/announce", text="Bib collection moved to Gate 3.")
+    assert any("+919876543210" in r.getMessage() and "Gate 3" in r.getMessage() for r in caplog.records)
+    assert "Gate 3" in text(client.get("/events/jaipur-night-run-2026"))
+    assert "texted to 1" in text(client.get("/organizer/events/jaipur-night-run-2026"))
+    post(client, "/organizer/events/jaipur-night-run-2026/announce", text="short")
+    for i in range(5):
+        post(client, "/organizer/events/jaipur-night-run-2026/announce", text=f"Another update number {i}")
+    with app.app_context():
+        assert Announcement.query.count() == 3  # 3 a day
+    # Other organizers can't post on this event.
+    with client.session_transaction() as s:
+        s.pop("uid")
+    sign_in(client, phone="9811111111", name="Other Org")
+    assert post(client, "/organizer/events/jaipur-night-run-2026/announce", text="Hijacked message here").status_code == 302
+    with app.app_context():
+        assert Announcement.query.count() == 3

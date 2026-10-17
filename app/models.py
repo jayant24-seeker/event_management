@@ -153,6 +153,15 @@ def rating_summary(event_slugs):
     return {"avg": round(sum(r * n for r, n in rows) / count, 1), "count": count, "stars": stars}
 
 
+class Announcement(db.Model):
+    """An update from the organizer, texted to ticket holders and shown on the event page."""
+    id = db.Column(db.Integer, primary_key=True)
+    event_slug = db.Column(db.String(120), db.ForeignKey("event.slug"), nullable=False, index=True)
+    text = db.Column(db.String(320), nullable=False)
+    sent_to = db.Column(db.Integer, nullable=False, default=0)
+    created_at = db.Column(db.DateTime, nullable=False, default=utcnow)
+
+
 class ContactMessage(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), nullable=False)

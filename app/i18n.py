@@ -147,6 +147,7 @@ HI = {
     "Continues": "जारी",
     "Nothing on in this month yet.": "इस महीने अभी कोई इवेंट नहीं।",
     "Mon": "सोम", "Tue": "मंगल", "Wed": "बुध", "Thu": "गुरु", "Fri": "शुक्र", "Sat": "शनि", "Sun": "रवि",
+    "Updates from the organizer": "आयोजक की ओर से सूचना",
     # Offline page
     "No internet right now": "अभी इंटरनेट नहीं है",
     "Tickets you've opened on this phone before still work. Show the QR code at the gate.":
