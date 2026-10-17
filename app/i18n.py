@@ -279,6 +279,7 @@ HI = {
     "✓ No password to remember: we text you a code": "✓ पासवर्ड याद रखने की ज़रूरत नहीं: हम कोड SMS करते हैं",
     "✓ QR tickets on your phone, no printing": "✓ फ़ोन पर QR टिकट, प्रिंट की ज़रूरत नहीं",
     "By continuing you agree to our %(terms)s and %(privacy)s.": "आगे बढ़कर आप हमारी %(terms)s और %(privacy)s से सहमत होते हैं।",
+    "Pick up where you left off": "जहाँ छोड़ा था, वहीं से",
     # Offline page
     "No internet right now": "अभी इंटरनेट नहीं है",
     "Tickets you've opened on this phone before still work. Show the QR code at the gate.":

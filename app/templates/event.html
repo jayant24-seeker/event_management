@@ -32,10 +32,13 @@
 {% endblock %}
 
 {% block tabbar %}{% endblock %}
+{# Remembered in this browser only, for the "Recently viewed" row on the homepage. #}
+{% set _seen = {"slug": e.slug, "title": e.title, "url": url_for('main.event', slug=e.slug), "poster": url_for('static', filename=e.poster),
+                "tint": e.tint, "when": e.start.strftime('%d %b'), "city": e.city, "end": e.end.isoformat()} %}
 
 {% block content %}
 {# ---------- Banner ---------- #}
-<section class="relative isolate overflow-hidden bg-ink text-paper">
+<section data-recent="{{ _seen|tojson|forceescape }}" class="relative isolate overflow-hidden bg-ink text-paper">
   <img src="{{ url_for('static', filename=e.banner) }}" alt="" fetchpriority="high"
        data-morph-banner class="absolute inset-0 -z-20 h-full w-full object-cover {{ 'grayscale-[50%]' if past }}">
   <div class="absolute inset-0 -z-10 bg-gradient-to-t from-ink via-ink/70 to-ink/20"></div>

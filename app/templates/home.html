@@ -122,6 +122,12 @@
   </div>
 </section>
 
+{# ---------- Recently viewed (filled in from this browser's history by site.js) ---------- #}
+<section class="container-site mt-14" hidden data-recent-row>
+  <h2 class="text-2xl font-extrabold">{{ _('Pick up where you left off') }}</h2>
+  <div class="no-scrollbar -mx-4 mt-4 flex snap-x gap-3 overflow-x-auto px-4 pb-2 sm:mx-0 sm:px-0" data-recent-list></div>
+</section>
+
 {# ---------- Cities ---------- #}
 <section class="container-site mt-16">
   <h2 class="text-3xl font-extrabold">{{ _('What\'s on near you') }}</h2>

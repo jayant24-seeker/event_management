@@ -79,3 +79,4 @@ Every item keeps `pytest` green. Newest at the bottom.
 - Hindi: checkout fully translated (headings, field labels, gender options shown in Hindi while saving the same values, discount code, totals, buttons).
 - Hindi: booking confirmation and payment pages translated.
 - Hindi: sign-in, profile, Explore, city, organizer profile, saved, waitlist, ticket pass and 404 pages translated (about 230 phrases in total now).
+- "Pick up where you left off": homepage row of events you recently opened (kept in this browser only, finished events dropped).

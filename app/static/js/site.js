@@ -22,6 +22,37 @@
     if (otp.value.length === 6) otp.form.requestSubmit();
   });
 
+  // Recently viewed events: remembered in this browser only (no account, nothing sent anywhere).
+  const RECENT = "eventouse:recent";
+  const readRecent = () => { try { return JSON.parse(localStorage.getItem(RECENT)) || []; } catch { return []; } };
+  const seen = document.querySelector("[data-recent]");
+  if (seen) {
+    try {
+      const item = JSON.parse(seen.dataset.recent);
+      const list = [item, ...readRecent().filter((r) => r.slug !== item.slug)].slice(0, 10);
+      localStorage.setItem(RECENT, JSON.stringify(list));
+    } catch {}
+  }
+  const row = document.querySelector("[data-recent-row]");
+  if (row) {
+    const items = readRecent().filter((r) => new Date(r.end) > new Date()).slice(0, 8);
+    const box = row.querySelector("[data-recent-list]");
+    items.forEach((r) => {
+      const a = document.createElement("a");
+      a.href = r.url;
+      a.className = "flex w-64 shrink-0 snap-start items-center gap-3 rounded-card border border-line bg-paper-raised p-2.5 transition hover:-translate-y-0.5 hover:shadow-poster";
+      const img = document.createElement("img");
+      img.src = r.poster; img.alt = ""; img.loading = "lazy";
+      img.className = "h-16 w-12 shrink-0 rounded-lg object-cover"; img.style.backgroundColor = r.tint;
+      const text = document.createElement("span");
+      text.className = "min-w-0";
+      const t = document.createElement("span"); t.className = "block truncate font-semibold"; t.textContent = r.title;
+      const m = document.createElement("span"); m.className = "block text-sm text-ink-soft"; m.textContent = `${r.when} · ${r.city}`;
+      text.append(t, m); a.append(img, text); box.append(a);
+    });
+    row.hidden = items.length === 0;
+  }
+
   // Installable app + tickets that open offline. Signed out: forget any saved ticket pages.
   const root = document.body.dataset.root || "";
   if ("serviceWorker" in navigator && !document.body.dataset.preview) navigator.serviceWorker.register(`${root}/sw.js`).catch(() => {});
