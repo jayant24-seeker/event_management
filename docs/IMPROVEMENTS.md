@@ -18,7 +18,7 @@ Every item keeps `pytest` green. Newest at the bottom.
 - [x] Organizer analytics: sales over time chart, ticket mix, check-in rate
 - [x] Site admin: review events, read contact messages
 - [ ] Printable / downloadable ticket
-- [ ] Social share image per event (Open Graph)
+- [x] Social share image per event (Open Graph)
 - [ ] Typo-tolerant search
 - [ ] Dark mode
 - [ ] Accessibility audit and fixes
@@ -34,3 +34,4 @@ Every item keeps `pytest` green. Newest at the bottom.
 - Ticket passes and transfers: every ticket has its own pass page (/pass/<code>) to send on WhatsApp, which also opens offline once viewed; the booker can move a ticket to a new name (new QR, old one stops working) unless the policy says non-transferable. QR codes now scale cleanly.
 - Organizer analytics: tickets-per-day bar chart with hover/tap tooltips and a table view, check-in rate, tickets per booking, average ticket, cancellations. Demo sales seeded for three Pink Pace events so the demo dashboard has data (off in tests). Checked no page scrolls sideways at 390px.
 - Site admin (/admin, numbers in ADMIN_PHONES; demo 88888 88888): site totals, every event with Feature/Hide, organizer verification, contact inbox with mark-done. Invisible (404) to everyone else.
+- Link previews: WhatsApp/Facebook ignore SVG, so each event now has a 1200x630 PNG card (its colours, title, date, price) drawn with Pillow and cached; a site-wide card for every other page. Bundled the Mukta font (OFL). Hindi titles fall back to "<category> in <city>" until the server has libraqm for Devanagari shaping.

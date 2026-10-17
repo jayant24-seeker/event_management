@@ -56,3 +56,17 @@ def test_offline_page_never_shows_who_is_signed_in(client):
     sign_in(client, name="Asha Verma")
     page = client.get("/offline").get_data(as_text=True)
     assert "No internet right now" in page and "Asha" not in page
+
+
+def test_link_preview_images(client):
+    page = client.get("/events/jaipur-night-run-2026").get_data(as_text=True)
+    assert 'og:image" content="http://localhost/events/jaipur-night-run-2026/share.png"' in page
+    assert page.count('property="og:image"') == 1
+    img = client.get("/events/jaipur-night-run-2026/share.png")
+    assert img.status_code == 200 and img.data[:8] == b"\x89PNG\r\n\x1a\n"
+    assert client.get("/events/nope/share.png").status_code == 404
+    # Hindi title: drawn with a fallback headline when the server can't shape Devanagari.
+    assert client.get("/events/deepotsav-kavi-sammelan/share.png").status_code == 200
+    home = client.get("/").get_data(as_text=True)
+    assert 'og:image" content="http://localhost/share.png"' in home
+    assert client.get("/share.png").data[:4] == b"\x89PNG"

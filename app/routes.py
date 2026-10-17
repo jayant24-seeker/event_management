@@ -145,6 +145,28 @@ def event(slug):
                            org_rating=rating_summary(org_slugs), **review_context(e))
 
 
+@bp.route("/share.png")
+def site_share_image():
+    from flask import send_file
+
+    from .share import site_card_path
+
+    return send_file(site_card_path(), mimetype="image/png", max_age=86400)
+
+
+@bp.route("/events/<slug>/share.png")
+def event_share_image(slug):
+    """Link preview card (Open Graph image)."""
+    from flask import send_file
+
+    from .share import card_path
+
+    e = store().get(slug)
+    if not e:
+        abort(404)
+    return send_file(card_path(e), mimetype="image/png", max_age=3600)
+
+
 @bp.route("/events/<slug>.ics")
 def event_ics(slug):
     """Add-to-calendar file (works with Apple, Outlook and Google Calendar)."""
