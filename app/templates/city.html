@@ -15,7 +15,7 @@
 {% block head %}
 <link rel="canonical" href="{{ url_for('main.city', slug=request.view_args.slug, _external=True) }}">
 
-<script type="application/ld+json">{{ faq_jsonld(faq)|tojson }}</script>
+<script type="application/ld+json" nonce="{{ csp_nonce() }}">{{ faq_jsonld(faq)|tojson }}</script>
 {% endblock %}
 
 {% block content %}

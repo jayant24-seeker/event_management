@@ -23,7 +23,7 @@
 {% block head %}
 <link rel="canonical" href="{{ page_url }}">
 
-<script type="application/ld+json">{{ event_jsonld(e)|tojson }}</script>
+<script type="application/ld+json" nonce="{{ csp_nonce() }}">{{ event_jsonld(e)|tojson }}</script>
 {% endblock %}
 
 {% block content %}
@@ -405,7 +405,7 @@
             <textarea id="answer-{{ q.id }}" name="answer" rows="2" maxlength="1500" class="input rounded-2xl" placeholder="Your answer (shown publicly)">{{ q.answer or '' }}</textarea>
             <div class="flex gap-2">
               <button name="action" value="answer" class="btn-dark py-2">{{ 'Update answer' if q.answer else 'Answer' }}</button>
-              <button name="action" value="hide" class="btn-ghost py-2 text-rani" formnovalidate onclick="return confirm('Remove this question?')">Remove</button>
+              <button name="action" value="hide" class="btn-ghost py-2 text-rani" formnovalidate data-confirm="Remove this question?">Remove</button>
             </div>
           </form>
           {% endif %}

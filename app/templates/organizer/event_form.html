@@ -161,7 +161,7 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
+<script nonce="{{ csp_nonce() }}">
   // Add ticket rows, show "Your category" for Other, hide city for online events.
   (function () {
     const form = document.querySelector("[data-event-form]");

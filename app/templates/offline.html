@@ -9,11 +9,11 @@
   <div id="offline-tickets" class="mx-auto mt-6 grid max-w-sm gap-2 text-left" hidden>
     <p class="text-sm font-bold uppercase tracking-wider text-ink-soft">{{ _("Saved on this phone") }}</p>
   </div>
-  <button type="button" onclick="location.reload()" class="btn-primary mt-8">{{ _("Try again") }}</button>
+  <button type="button" data-reload class="btn-primary mt-8">{{ _("Try again") }}</button>
 </div>
 {% endblock %}
 {% block scripts %}
-<script>
+<script nonce="{{ csp_nonce() }}">
   // List the ticket pages the service worker kept, so they open without a signal.
   if ("caches" in window) {
     (async () => {

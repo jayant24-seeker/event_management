@@ -5,6 +5,16 @@
   document.addEventListener("click", (ev) => menus.forEach((m) => { if (m.open && !m.contains(ev.target)) m.open = false; }));
   document.addEventListener("keydown", (ev) => { if (ev.key === "Escape") menus.forEach((m) => { m.open = false; }); });
 
+  // Confirm before destructive actions: <form data-confirm="..."> or <button data-confirm="...">.
+  document.addEventListener("submit", (ev) => {
+    const msg = ev.submitter?.dataset.confirm || ev.target.dataset.confirm;
+    if (msg && !confirm(msg)) ev.preventDefault();
+  });
+  document.addEventListener("click", (ev) => {
+    if (ev.target.closest("[data-print]")) window.print();
+    if (ev.target.closest("[data-reload]")) location.reload();
+  });
+
   // Installable app + tickets that open offline. Signed out: forget any saved ticket pages.
   if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js").catch(() => {});
   if (document.body.dataset.auth !== "1") {

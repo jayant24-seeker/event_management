@@ -113,11 +113,26 @@ def create_app(config=None):
             except OSError:
                 pass
 
+    @app.template_global()
+    def csp_nonce():
+        if "csp_nonce" not in g:
+            g.csp_nonce = secrets.token_urlsafe(16)
+        return g.csp_nonce
+
     @app.after_request
     def security_headers(response):
         response.headers.setdefault("X-Content-Type-Options", "nosniff")
         response.headers.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
         response.headers.setdefault("X-Frame-Options", "SAMEORIGIN")
+        # Only our own scripts (plus inline ones carrying this request's nonce) may run.
+        # Skipped in debug so the Werkzeug debugger's inline scripts still work.
+        if response.mimetype == "text/html" and not app.debug:
+            response.headers.setdefault("Content-Security-Policy", "; ".join([
+                "default-src 'self'", f"script-src 'self' 'nonce-{csp_nonce()}'",
+                "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com", "font-src 'self' https://fonts.gstatic.com",
+                "img-src 'self' data:", "frame-src https://www.google.com", "connect-src 'self'", "worker-src 'self'",
+                "manifest-src 'self'", "object-src 'none'", "base-uri 'self'", "form-action 'self'", "frame-ancestors 'self'",
+            ]))
         response.headers.setdefault("Permissions-Policy", "camera=(self), microphone=(), geolocation=(self)")
         if g.get("user") is not None or request.path.startswith(("/organizer", "/bookings", "/tickets", "/pay", "/account", "/pass/", "/admin")):
             response.headers["Cache-Control"] = "private, no-store"  # personal pages never cached

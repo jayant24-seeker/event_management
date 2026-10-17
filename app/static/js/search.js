@@ -31,13 +31,13 @@
 
     function render(data, q) {
       const row = (url, html, i) =>
-        `<a id="${list.id}-${i}" role="option" aria-selected="false" href="${url}" class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm hover:bg-ink/5 aria-selected:bg-ink/5">${html}</a>`;
+        `<a id="${list.id}-${i}" role="option" aria-selected="false" href="${esc(url)}" class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm hover:bg-ink/5 aria-selected:bg-ink/5">${html}</a>`;
       let i = 0;
       let html = "";
       if (data.events.length) {
         html += `<p class="px-3 pb-1 pt-2 text-[11px] font-bold uppercase tracking-wider text-ink-soft">Events</p>`;
         data.events.forEach((e) => {
-          html += row(e.url, `<img src="${e.poster}" alt="" class="h-12 w-9 shrink-0 rounded-md object-cover"><span class="min-w-0"><span class="block truncate font-semibold">${esc(e.title)}</span><span class="block text-xs text-ink-soft">${esc(e.meta)}</span></span>`, i++);
+          html += row(e.url, `<img src="${esc(e.poster)}" alt="" class="h-12 w-9 shrink-0 rounded-md object-cover"><span class="min-w-0"><span class="block truncate font-semibold">${esc(e.title)}</span><span class="block text-xs text-ink-soft">${esc(e.meta)}</span></span>`, i++);
         });
       }
       const groups = [["Cities", data.cities], ["Categories", data.categories]];

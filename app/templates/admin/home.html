@@ -2,7 +2,7 @@
 {% block title %}Admin · {{ site_name }}{% endblock %}
 {% block head %}<meta name="robots" content="noindex">{% endblock %}
 {% macro post_button(action, label, hidden={}, style='btn-outline', confirm='') -%}
-<form method="post" action="{{ action }}" class="inline"{% if confirm %} onsubmit="return confirm({{ confirm|tojson|forceescape }})"{% endif %}>
+<form method="post" action="{{ action }}" class="inline"{% if confirm %} data-confirm="{{ confirm }}"{% endif %}>
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   {% for k, v in hidden.items() %}<input type="hidden" name="{{ k }}" value="{{ v }}">{% endfor %}
   <button class="{{ style }} px-3 py-1.5 text-xs">{{ label }}</button>

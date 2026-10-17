@@ -31,3 +31,20 @@ def test_bad_coupon_expiry_does_not_crash(client):
     res = post(client, "/organizer/events/jaipur-night-run-2026/coupons", code="NIGHT5", percent_off="5",
                valid_until="not-a-date")
     assert res.status_code == 302
+
+
+def test_content_security_policy_and_no_inline_handlers(client):
+    import pathlib
+    import re
+
+    res = client.get("/events/jaipur-night-run-2026")
+    csp = res.headers["Content-Security-Policy"]
+    nonce = re.search(r"'nonce-([^']+)'", csp).group(1)
+    page = res.get_data(as_text=True)
+    assert "object-src 'none'" in csp and "frame-ancestors 'self'" in csp
+    # Every inline script carries this request's nonce; no on*="" handlers anywhere in the templates.
+    for tag in re.findall(r"<script(?![^>]*\bsrc=)[^>]*>", page):
+        assert f'nonce="{nonce}"' in tag
+    templates = pathlib.Path(__file__).parent.parent / "app" / "templates"
+    for f in templates.rglob("*.html"):
+        assert not re.search(r"\son(click|submit|change|load|input)=", f.read_text()), f

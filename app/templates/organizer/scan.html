@@ -33,7 +33,7 @@
 </div>
 {% endblock %}
 {% block scripts %}
-<script>
+<script nonce="{{ csp_nonce() }}">
 (function () {
   const video = document.querySelector("[data-video]");
   const message = document.querySelector("[data-camera-message]");
