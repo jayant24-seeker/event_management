@@ -141,6 +141,7 @@ def register(slug):
             if error:
                 errors.append(error)
             elif booking.status == "confirmed":
+                send_confirmation(booking, e)
                 flash("You're in! Your tickets are below.")
                 return redirect(url_for("booking.show", ref=booking.ref))
             else:
@@ -178,6 +179,35 @@ def create_booking(e, people, subtotal, discount, coupon):
         return booking, None
 
 
+def where_text(e):
+    name, address = e.venue["name"], e.venue.get("address", "")
+    if e.is_online or not address:
+        return name
+    return address if address.startswith(name) else f"{name}, {address}"
+
+
+def send_confirmation(booking, e):
+    """Text and email the person who booked: what, when, where, and links to each ticket."""
+    from .mailer import send_email
+    from .sms import SmsNotConfigured, send_sms
+
+    link = url_for("booking.show", ref=booking.ref, _external=True)
+    when = e.start.strftime("%a %d %b, %-I:%M %p")
+    try:
+        send_sms(booking.user.phone, f"You're booked for {e.title}, {when}. {len(booking.attendees)} ticket(s): {link}")
+    except SmsNotConfigured:
+        current_app.logger.exception("Booking SMS not sent")
+    email = booking.user.email or next((a.details.get("email") for a in booking.attendees if a.details.get("email")), "")
+    lines = [f"Hi {booking.user.first_name},", "", f"You're booked for {e.title}.", "",
+             f"When:  {e.start.strftime('%A %d %B %Y, %-I:%M %p')}",
+             f"Where: {where_text(e)}",
+             f"Booking: {booking.ref} · {'Free' if booking.total == 0 else f'₹{booking.total:,} paid'}", "", "Tickets:"]
+    lines += [f"  {a.ticket_name} - {a.name}: {url_for('booking.ticket_pass', code=a.code, _external=True)}"
+              for a in booking.attendees]
+    lines += ["", f"All your tickets: {link}", f"Refunds: {e.refund_policy}", "", "See you there!", "Team Eventouse"]
+    send_email(email, f"Your tickets: {e.title} ({e.start.strftime('%d %b')})", "\n".join(lines))
+
+
 def own_booking_or_404(ref):
     booking = Booking.query.filter_by(ref=ref).first()
     if booking is None or booking.user_id != g.user.id:
@@ -199,6 +229,7 @@ def pay(ref):
             booking.status, booking.confirmed_at = "confirmed", utcnow()
             booking.payment_ref = "TEST-" + secrets.token_hex(6).upper()
             db.session.commit()
+            send_confirmation(booking, e)
             flash("Payment received. You're in!")
             return redirect(url_for("booking.show", ref=ref))
         booking.status = "cancelled"

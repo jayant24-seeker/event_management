@@ -26,7 +26,7 @@ Every item keeps `pytest` green. Newest at the bottom.
 - [x] Organizers: message all attendees (SMS announcement, e.g. venue change)
 - [x] Organizers: duplicate an event (next edition in one click)
 - [x] Group discount (e.g. 10% off 4+ tickets) set by the organizer
-- [ ] Booking confirmation by email (console in development)
+- [x] Booking confirmation by email (console in development)
 - [ ] "Near me": sort Explore by distance from the visitor
 - [ ] Waitlist position shown to the person waiting
 - [ ] README refresh for everything added overnight
@@ -49,3 +49,4 @@ Every item keeps `pytest` green. Newest at the bottom.
 - Organizer updates: "Message ticket holders" on the event admin page texts everyone who booked (3 a day max) and pins the update on the event page and on their tickets.
 - Duplicate for next year: one click copies an event as a draft 52 weeks later (same weekday), updates the year in the title, resets sales and drops results. Also checked the site in the iPhone simulator (Safari): homepage, event page, calendar agenda all render well.
 - Group discounts: organizer sets "N+ tickets → X% off" (2+ tickets, up to 50%); event page advertises it, checkout nudges ("add 1 more for 15% off") and applies whichever of group discount or code saves more.
+- Booking confirmations: SMS plus a plain-text email (when, where, one link per ticket, refund policy) as soon as a booking is confirmed; console in development, SMTP via MAIL_* settings in production; never blocks a booking if mail is down.

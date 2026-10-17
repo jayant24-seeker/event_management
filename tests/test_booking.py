@@ -182,3 +182,15 @@ def test_group_discount_beats_or_yields_to_codes(app, client):
     # EARLYBIRD10 saves less than 15%, so the group discount stays.
     with_code = text(client.get("/events/amer-hills-trail-ultra/register?t0=3&coupon=EARLYBIRD10"))
     assert "Group discount" in with_code and "isn't needed" in with_code
+
+
+def test_confirmation_is_texted_and_emailed(app, client, caplog):
+    import logging
+
+    sign_in(client)
+    with caplog.at_level(logging.INFO):
+        post(client, "/events/deepotsav-kavi-sammelan/register", t0="1", action="book", **{"a0-name": "Asha", "a0-age": "30"})
+    logs = [r.getMessage() for r in caplog.records]
+    assert any(m.startswith("SMS to +919876543210: You're booked for") for m in logs)
+    email = next(m for m in logs if m.startswith("Email to asha@example.com"))
+    assert "/pass/" in email and "/bookings/" in email and "Asha" in email

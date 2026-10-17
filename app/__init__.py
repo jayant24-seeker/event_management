@@ -25,6 +25,13 @@ def create_app(config=None):
         SESSION_COOKIE_SAMESITE="Lax",
         SESSION_COOKIE_SECURE=os.environ.get("SESSION_COOKIE_SECURE") == "1",
         TRUSTED_PROXY=os.environ.get("TRUSTED_PROXY") == "1",
+        # Email: "console" logs messages (development); "smtp" sends with the MAIL_* settings.
+        MAIL_PROVIDER=os.environ.get("MAIL_PROVIDER", "console"),
+        MAIL_SERVER=os.environ.get("MAIL_SERVER", ""),
+        MAIL_PORT=int(os.environ.get("MAIL_PORT", "587")),
+        MAIL_USERNAME=os.environ.get("MAIL_USERNAME", ""),
+        MAIL_PASSWORD=os.environ.get("MAIL_PASSWORD", ""),
+        MAIL_FROM=os.environ.get("MAIL_FROM", "Eventouse <tickets@eventouse.com>"),
         # Eventouse staff who can open /admin: comma-separated +91 numbers.
         ADMIN_PHONES=os.environ.get("ADMIN_PHONES", ""),
     )
