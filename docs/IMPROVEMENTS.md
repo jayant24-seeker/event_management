@@ -32,7 +32,7 @@ Every item keeps `pytest` green. Newest at the bottom.
 - [x] README refresh for everything added overnight
 - [x] Gate scanner page (camera QR scanning on phones)
 - [x] Check-in staff: organizer adds volunteer phone numbers who can scan tickets
-- [ ] Questions & answers on event pages (attendees ask, organizer answers)
+- [x] Questions & answers on event pages (attendees ask, organizer answers)
 - [ ] Dark mode
 
 ## Done
@@ -60,3 +60,4 @@ Every item keeps `pytest` green. Newest at the bottom.
 - README: new settings (mail, admin, proxy, refunds), new modules and routes, demo admin login.
 - Gate scanner (/organizer/scan, "Scan with camera" on the dashboard): live camera QR scanning with big green/amber/red results, vibration, running "X of Y checked in", manual code entry. Uses the browser's BarcodeDetector where available and bundled jsQR (Apache-2.0) on iPhone; decoding verified against a real ticket QR.
 - Gate team: organizers add volunteers by phone number on the dashboard; volunteers sign in and get "Scan tickets" in their menu, can check tickets in for that organizer only, and see nothing else (no dashboard, attendee data or editing).
+- Questions & answers: signed-in visitors ask on the event page (5 a day); the organizer answers or removes inline, the asker gets an SMS; only answered questions are public; the event admin page flags questions waiting.

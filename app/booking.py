@@ -9,7 +9,7 @@ from flask import Blueprint, abort, current_app, flash, g, jsonify, redirect, re
 
 from .auth import login_required, normalize_phone
 from .events import IST, now_ist
-from .models import (PAYMENT_HOLD, Attendee, Booking, Coupon, EventRow, Review, SavedEvent, WaitlistEntry, db,
+from .models import (PAYMENT_HOLD, Attendee, Booking, Coupon, EventRow, Question, Review, SavedEvent, WaitlistEntry, db,
                      rating_summary, seats_taken, short_code, utcnow)
 from .ratelimit import hit
 from .routes import store
@@ -432,6 +432,79 @@ def review(slug):
     db.session.commit()
     flash("Thanks for the review!")
     return redirect(url_for("main.event", slug=slug) + "#reviews")
+
+
+# ---- Questions and answers
+MAX_QUESTIONS_PER_DAY = 5
+
+
+def owns_event(e):
+    return g.get("user") is not None and g.user.organizer_slug == e.organizer
+
+
+def questions_context(e):
+    """Answered questions for everyone; the organizer also sees unanswered ones, askers see their own."""
+    q = Question.query.filter_by(event_slug=e.slug, hidden=False)
+    if owns_event(e):
+        rows = q.order_by(Question.answered_at.isnot(None), Question.created_at.desc()).all()
+    else:
+        mine = g.user.id if g.get("user") else -1
+        rows = [x for x in q.order_by(Question.answered_at.desc(), Question.created_at.desc()).all()
+                if x.answered_at or x.user_id == mine]
+    return {"questions": rows, "is_owner": owns_event(e)}
+
+
+@bp.route("/events/<slug>/questions", methods=["POST"])
+@login_required
+def ask(slug):
+    from datetime import timedelta
+
+    e = get_event_or_404(slug)
+    text = " ".join(request.form.get("text", "").split())[:500]
+    back = redirect(url_for("main.event", slug=slug) + "#questions")
+    if len(text) < 8:
+        flash("Write your question in a few words.")
+        return back
+    if Question.query.filter(Question.user_id == g.user.id, Question.created_at > utcnow() - timedelta(days=1)).count() >= MAX_QUESTIONS_PER_DAY:
+        flash("You've asked a lot of questions today. Please try again tomorrow.")
+        return back
+    parts = (g.user.name or "Guest").split()
+    db.session.add(Question(event_slug=slug, user_id=g.user.id, text=text,
+                            name=parts[0] + (f" {parts[-1][0]}." if len(parts) > 1 else "")))
+    db.session.commit()
+    flash(f"Question sent to {e.org.get('name', 'the organizer')}. We'll text you when they answer.")
+    return back
+
+
+@bp.route("/events/<slug>/questions/<int:qid>", methods=["POST"])
+@login_required
+def answer(slug, qid):
+    from .sms import SmsNotConfigured, send_sms
+
+    e = get_event_or_404(slug)
+    q = Question.query.filter_by(id=qid, event_slug=slug).first_or_404()
+    if not owns_event(e):
+        abort(404)
+    if request.form.get("action") == "hide":
+        q.hidden = True
+        db.session.commit()
+        flash("Question removed.")
+        return redirect(url_for("main.event", slug=slug) + "#questions")
+    text = request.form.get("answer", "").strip()[:1500]
+    if len(text) < 2:
+        flash("Write an answer first.")
+        return redirect(url_for("main.event", slug=slug) + f"#q{qid}")
+    first_answer = q.answered_at is None
+    q.answer, q.answered_at = text, utcnow()
+    db.session.commit()
+    if first_answer:
+        try:
+            send_sms(q.user.phone, f"{e.org.get('name', 'The organizer')} answered your question about {e.title}: "
+                                   f"{url_for('main.event', slug=slug, _external=True)}#q{qid}")
+        except SmsNotConfigured:
+            current_app.logger.exception("Answer SMS not sent")
+    flash("Answer posted.")
+    return redirect(url_for("main.event", slug=slug) + f"#q{qid}")
 
 
 # ---- Saved events

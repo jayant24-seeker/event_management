@@ -16,7 +16,8 @@ from sqlalchemy.orm import contains_eager
 from .auth import login_required
 from .booking import FIELDS, field_keys
 from .events import EventStore, now_ist, problems
-from .models import Announcement, Attendee, Booking, Coupon, EventRow, Organizer, User, WaitlistEntry, db, utcnow
+from .models import (Announcement, Attendee, Booking, Coupon, EventRow, Organizer, Question, User, WaitlistEntry, db,
+                     utcnow)
 from .posters import write_art
 from .routes import follower_count, store
 
@@ -443,7 +444,8 @@ def event_admin(slug):
                            sales=sales_by_event([slug]).get(slug, (0, 0, 0)), daily=daily_sales(slug),
                            bookings=bookings, cancelled=cancelled,
                            announcements=Announcement.query.filter_by(event_slug=slug)
-                           .order_by(Announcement.created_at.desc()).all())
+                           .order_by(Announcement.created_at.desc()).all(),
+                           open_questions=Question.query.filter_by(event_slug=slug, hidden=False, answered_at=None).count())
 
 
 def csv_safe(value):

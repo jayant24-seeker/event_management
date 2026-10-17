@@ -110,6 +110,7 @@
 {% if e.raw.kit %}{% set _x = sections.append(('kit', _('What you get'))) %}{% endif %}
 {% if e.raw.prizes %}{% set _x = sections.append(('prizes', _('Prizes'))) %}{% endif %}
 {% set _x = sections.append(('faqs', _('FAQs'))) %}
+{% set _x = sections.append(('questions', _('Questions'))) %}
 <nav class="sticky top-16 z-30 border-b border-line/70 bg-paper/95 backdrop-blur" aria-label="Sections">
   <div class="container-site no-scrollbar flex gap-1 overflow-x-auto py-2 text-sm font-semibold">
     {% for id, label in sections %}<a href="#{{ id }}" class="shrink-0 rounded-full px-3.5 py-1.5 text-ink-soft hover:bg-ink/5 hover:text-ink aria-[current=true]:bg-ink aria-[current=true]:text-paper" data-section-link>{{ label }}</a>{% endfor %}
@@ -366,6 +367,52 @@
           <p class="mt-3 leading-relaxed text-ink-soft">{{ e.refund_policy }}</p>
         </details>
       </div>
+    </section>
+
+    {# Questions and answers #}
+    <section id="questions" class="scroll-mt-32">
+      <p class="eyebrow">{{ _('Questions') }}</p>
+      <h2 class="mt-1 text-3xl font-extrabold">{{ _('Ask the organizer') }}</h2>
+      {% if not past %}
+      {% if current_user %}
+      <form method="post" action="{{ url_for('booking.ask', slug=e.slug) }}" class="mt-5 flex flex-col gap-2 sm:flex-row">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label class="sr-only" for="ask-text">{{ _('Your question') }}</label>
+        <input id="ask-text" name="text" required minlength="8" maxlength="500" class="input" placeholder="{{ _('e.g. Is there parking near the start?') }}">
+        <button class="btn-dark shrink-0">{{ _('Ask') }}</button>
+      </form>
+      <p class="mt-2 text-xs text-ink-soft">{{ _('Answers appear here, and we text you when yours is answered.') }}</p>
+      {% else %}
+      <p class="mt-4 text-ink-soft"><a href="{{ url_for('auth.login', next=request.path ~ '#questions') }}" class="font-semibold text-rani hover:underline">{{ _('Sign in') }}</a> {{ _('to ask a question.') }} {{ _('Check the FAQs above first.') }}</p>
+      {% endif %}
+      {% endif %}
+      {% if questions %}
+      <ul class="mt-6 space-y-3">
+        {% for q in questions %}
+        <li id="q{{ q.id }}" class="scroll-mt-32 rounded-card border border-line bg-paper-raised p-5">
+          <p class="font-semibold">{{ q.text }}</p>
+          <p class="mt-1 text-xs text-ink-soft">{{ q.name }} · {{ q.created_at|ist('%d %b') }}{% if not q.answered_at %} · <span class="font-semibold text-rani-dark">{{ _('Waiting for an answer') }}</span>{% endif %}</p>
+          {% if q.answer %}
+          <div class="mt-3 border-l-4 border-marigold pl-4">
+            <p class="text-xs font-bold uppercase tracking-wider text-ink-soft">{{ e.org.name }}</p>
+            <p class="mt-1 whitespace-pre-line leading-relaxed">{{ q.answer }}</p>
+          </div>
+          {% endif %}
+          {% if is_owner %}
+          <form method="post" action="{{ url_for('booking.answer', slug=e.slug, qid=q.id) }}" class="mt-3 space-y-2">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <label class="sr-only" for="answer-{{ q.id }}">Answer</label>
+            <textarea id="answer-{{ q.id }}" name="answer" rows="2" maxlength="1500" class="input rounded-2xl" placeholder="Your answer (shown publicly)">{{ q.answer or '' }}</textarea>
+            <div class="flex gap-2">
+              <button name="action" value="answer" class="btn-dark py-2">{{ 'Update answer' if q.answer else 'Answer' }}</button>
+              <button name="action" value="hide" class="btn-ghost py-2 text-rani" formnovalidate onclick="return confirm('Remove this question?')">Remove</button>
+            </div>
+          </form>
+          {% endif %}
+        </li>
+        {% endfor %}
+      </ul>
+      {% endif %}
     </section>
 
     {# Organizer #}

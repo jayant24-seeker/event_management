@@ -152,6 +152,16 @@ HI = {
     "Finding you…": "आपको ढूँढ रहे हैं…",
     "Location is off": "लोकेशन बंद है",
     "Scan tickets": "टिकट स्कैन करें",
+    # Questions
+    "Questions": "सवाल",
+    "Ask the organizer": "आयोजक से पूछें",
+    "Your question": "आपका सवाल",
+    "Ask": "पूछें",
+    "e.g. Is there parking near the start?": "जैसे, क्या शुरुआत के पास पार्किंग है?",
+    "Answers appear here, and we text you when yours is answered.": "जवाब यहाँ दिखेंगे, और आपके सवाल का जवाब आने पर हम आपको SMS करेंगे।",
+    "to ask a question.": "करके सवाल पूछें।",
+    "Check the FAQs above first.": "पहले ऊपर दिए FAQs देख लें।",
+    "Waiting for an answer": "जवाब का इंतज़ार",
     # Offline page
     "No internet right now": "अभी इंटरनेट नहीं है",
     "Tickets you've opened on this phone before still work. Show the QR code at the gate.":

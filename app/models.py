@@ -172,6 +172,21 @@ class GateStaff(db.Model):
     __table_args__ = (UniqueConstraint("organizer_slug", "phone"),)
 
 
+class Question(db.Model):
+    """A question on an event page. Public once the organizer answers it."""
+    id = db.Column(db.Integer, primary_key=True)
+    event_slug = db.Column(db.String(120), db.ForeignKey("event.slug"), nullable=False, index=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    name = db.Column(db.String(120), nullable=False)
+    text = db.Column(db.String(500), nullable=False)
+    answer = db.Column(db.Text, nullable=True)
+    answered_at = db.Column(db.DateTime, nullable=True)
+    hidden = db.Column(db.Boolean, nullable=False, default=False)  # organizer removed it
+    created_at = db.Column(db.DateTime, nullable=False, default=utcnow)
+
+    user = db.relationship("User")
+
+
 class ContactMessage(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), nullable=False)

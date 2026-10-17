@@ -203,3 +203,31 @@ def test_waitlist_shows_place_in_line(app, client):
     assert "#2" in second
     again = text(post(client, "/events/jaipur-night-run-2026/notify", name="A", phone="9800000001"))
     assert "#1" in again  # joining twice keeps your place
+
+
+def test_questions_and_answers(app, client, caplog):
+    import logging
+
+    from app.models import Question
+
+    sign_in(client)
+    post(client, "/events/jaipur-night-run-2026/questions", text="Is there parking near the start?")
+    page = text(client.get("/events/jaipur-night-run-2026"))
+    assert "Is there parking near the start?" in page and "Waiting for an answer" in page  # the asker sees it
+    with client.session_transaction() as s:
+        s.pop("uid")
+    assert "Is there parking" not in text(client.get("/events/jaipur-night-run-2026"))  # others don't, yet
+    sign_in(client, phone="9999999999")
+    assert post(client, "/events/kota-campus-beats/questions/1", answer="x").status_code == 404  # wrong event
+    with caplog.at_level(logging.INFO):
+        post(client, "/events/jaipur-night-run-2026/questions/1", action="answer", answer="Yes, at Gate 2.")
+    assert any("+919876543210" in r.getMessage() and "answered your question" in r.getMessage() for r in caplog.records)
+    with client.session_transaction() as s:
+        s.pop("uid")
+    public = text(client.get("/events/jaipur-night-run-2026"))
+    assert "Is there parking near the start?" in public and "Yes, at Gate 2." in public
+    # Someone who isn't the organizer can't answer or hide.
+    sign_in(client, phone="9811111119", name="Not Org")
+    assert post(client, "/events/jaipur-night-run-2026/questions/1", action="hide").status_code == 404
+    with app.app_context():
+        assert not db.session.get(Question, 1).hidden

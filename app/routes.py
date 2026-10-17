@@ -173,11 +173,11 @@ def event(slug):
     e = s.get(slug)
     if not e:
         abort(404)
-    from .booking import review_context
+    from .booking import questions_context, review_context
 
     org_slugs = [x.slug for x in s.by_organizer(e.organizer)]
     return render_template("event.html", e=e, similar=s.similar(e), org_events=len(org_slugs),
-                           org_rating=rating_summary(org_slugs), **review_context(e))
+                           org_rating=rating_summary(org_slugs), **review_context(e), **questions_context(e))
 
 
 @bp.app_template_global()

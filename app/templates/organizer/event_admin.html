@@ -39,6 +39,12 @@
   </div>
   {% endif %}
 
+  {% if open_questions %}
+  <a href="{{ url_for('main.event', slug=row.slug) }}#questions" class="mt-6 flex items-center justify-between gap-3 rounded-card bg-marigold/20 p-4 font-semibold hover:bg-marigold/30">
+    <span>{{ open_questions }} question{{ 's' if open_questions != 1 }} waiting for your answer</span><span aria-hidden="true">→</span>
+  </a>
+  {% endif %}
+
   {# Sales over time + headline numbers #}
   {% if e %}
   <section class="mt-8 grid gap-4 lg:grid-cols-[1fr_260px]">
