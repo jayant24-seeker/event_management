@@ -28,7 +28,7 @@ Every item keeps `pytest` green. Newest at the bottom.
 - [x] Organizer co-admins (more than one person managing an organizer)
 - [x] Razorpay integration path behind settings (replace test payment page)
 - [ ] Code review of the whole branch (bugs, security) and fixes
-- [ ] Organizer payouts view (what was sold, fees, what reaches the bank) once fees are decided
+- [x] Organizer payouts view (fees as settings, matching the pricing page)
 - [x] Event page photo gallery lightbox (swipe through result photos)
 - [ ] Guest checkout without an account? (needs a product decision: phone OTP is the account today)
 - [x] Accessibility audit and fixes
@@ -51,7 +51,7 @@ Every item keeps `pytest` green. Newest at the bottom.
 - [x] Organizer co-admins (more than one person managing an organizer)
 - [x] Razorpay integration path behind settings (replace test payment page)
 - [ ] Code review of the whole branch (bugs, security) and fixes
-- [ ] Organizer payouts view (what was sold, fees, what reaches the bank) once fees are decided
+- [x] Organizer payouts view (fees as settings, matching the pricing page)
 - [x] Event page photo gallery lightbox (swipe through result photos)
 - [ ] Guest checkout without an account? (needs a product decision: phone OTP is the account today)
 
@@ -115,3 +115,4 @@ Every item keeps `pytest` green. Newest at the bottom.
 - Organizer team roles: add people as Gate staff (scan only) or Co-admin (the full organizer dashboard: events, attendees, sales, messages). Co-admins are linked as soon as they sign in; removing them takes access away; numbers that already run another organizer cannot be added as co-admins.
 - Photo viewer on past events: results photos open in a full-screen viewer (native dialog) with a counter, arrow buttons and keys, swipe on phones, Esc or tap outside to close; without JavaScript the links still open the photo.
 - Toasts and micro-interactions: messages ("You are following…", "Code created") now float up as toasts above the phone tab bar, can be dismissed, and leave on their own; the Save heart pops when filled; both respect reduced motion.
+- Payout summary on each event: ticket sales, Eventouse fee (3%), payment charges (~2%) and what reaches the bank; both rates are settings (PLATFORM_FEE_PCT, PAYMENT_FEE_PCT) so they can follow the final pricing.

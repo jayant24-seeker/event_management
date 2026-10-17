@@ -38,6 +38,9 @@ def create_app(config=None):
         MAIL_USERNAME=os.environ.get("MAIL_USERNAME", ""),
         MAIL_PASSWORD=os.environ.get("MAIL_PASSWORD", ""),
         MAIL_FROM=os.environ.get("MAIL_FROM", "Eventouse <tickets@eventouse.com>"),
+        # Fees shown to organizers (percent of ticket revenue). Match the pricing page.
+        PLATFORM_FEE_PCT=float(os.environ.get("PLATFORM_FEE_PCT", "3")),
+        PAYMENT_FEE_PCT=float(os.environ.get("PAYMENT_FEE_PCT", "2")),
         # Payments: "test" (the built-in test page) or "razorpay" with the keys below.
         PAYMENT_PROVIDER=os.environ.get("PAYMENT_PROVIDER", "test"),
         RAZORPAY_KEY_ID=os.environ.get("RAZORPAY_KEY_ID", ""),

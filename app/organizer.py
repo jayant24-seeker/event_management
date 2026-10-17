@@ -499,6 +499,14 @@ def attendee_rows(slug):
             .order_by(Booking.confirmed_at.desc(), Attendee.id).all())
 
 
+def payout_summary(revenue):
+    """(gross, platform fee, payment charges, payout) in rupees for ticket revenue."""
+    cfg = current_app.config
+    fee = round(revenue * cfg["PLATFORM_FEE_PCT"] / 100)
+    charges = round(revenue * cfg["PAYMENT_FEE_PCT"] / 100)
+    return revenue, fee, charges, revenue - fee - charges
+
+
 def daily_sales(slug, days=45):
     """[(date, tickets, revenue)] per day in IST, from the first sale (at most `days` back) to today."""
     from datetime import timedelta, timezone
@@ -547,6 +555,7 @@ def event_admin(slug):
                            used=used, waitlist=waitlist, keys=keys, fields=FIELDS,
                            sales=sales_by_event([slug]).get(slug, (0, 0, 0)), daily=daily_sales(slug),
                            bookings=bookings, cancelled=cancelled, sources=sources,
+                           payout=payout_summary(sales_by_event([slug]).get(slug, (0, 0, 0))[1]),
                            announcements=Announcement.query.filter_by(event_slug=slug)
                            .order_by(Announcement.created_at.desc()).all(),
                            open_questions=Question.query.filter_by(event_slug=slug, hidden=False, answered_at=None).count())

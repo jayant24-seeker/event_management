@@ -335,3 +335,11 @@ def test_co_admin_gets_full_access_and_can_be_removed(app, client):
     post(client, "/organizer/staff", remove=str(member_id))
     with app.app_context():
         assert User.query.filter_by(phone="+919822233344").one().organizer_slug is None
+
+
+def test_payout_summary(app):
+    from app.organizer import payout_summary
+
+    with app.app_context():
+        assert payout_summary(10000) == (10000, 300, 200, 9500)
+        assert payout_summary(0) == (0, 0, 0, 0)
