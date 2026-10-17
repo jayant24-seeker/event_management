@@ -116,3 +116,4 @@ Every item keeps `pytest` green. Newest at the bottom.
 - Photo viewer on past events: results photos open in a full-screen viewer (native dialog) with a counter, arrow buttons and keys, swipe on phones, Esc or tap outside to close; without JavaScript the links still open the photo.
 - Toasts and micro-interactions: messages ("You are following…", "Code created") now float up as toasts above the phone tab bar, can be dismissed, and leave on their own; the Save heart pops when filled; both respect reduced motion.
 - Payout summary on each event: ticket sales, Eventouse fee (3%), payment charges (~2%) and what reaches the bank; both rates are settings (PLATFORM_FEE_PCT, PAYMENT_FEE_PCT) so they can follow the final pricing.
+- Gzip: pages, CSS, JS, SVG posters and JSON are compressed when the browser accepts it: homepage 64 KB → 8 KB, stylesheet 65 KB → 11 KB, event page → 9 KB.

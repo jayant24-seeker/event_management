@@ -100,3 +100,13 @@ def test_city_page_shows_nearby_cities(client):
     assert "Also within reach" in page and "km from Jaipur" in page
     # Surat is far from Jaipur (over 450 km), so its events aren't suggested.
     assert "Surat ·" not in page.split("Also within reach")[1].split("Questions about")[0]
+
+
+def test_text_responses_are_gzipped(client):
+    import gzip
+
+    res = client.get("/", headers={"Accept-Encoding": "gzip, br"})
+    assert res.headers["Content-Encoding"] == "gzip" and b"Eventouse" in gzip.decompress(res.data)
+    css = client.get("/static/css/app.css", headers={"Accept-Encoding": "gzip"})
+    assert css.headers.get("Content-Encoding") == "gzip"
+    assert "Content-Encoding" not in client.get("/").headers  # clients that don't ask get plain

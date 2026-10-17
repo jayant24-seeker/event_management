@@ -1,3 +1,4 @@
+import gzip
 import os
 import secrets
 from datetime import timedelta
@@ -156,6 +157,25 @@ def create_app(config=None):
         response.headers.setdefault("Permissions-Policy", "camera=(self), microphone=(), geolocation=(self)")
         if g.get("user") is not None or request.path.startswith(("/organizer", "/bookings", "/tickets", "/pay", "/account", "/pass/", "/admin")):
             response.headers["Cache-Control"] = "private, no-store"  # personal pages never cached
+        return response
+
+    # Gzip text responses (pages, CSS, JS, SVG posters, JSON): about 5x smaller on mobile data.
+    compressible = ("text/", "application/json", "application/javascript", "image/svg+xml",
+                    "application/xml", "application/manifest+json")
+
+    @app.after_request
+    def gzip_response(response):
+        if (response.status_code != 200 or "gzip" not in request.headers.get("Accept-Encoding", "")
+                or "Content-Encoding" in response.headers or not response.mimetype.startswith(compressible)):
+            return response
+        response.direct_passthrough = False
+        data = response.get_data()
+        if len(data) < 1024:
+            return response
+        response.set_data(gzip.compress(data, compresslevel=6))
+        response.headers["Content-Encoding"] = "gzip"
+        response.headers["Content-Length"] = len(response.get_data())
+        response.vary.add("Accept-Encoding")
         return response
 
     @app.errorhandler(404)
