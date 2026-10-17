@@ -27,6 +27,10 @@ Every item keeps `pytest` green. Newest at the bottom.
 - [x] Recurring events / series (weekly classes with many dates)
 - [x] Organizer co-admins (more than one person managing an organizer)
 - [x] Razorpay integration path behind settings (replace test payment page)
+- [ ] Code review of the whole branch (bugs, security) and fixes
+- [ ] Organizer payouts view (what was sold, fees, what reaches the bank) once fees are decided
+- [ ] Event page photo gallery lightbox (swipe through result photos)
+- [ ] Guest checkout without an account? (needs a product decision: phone OTP is the account today)
 - [x] Accessibility audit and fixes
 - [x] Speed: measured every main page (3-8 queries, under 40 ms); fixed the one N+1
 - [x] Organizers: message all attendees (SMS announcement, e.g. venue change)
@@ -46,6 +50,10 @@ Every item keeps `pytest` green. Newest at the bottom.
 - [x] Recurring events / series (weekly classes with many dates)
 - [x] Organizer co-admins (more than one person managing an organizer)
 - [x] Razorpay integration path behind settings (replace test payment page)
+- [ ] Code review of the whole branch (bugs, security) and fixes
+- [ ] Organizer payouts view (what was sold, fees, what reaches the bank) once fees are decided
+- [ ] Event page photo gallery lightbox (swipe through result photos)
+- [ ] Guest checkout without an account? (needs a product decision: phone OTP is the account today)
 
 ## Done
 - Security: per-IP limits on sign-in codes, waitlist and contact form; blocked `/\host` open redirect; bad coupon expiry no longer crashes. Ownership checks reviewed (all OK).
@@ -104,4 +112,4 @@ Every item keeps `pytest` green. Newest at the bottom.
 - Razorpay payments (switch on with PAYMENT_PROVIDER=razorpay and keys): order per booking, Razorpay Checkout on the pay page, server-side signature check, signed webhook as a backup (idempotent), automatic refunds on cancellation, CSP opened for Razorpay only when enabled. Test mode stays the default. Covered by tests with the API mocked; needs real test keys for a live trial.
 - About page: live numbers (events, cities, people registered, organizers) and a tilted strip of current event posters linking to each event.
 - Repeating events: "Add more dates" (every week / 2 weeks / 4 weeks, up to 12) creates linked copies with their own tickets and freshly drawn posters; the event page shows "Other dates" chips; listings show a series once with "+N more dates".
-- Organizer team roles: add people as Gate staff (scan only) or Co-admin (full dashboard: events, attendees, payouts view). Co-admins are linked as soon as they sign in; removing them takes access away; numbers that already run another organizer cannot be added as co-admins.
+- Organizer team roles: add people as Gate staff (scan only) or Co-admin (the full organizer dashboard: events, attendees, sales, messages). Co-admins are linked as soon as they sign in; removing them takes access away; numbers that already run another organizer cannot be added as co-admins.
