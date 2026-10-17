@@ -8,13 +8,13 @@
 
 {% block content %}
 <div class="container-site py-8 sm:py-12">
-  <a href="{{ url_for('main.event', slug=e.slug) }}#tickets" class="text-sm font-semibold text-rani hover:underline">← Change tickets</a>
-  <h1 class="mt-2 text-3xl font-extrabold sm:text-4xl">Who's coming?</h1>
-  <p class="mt-1 text-ink-soft">Details for each ticket. The organizer uses them for bibs, kits and entry.</p>
+  <a href="{{ url_for('main.event', slug=e.slug) }}#tickets" class="text-sm font-semibold text-rani hover:underline">← {{ _('Change tickets') }}</a>
+  <h1 class="mt-2 text-3xl font-extrabold sm:text-4xl">{{ _("Who's coming?") }}</h1>
+  <p class="mt-1 text-ink-soft">{{ _('Details for each ticket. The organizer uses them for bibs, kits and entry.') }}</p>
 
   {% if errors %}
   <div class="mt-6 rounded-xl border border-rani/40 bg-rani/5 p-4" role="alert">
-    <p class="font-bold text-rani">Please fix these:</p>
+    <p class="font-bold text-rani">{{ _('Please fix these:') }}</p>
     <ul class="mt-1 list-inside list-disc text-sm">{% for err in errors %}<li>{{ err }}</li>{% endfor %}</ul>
   </div>
   {% endif %}
@@ -26,12 +26,12 @@
     <div class="space-y-5">
       {% set k = namespace(i=0) %}
       {% for i, t, n in picked %}
-        {% for _ in range(n) %}
+        {% for _seat in range(n) %}
         <fieldset class="rounded-card border border-line bg-paper-raised p-5">
           <legend class="sr-only">Ticket {{ k.i + 1 }}</legend>
           <div class="flex items-center justify-between gap-3">
-            <p class="font-display text-lg font-bold">Ticket {{ k.i + 1 }} · {{ t.name }}</p>
-            <p class="text-sm font-bold text-rani">{{ 'Free' if t.price == 0 else t.price|inr }}</p>
+            <p class="font-display text-lg font-bold">{{ _('Ticket') }} {{ k.i + 1 }} · {{ t.name }}</p>
+            <p class="text-sm font-bold text-rani">{{ _('Free') if t.price == 0 else t.price|inr }}</p>
           </div>
           <div class="mt-4 grid gap-4 sm:grid-cols-2">
             {% for key, spec in fields %}
@@ -39,14 +39,14 @@
             {% set value = form.get(fname) or (current_user.name if key == 'name' and k.i == 0 else '') or (current_user.email if key == 'email' and k.i == 0 else '') %}
             {% set tag = 'div' if spec.type == 'select' else 'label' %}
             <{{ tag }} class="block {{ 'sm:col-span-2' if key in ('name', 'emergency', 'tshirt') }}">
-              <span id="{{ fname }}-label" class="mb-1.5 block text-sm font-semibold">{{ spec.label }}{% if not spec.required %} <span class="font-normal text-ink-soft">(optional)</span>{% endif %}</span>
+              <span id="{{ fname }}-label" class="mb-1.5 block text-sm font-semibold">{{ _(spec.label) }}{% if not spec.required %} <span class="font-normal text-ink-soft">({{ _('optional') }})</span>{% endif %}</span>
               {% if spec.type == 'select' %}
               {# One tap per choice instead of a dropdown. #}
               <div role="radiogroup" aria-labelledby="{{ fname }}-label" class="flex flex-wrap gap-2">
                 {% for opt in spec.options %}
                 <label class="cursor-pointer">
                   <input type="radio" name="{{ fname }}" value="{{ opt }}" class="peer sr-only" {{ 'checked' if value == opt }} {{ 'required' if spec.required }}>
-                  <span class="inline-flex min-w-[3.25rem] justify-center rounded-full border border-line bg-paper px-4 py-2.5 text-sm font-semibold transition hover:border-ink/50 peer-checked:border-ink peer-checked:bg-ink peer-checked:text-paper peer-focus-visible:ring-2 peer-focus-visible:ring-rani peer-focus-visible:ring-offset-2">{{ opt }}</span>
+                  <span class="inline-flex min-w-[3.25rem] justify-center rounded-full border border-line bg-paper px-4 py-2.5 text-sm font-semibold transition hover:border-ink/50 peer-checked:border-ink peer-checked:bg-ink peer-checked:text-paper peer-focus-visible:ring-2 peer-focus-visible:ring-rani peer-focus-visible:ring-offset-2">{{ _(opt) }}</span>
                 </label>
                 {% endfor %}
               </div>
@@ -86,24 +86,24 @@
 
         {% if subtotal %}
         <div class="mt-4 flex gap-2">
-          <label class="flex-1"><span class="sr-only">Discount code</span>
-            <input name="coupon" value="{{ coupon_code }}" class="input py-2 uppercase placeholder:normal-case" placeholder="Discount code" autocomplete="off">
+          <label class="flex-1"><span class="sr-only">{{ _('Discount code') }}</span>
+            <input name="coupon" value="{{ coupon_code }}" class="input py-2 uppercase placeholder:normal-case" placeholder="{{ _('Discount code') }}" autocomplete="off">
           </label>
-          <button name="action" value="apply" class="btn-outline py-2" formnovalidate>Apply</button>
+          <button name="action" value="apply" class="btn-outline py-2" formnovalidate>{{ _('Apply') }}</button>
         </div>
         {% if coupon_error %}<p class="mt-2 text-sm font-semibold text-rani">{{ coupon_error }}</p>
-        {% elif coupon %}<p class="mt-2 text-sm font-semibold text-leaf">Code applied.</p>
-        {% elif group_applied and coupon_code %}<p class="mt-2 text-sm font-semibold text-ink-soft">Your group discount saves more, so the code isn't needed.</p>{% endif %}
+        {% elif coupon %}<p class="mt-2 text-sm font-semibold text-leaf">{{ _('Code applied.') }}</p>
+        {% elif group_applied and coupon_code %}<p class="mt-2 text-sm font-semibold text-ink-soft">{{ _("Your group discount saves more, so the code isn't needed.") }}</p>{% endif %}
         {% endif %}
 
         <div class="mt-4 flex items-baseline justify-between border-t border-line pt-4">
-          <p class="font-semibold">Total</p>
+          <p class="font-semibold">{{ _('Total') }}</p>
           <p class="font-display text-3xl font-extrabold">{{ (subtotal - discount)|inr }}</p>
         </div>
         <button name="action" value="book" class="btn-primary btn-lg mt-4 w-full">
-          {{ 'Confirm registration' if subtotal - discount == 0 else 'Continue to payment' }}
+          {{ _('Confirm registration') if subtotal - discount == 0 else _('Continue to payment') }}
         </button>
-        <p class="mt-3 text-xs text-ink-soft">Refunds: {{ e.refund_policy }}</p>
+        <p class="mt-3 text-xs text-ink-soft">{{ _('Refunds') }}: {{ e.refund_policy }}</p>
       </div>
     </aside>
   </form>

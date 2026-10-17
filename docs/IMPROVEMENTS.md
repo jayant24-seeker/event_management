@@ -76,3 +76,4 @@ Every item keeps `pytest` green. Newest at the bottom.
 - Event form: live preview beside the form (desktop) showing the Explore card as you type (title, date chip, category, city and venue, "From ₹" price) and the chosen poster instantly; group discount moved below the ticket rows; wider layout.
 - For organizers page: feature grid rewritten to sell what now exists (gate scanner and team, live sales and to-dos, messaging ticket holders, automatic refunds and waitlists, group discounts, Q&A) with icons instead of 1-6 numbers (the features are not steps).
 - Hindi: event page UI now fully switches (breadcrumb, Save/Saved, Start/Finish, prizes heading, countdown units, organizer line with natural Hindi word order, review count, Verified).
+- Hindi: checkout fully translated (headings, field labels, gender options shown in Hindi while saving the same values, discount code, totals, buttons).
