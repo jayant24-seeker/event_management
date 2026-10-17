@@ -27,7 +27,7 @@
 <div class="container-site py-10">
   <div class="flex flex-wrap items-end justify-between gap-4">
     <div>
-      <p class="eyebrow">Organizer dashboard</p>
+      <p class="text-sm font-semibold text-ink-soft">Organizer dashboard</p>
       <h1 class="mt-1 text-3xl font-extrabold sm:text-4xl">{{ g.org.data.name }}{% if g.org.data.verified %} <span class="badge bg-marigold align-middle text-ink">Verified</span>{% endif %}</h1>
     </div>
     <div class="flex gap-2">
@@ -37,19 +37,34 @@
   </div>
 
   <dl class="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-    {% for label, value in [('Tickets sold on ' ~ site_name, totals[0]|num), ('Revenue', totals[1]|inr), ('Checked in', totals[2]|num), ('On waitlists', waitlist|num), ('Followers', followers|num)] %}
-    <div class="rounded-card bg-ink p-5 text-paper">
-      <dt class="text-xs uppercase tracking-wider text-paper/60">{{ label }}</dt>
+    {% for label, value in [('Revenue', totals[1]|inr), ('Tickets sold on ' ~ site_name, totals[0]|num), ('Checked in', totals[2]|num), ('On waitlists', waitlist|num), ('Followers', followers|num)] %}
+    {# The two money numbers lead; the rest stay quiet. #}
+    <div class="rounded-card p-5 {{ 'bg-ink text-paper' if loop.index <= 2 else 'border border-line bg-paper-raised' }} {{ 'col-span-2 sm:col-span-1' if loop.first }}">
+      <dt class="text-sm {{ 'text-paper/70' if loop.index <= 2 else 'text-ink-soft' }}">{{ label }}</dt>
       <dd class="mt-1 font-display text-3xl font-extrabold">{{ value }}</dd>
     </div>
     {% endfor %}
   </dl>
 
+  {% if todo %}
+  <section class="mt-6 rounded-card border border-marigold/50 bg-marigold/10 p-4 sm:p-5" aria-labelledby="todo-h">
+    <h2 id="todo-h" class="font-bold">Needs your attention</h2>
+    <ul class="mt-2 divide-y divide-marigold/30">
+      {% for text, href, action in todo %}
+      <li class="flex flex-wrap items-center justify-between gap-2 py-2.5">
+        <span>{{ text }}</span>
+        <a href="{{ href }}" class="btn-dark px-4 py-1.5 text-xs">{{ action }}</a>
+      </li>
+      {% endfor %}
+    </ul>
+  </section>
+  {% endif %}
+
   <form method="post" action="{{ url_for('org.check_in') }}" class="mt-6 flex flex-wrap items-center gap-2 rounded-card border border-line bg-paper-raised p-4">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <p class="mr-2 font-semibold">Gate check-in</p>
     <a href="{{ url_for('org.scan') }}" class="btn-primary py-2">Scan with camera</a>
-    <input name="code" class="input max-w-xs py-2 font-mono uppercase" placeholder="Ticket code" required autocomplete="off">
+    <input name="code" class="input max-w-xs py-2 font-mono uppercase placeholder:font-sans placeholder:normal-case" placeholder="Ticket code" required autocomplete="off">
     <button class="btn-dark py-2">Check in</button>
     <p class="w-full text-xs text-ink-soft sm:w-auto">Or scan the ticket's QR with your phone camera while signed in.</p>
   </form>

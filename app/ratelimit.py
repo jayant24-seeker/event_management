@@ -27,6 +27,8 @@ def client_ip():
 def hit(name):
     """Record one request; returns False when this IP is over the limit."""
     limit, window = LIMITS[name]
+    if current_app.debug:
+        limit *= 20  # development: lots of test sign-ins from one machine
     hits = current_app.extensions.setdefault("ratelimit", defaultdict(deque))[(name, client_ip())]
     now = time.monotonic()
     while hits and hits[0] <= now - window:

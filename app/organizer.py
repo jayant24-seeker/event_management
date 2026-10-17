@@ -157,8 +157,37 @@ def dashboard():
     waitlist = WaitlistEntry.query.filter(WaitlistEntry.event_slug.in_([r.slug for r in rows])).count() if rows else 0
     from .models import GateStaff
     return render_template("organizer/dashboard.html", upcoming=upcoming, past=past, sales=sales,
+                           todo=attention_items(rows),
                            totals=totals, waitlist=waitlist, followers=follower_count(g.org.slug),
                            staff=GateStaff.query.filter_by(organizer_slug=g.org.slug).order_by(GateStaff.created_at).all())
+
+
+def attention_items(rows):
+    """Short to-do list for the dashboard: (text, link, button label), most urgent first."""
+    live = store()
+    slugs = [r.slug for r in rows]
+    questions = dict(db.session.query(Question.event_slug, func.count(Question.id))
+                     .filter(Question.event_slug.in_(slugs), Question.hidden.is_(False), Question.answered_at.is_(None))
+                     .group_by(Question.event_slug)) if slugs else {}
+    waiting = dict(db.session.query(WaitlistEntry.event_slug, func.count(WaitlistEntry.id))
+                   .filter(WaitlistEntry.event_slug.in_(slugs), WaitlistEntry.notified_at.is_(None))
+                   .group_by(WaitlistEntry.event_slug)) if slugs else {}
+    out = []
+    for r in rows:
+        title = r.data.get("title") or "Untitled event"
+        e = live.get(r.slug)
+        if questions.get(r.slug):
+            n = questions[r.slug]
+            out.append((f"{n} question{'s' if n != 1 else ''} waiting on {title}",
+                        url_for("main.event", slug=r.slug) + "#questions", "Answer"))
+        if r.status == "draft":
+            out.append((f"{title} is still a draft", url_for("org.edit_event", slug=r.slug), "Finish and publish"))
+        elif e and not e.is_past() and e.sold_out and waiting.get(r.slug):
+            out.append((f"{title} is sold out and {waiting[r.slug]} people are waiting",
+                        url_for("org.edit_event", slug=r.slug), "Add seats"))
+        elif e and not e.is_past() and e.selling_fast:
+            out.append((f"{title} is {round(e.sold_ratio * 100)}% sold", url_for("org.edit_event", slug=r.slug), "Add seats"))
+    return out[:6]
 
 
 # ---------- Create and edit events ----------

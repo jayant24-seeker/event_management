@@ -238,3 +238,15 @@ def test_gate_staff_can_scan_but_nothing_else(app, client):
     post(client, "/organizer/staff", remove=str(staff_id))
     with app.app_context():
         assert GateStaff.query.count() == 0
+
+
+def test_dashboard_needs_attention(app, client):
+    from app.models import Question, User
+
+    sign_in(client, phone="9999999999")
+    with app.app_context():
+        asker = User.query.filter_by(phone="+919999999999").one()
+        db.session.add(Question(event_slug="little-legs-kids-run", user_id=asker.id, name="Asha", text="Is there a stroller area?"))
+        db.session.commit()
+    page = text(client.get("/organizer/"))
+    assert "Needs your attention" in page and "1 question waiting on Little Legs Kids Run" in page
