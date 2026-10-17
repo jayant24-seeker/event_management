@@ -38,7 +38,7 @@ def home():
     )
 
 
-PER_PAGE = 12
+PER_PAGE = 24
 EXPLORE_DEFAULTS = {"when": "upcoming", "sort": "date", "page": 1}
 
 

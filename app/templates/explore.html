@@ -9,8 +9,7 @@
 
 {% block content %}
 <section class="container-site pt-8 sm:pt-10">
-  <p class="eyebrow">{{ 'Archive' if past else 'Explore' }}</p>
-  <h1 class="mt-1 text-3xl font-extrabold sm:text-4xl">{{ heading }}</h1>
+  <h1 class="text-3xl font-extrabold sm:text-4xl">{{ heading }}</h1>
 
   <nav class="mt-5 flex gap-6 border-b border-line text-sm font-semibold" aria-label="Upcoming or past events">
     {% for key, label in [('upcoming', _('Upcoming')), ('past', _('Past events'))] %}
