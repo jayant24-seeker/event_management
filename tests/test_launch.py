@@ -70,3 +70,14 @@ def test_link_preview_images(client):
     home = client.get("/").get_data(as_text=True)
     assert 'og:image" content="http://localhost/share.png"' in home
     assert client.get("/share.png").data[:4] == b"\x89PNG"
+
+
+def test_near_me_button_data(client):
+    import json
+    import re
+
+    page = client.get("/").get_data(as_text=True)
+    raw = re.search(r'data-near-me="([^"]+)"', page).group(1)
+    cities = json.loads(html.unescape(raw))
+    assert cities["Jaipur"][2] == "/events-in-jaipur" and "Online" not in cities
+    assert "geolocation=(self)" in client.get("/").headers["Permissions-Policy"]

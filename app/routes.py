@@ -333,6 +333,20 @@ def for_organizers():
                            n_people=sum(e.registered for e in s.events), sample=s.featured()[:3])
 
 
+# Rough city centres for "Near me" (worked out in the browser; the location never reaches us).
+CITY_CENTRES = {
+    "Jaipur": (26.912, 75.787), "Kota": (25.213, 75.865), "Jodhpur": (26.239, 73.024), "Ajmer": (26.450, 74.640),
+    "Surat": (21.170, 72.831), "Chandigarh": (30.733, 76.779), "Udaipur": (24.585, 73.712), "Bikaner": (28.022, 73.312),
+    "Ahmedabad": (23.023, 72.571), "Delhi": (28.614, 77.209), "Pushkar": (26.490, 74.551), "Mohali": (30.704, 76.717),
+}
+
+
+@bp.app_template_global()
+def near_me_cities():
+    """{city: [lat, lng, url]} for cities that have upcoming events and a known centre."""
+    return {c: [*CITY_CENTRES[c], city_url(c)] for c, _ in store().counts("city") if c in CITY_CENTRES}
+
+
 # ---------- SEO: city landing pages, sitemap, robots ----------
 def city_slug(city):
     return re.sub(r"[^a-z0-9]+", "-", city.lower()).strip("-")
