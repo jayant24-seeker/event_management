@@ -198,3 +198,22 @@ def test_explore_calendar_view():
     # Filters still apply.
     page = h.unescape(client.get(f"/events?view=calendar&month={month}&city=Nowhere").get_data(as_text=True))
     assert nxt.title not in page
+
+
+@pytest.mark.parametrize("typed, expected", [
+    ("jaipr night", "jaipur-night-run-2026"),
+    ("marathn", "tricity-half-marathon-2026"),
+    ("cyclothn", "jodhpur-blue-city-cyclothon"),
+    ("standup", "kota-standup-night"),
+    ("poetry", "deepotsav-kavi-sammelan"),
+    ("navratri", "sharad-purnima-garba-night"),
+])
+def test_search_forgives_typos_and_everyday_words(store, typed, expected):
+    found = [e.slug for when in ("upcoming", "past") for e in store.search(typed, when=when, at=TODAY)]
+    assert expected in found
+
+
+def test_search_typos_do_not_match_everything(store):
+    assert store.search("xyzzy", at=TODAY) == []
+    assert len(store.search("run", at=TODAY)) < len(store.upcoming(TODAY))
+    assert store.suggest("jodpur", at=TODAY)["cities"] == ["Jodhpur"]

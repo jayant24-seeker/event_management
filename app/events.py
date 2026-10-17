@@ -4,6 +4,7 @@ The site reads events from the database (EventStore.from_db). data/*.json is the
 data, and tests load it directly with EventStore(). Templates only use the Event
 properties below, so they don't care where the data came from.
 """
+import difflib
 import json
 import re
 from dataclasses import dataclass, field
@@ -218,6 +219,34 @@ def problems(raw):
     return issues
 
 
+# Everyday words people type for what our categories are called.
+SYNONYMS = {
+    "marathon": "running", "run": "running", "race": "running", "5k": "running", "10k": "running",
+    "ride": "cycling", "cyclothon": "cycling", "bike": "cycling", "concert": "music", "gig": "music",
+    "standup": "comedy", "stand-up": "comedy", "kavi": "kavi sammelan", "poetry": "kavi sammelan",
+    "mushaira": "kavi sammelan", "dandiya": "garba", "navratri": "garba", "yoga": "wellness",
+    "class": "workshop", "masterclass": "workshop", "meetup": "tech", "startup": "tech",
+}
+
+
+def text_matches(q, haystack):
+    """Substring match first; then every word of the query must be close to a word in the
+    text (typos like "jaipr" or "marathn"), or be a known synonym of something in it."""
+    if q in haystack:
+        return True
+    words = set(re.findall(r"[\w-]+", haystack))
+    for term in re.findall(r"[\w-]+", q):
+        synonym = SYNONYMS.get(term)
+        if term in words or (synonym and synonym in haystack):
+            continue
+        if len(term) >= 4 and any(w.startswith(term) for w in words):
+            continue
+        cutoff = 0.75 if len(term) >= 5 else 0.85
+        if len(term) < 4 or not difflib.get_close_matches(term, words, n=1, cutoff=cutoff):
+            return False
+    return True
+
+
 def date_window(key, at=None):
     """(start, end) for the date filter: today, weekend, week or month. None means any date."""
     at = at or now_ist()
@@ -317,8 +346,8 @@ class EventStore:
         events.sort(key=lambda e: not e.title.lower().startswith(q))
         return {
             "events": events[:limit],
-            "cities": [c for c, _ in self.counts("city", at) if q in c.lower()],
-            "categories": [c for c, _ in self.counts("category", at) if q in c.lower()],
+            "cities": [c for c, _ in self.counts("city", at) if text_matches(q, c.lower())],
+            "categories": [c for c, _ in self.counts("category", at) if text_matches(q, c.lower())],
         }
 
     def search(self, q="", city=None, category=None, max_price=None, when="upcoming", sort="date",
@@ -331,7 +360,7 @@ class EventStore:
         for e in pool:
             haystack = " ".join([e.title, e.tagline, e.city, e.category, e.venue["name"], e.org.get("name", ""),
                                  " ".join(e.raw.get("tags", []))]).lower()
-            if q and q not in haystack:
+            if q and not text_matches(q, haystack):
                 continue
             if city and e.city != city:
                 continue
