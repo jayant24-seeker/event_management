@@ -242,3 +242,11 @@ def test_my_tickets_next_up_and_suggestions(app, client):
     assert "Next up" in page and "Show tickets (1)" in page
     # Suggestions skip what's already booked.
     assert page.split("You might like")[1].count("दीपोत्सव कवि सम्मेलन") == 0
+
+
+def test_booked_recently_social_proof(app, client):
+    sign_in(client)
+    assert "booked in the last day" not in text(client.get("/events/deepotsav-kavi-sammelan"))
+    post(client, "/events/deepotsav-kavi-sammelan/register", t0="3", action="book",
+         **{f"a{i}-{k}": v for i in range(3) for k, v in (("name", f"Guest {i}"), ("age", "30"))})
+    assert "3 booked in the last day" in text(client.get("/events/deepotsav-kavi-sammelan"))

@@ -191,6 +191,20 @@ def announcements_for(slug, limit=3):
     return Announcement.query.filter_by(event_slug=slug).order_by(Announcement.created_at.desc()).limit(limit).all()
 
 
+@bp.app_template_global()
+def booked_recently(slug, hours=24):
+    """Tickets booked on the site for this event in the last day (honest social proof)."""
+    from datetime import timedelta
+
+    from sqlalchemy import func
+
+    from .models import Attendee, Booking, db, utcnow
+
+    return (db.session.query(func.count(Attendee.id)).join(Booking)
+            .filter(Booking.event_slug == slug, Booking.status == "confirmed",
+                    Booking.confirmed_at > utcnow() - timedelta(hours=hours)).scalar() or 0)
+
+
 @bp.route("/share.png")
 def site_share_image():
     from flask import send_file

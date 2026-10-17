@@ -81,3 +81,4 @@ Every item keeps `pytest` green. Newest at the bottom.
 - Hindi: sign-in, profile, Explore, city, organizer profile, saved, waitlist, ticket pass and 404 pages translated (about 230 phrases in total now).
 - "Pick up where you left off": homepage row of events you recently opened (kept in this browser only, finished events dropped).
 - Dark mode: follows the phone/computer setting. New always-dark night/day tokens keep hero, footer and dark cards consistent; pages, cards, text and lines swap; pink text gets a lighter tone while pink buttons keep white text at 4.8:1; yellow badges and white buttons keep dark text; QR codes stay on white. axe reports no contrast issues on 10 pages in both themes at phone and desktop widths.
+- Honest social proof: event ticket box shows "N booked in the last day" from real bookings, only when there are at least 3.

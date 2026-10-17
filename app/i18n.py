@@ -280,6 +280,7 @@ HI = {
     "✓ QR tickets on your phone, no printing": "✓ फ़ोन पर QR टिकट, प्रिंट की ज़रूरत नहीं",
     "By continuing you agree to our %(terms)s and %(privacy)s.": "आगे बढ़कर आप हमारी %(terms)s और %(privacy)s से सहमत होते हैं।",
     "Pick up where you left off": "जहाँ छोड़ा था, वहीं से",
+    "%d booked in the last day": "पिछले एक दिन में %d बुकिंग",
     # Offline page
     "No internet right now": "अभी इंटरनेट नहीं है",
     "Tickets you've opened on this phone before still work. Show the QR code at the gate.":

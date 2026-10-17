@@ -466,6 +466,8 @@
           <p class="font-display text-2xl font-extrabold">{{ _('Free') if e.is_free else price_label(e) }}</p>
           {% if e.registered %}<p class="text-sm text-ink-soft"><strong class="text-ink">{{ e.registered|num }}</strong> {{ _('registered') }}</p>{% endif %}
         </div>
+        {% set recent = booked_recently(e.slug) %}
+        {% if recent >= 3 %}<p class="mt-2 flex items-center gap-1.5 text-sm font-semibold text-rani-dark"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2c1 3.5-2 5-2 8a2 2 0 0 0 4 0c0-1 .5-2 1-2.5C17 9 19 11.5 19 14a7 7 0 0 1-14 0c0-4 3-6.5 7-12z"/></svg>{{ _('%d booked in the last day')|format(recent) }}</p>{% endif %}
         <div class="mt-3 grid grid-cols-4 gap-2 text-center" data-countdown="{{ e.start.isoformat() }}" aria-label="Time until the event starts">
           {% for unit in ['days', 'hrs', 'min', 'sec'] %}
           <div class="rounded-xl bg-night py-2 text-day"><p class="font-display text-xl font-extrabold tabular-nums" data-unit="{{ unit }}">--</p><p class="text-[10px] uppercase tracking-wider text-day/60">{{ _(unit) }}</p></div>
