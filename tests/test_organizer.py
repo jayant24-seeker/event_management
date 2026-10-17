@@ -92,7 +92,7 @@ def test_attendee_cannot_check_in_tickets(app, client):
     with app.app_context():
         code = Attendee.query.one().code
     assert "Organizer view" not in text(client.get(f"/t/{code}"))
-    assert "/organizer/start" in post(client, "/organizer/check-in", code=code).headers["Location"]
+    assert post(client, "/organizer/check-in", code=code).status_code == 404
 
 
 def test_demo_organizer_dashboard(app, client):
@@ -205,3 +205,36 @@ def test_scanner_check_in_api(app, client):
     assert call(code)["status"] == "already"
     assert call("NOSUCHCODE")["status"] == "unknown"
     assert client.post("/organizer/check-in.json", json={"code": code}).status_code == 400  # CSRF still required
+
+
+def test_gate_staff_can_scan_but_nothing_else(app, client):
+    from app.models import GateStaff
+
+    sign_in(client, phone="9999999999")
+    post(client, "/organizer/staff", name="Ravi Volunteer", phone="98111 22233")
+    with app.app_context():
+        assert GateStaff.query.one().phone == "+919811122233"
+        b = Booking(user_id=1, event_slug="jaipur-night-run-2026", status="confirmed")
+        b.attendees.append(Attendee(ticket_name="5K Fun Run", price=0, details={"name": "Asha"}))
+        db.session.add(b)
+        db.session.commit()
+        code = b.attendees[0].code
+    with client.session_transaction() as s:
+        s.pop("uid")
+    sign_in(client, phone="9811122233", name="Ravi Volunteer")
+    assert "Scan tickets" in text(client.get("/"))
+    assert client.get("/organizer/scan").status_code == 200
+    res = client.post("/organizer/check-in.json", json={"code": code}, headers={"X-CSRF-Token": CSRF})
+    assert res.json["status"] == "ok"
+    assert "Organizer view" in text(client.get(f"/t/{code}"))
+    # ...but not the dashboard, attendee lists or editing.
+    assert "/organizer/start" in client.get("/organizer/").headers["Location"]
+    assert client.get("/organizer/events/jaipur-night-run-2026").status_code == 302
+    with app.app_context():
+        staff_id = GateStaff.query.one().id
+    with client.session_transaction() as s:
+        s.pop("uid")
+    sign_in(client, phone="9999999999")
+    post(client, "/organizer/staff", remove=str(staff_id))
+    with app.app_context():
+        assert GateStaff.query.count() == 0

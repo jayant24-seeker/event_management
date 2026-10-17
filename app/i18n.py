@@ -151,6 +151,7 @@ HI = {
     "Near me": "मेरे पास",
     "Finding you…": "आपको ढूँढ रहे हैं…",
     "Location is off": "लोकेशन बंद है",
+    "Scan tickets": "टिकट स्कैन करें",
     # Offline page
     "No internet right now": "अभी इंटरनेट नहीं है",
     "Tickets you've opened on this phone before still work. Show the QR code at the gate.":

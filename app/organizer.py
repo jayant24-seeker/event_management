@@ -51,6 +51,37 @@ def organizer_required(view):
     return wrapped
 
 
+def staff_org_slug(user):
+    """The organizer this person scans tickets for: their own, or one that added them as gate staff."""
+    from .models import GateStaff
+
+    if user is None:
+        return None
+    if user.organizer_slug:
+        return user.organizer_slug
+    row = GateStaff.query.filter_by(phone=user.phone).order_by(GateStaff.created_at.desc()).first()
+    return row.organizer_slug if row else None
+
+
+def check_in_required(view):
+    """Organizers, and the gate staff they added."""
+    @wraps(view)
+    @login_required
+    def wrapped(*args, **kwargs):
+        slug = staff_org_slug(g.user)
+        if slug is None:
+            abort(404)
+        g.org = db.session.get(Organizer, slug)
+        return view(*args, **kwargs)
+    return wrapped
+
+
+@bp.app_template_global()
+def is_gate_staff():
+    user = g.get("user")
+    return user is not None and not user.organizer_slug and staff_org_slug(user) is not None
+
+
 def own_event_or_404(slug):
     row = db.session.get(EventRow, slug)
     if row is None or row.organizer_slug != g.user.organizer_slug:
@@ -123,8 +154,10 @@ def dashboard():
     upcoming.sort(key=lambda x: x[1].start if x[1] else now)
     totals = [sum(v[i] for v in sales.values()) for i in range(3)]
     waitlist = WaitlistEntry.query.filter(WaitlistEntry.event_slug.in_([r.slug for r in rows])).count() if rows else 0
+    from .models import GateStaff
     return render_template("organizer/dashboard.html", upcoming=upcoming, past=past, sales=sales,
-                           totals=totals, waitlist=waitlist, followers=follower_count(g.org.slug))
+                           totals=totals, waitlist=waitlist, followers=follower_count(g.org.slug),
+                           staff=GateStaff.query.filter_by(organizer_slug=g.org.slug).order_by(GateStaff.created_at).all())
 
 
 # ---------- Create and edit events ----------
@@ -519,6 +552,33 @@ def announce(slug):
     return back
 
 
+# ---------- Gate staff ----------
+@bp.route("/staff", methods=["POST"])
+@organizer_required
+def staff():
+    from .auth import normalize_phone
+    from .models import GateStaff
+
+    if request.form.get("remove"):
+        row = GateStaff.query.filter_by(id=request.form.get("remove", type=int), organizer_slug=g.org.slug).first_or_404()
+        db.session.delete(row)
+        db.session.commit()
+        flash(f"{row.name or row.phone} can no longer scan tickets.")
+    else:
+        phone = normalize_phone(request.form.get("phone"))
+        if not phone:
+            flash("Enter a 10-digit mobile number for the volunteer.")
+        elif phone == g.user.phone:
+            flash("That's you. You can already scan tickets.")
+        elif GateStaff.query.filter_by(organizer_slug=g.org.slug, phone=phone).first():
+            flash("They're already on your gate team.")
+        else:
+            db.session.add(GateStaff(organizer_slug=g.org.slug, phone=phone, name=request.form.get("name", "").strip()[:120]))
+            db.session.commit()
+            flash("Added. They sign in with that number and open Scan tickets from the menu.")
+    return redirect(url_for("org.dashboard") + "#staff")
+
+
 # ---------- Check-in ----------
 def ticket_code(text):
     """The code from what was typed or scanned: a bare code, or the /t/<code> link in the QR."""
@@ -541,14 +601,14 @@ def check_in_code(code):
 
 
 @bp.route("/check-in", methods=["POST"])
-@organizer_required
+@check_in_required
 def check_in():
     """Mark a ticket as used. Only the event's own organizer can do this."""
     code = ticket_code(request.form.get("code"))
     status, a = check_in_code(code)
     if status == "unknown":
         flash("No ticket with that code for your events.")
-        return redirect(request.referrer or url_for("org.dashboard"))
+        return redirect(request.referrer or url_for("org.scan"))
     flash({"invalid": "This ticket is not valid (cancelled or unpaid).",
            "already": f"Already checked in: {a.name}.",
            "ok": f"Checked in: {a.name} ({a.ticket_name})."}[status])
@@ -556,7 +616,7 @@ def check_in():
 
 
 @bp.route("/scan")
-@organizer_required
+@check_in_required
 def scan():
     """Gate scanner: point the phone camera at tickets; results show instantly."""
     now = now_ist()
@@ -566,7 +626,7 @@ def scan():
 
 
 @bp.route("/check-in.json", methods=["POST"])
-@organizer_required
+@check_in_required
 def check_in_json():
     data = request.get_json(silent=True) or {}
     status, a = check_in_code(ticket_code(data.get("code")))
@@ -584,10 +644,11 @@ def check_in_json():
 
 @bp.app_template_global()
 def can_check_in(attendee):
-    if g.get("user") is None or not g.user.organizer_slug or attendee is None:
+    slug = staff_org_slug(g.get("user"))
+    if slug is None or attendee is None:
         return False
     row = db.session.get(EventRow, attendee.booking.event_slug)
-    return row is not None and row.organizer_slug == g.user.organizer_slug
+    return row is not None and row.organizer_slug == slug
 
 
 @bp.app_template_global()

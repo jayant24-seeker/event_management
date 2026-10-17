@@ -51,6 +51,7 @@
             <a href="{{ url_for('auth.account') }}" class="block rounded-xl px-3 py-2 hover:bg-ink/5">{{ _('Profile') }}</a>
             <a href="{{ url_for('booking.saved') }}" class="block rounded-xl px-3 py-2 hover:bg-ink/5">{{ _('Saved events') }}</a>
             {% if current_user.organizer_slug %}<a href="{{ url_for('org.dashboard') }}" class="block rounded-xl px-3 py-2 hover:bg-ink/5">{{ _('Organizer dashboard') }}</a>{% endif %}
+            {% if is_gate_staff() %}<a href="{{ url_for('org.scan') }}" class="block rounded-xl px-3 py-2 hover:bg-ink/5">{{ _('Scan tickets') }}</a>{% endif %}
             {% if is_admin() %}<a href="{{ url_for('admin.home') }}" class="block rounded-xl px-3 py-2 hover:bg-ink/5">Admin</a>{% endif %}
             <form method="post" action="{{ url_for('auth.logout') }}">
               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
@@ -79,6 +80,7 @@
             <a href="{{ url_for('booking.tickets') }}" class="rounded-xl px-3 py-2.5 hover:bg-ink/5">{{ _('My tickets') }}</a>
             <a href="{{ url_for('booking.saved') }}" class="rounded-xl px-3 py-2.5 hover:bg-ink/5">{{ _('Saved events') }}</a>
             {% if current_user.organizer_slug %}<a href="{{ url_for('org.dashboard') }}" class="rounded-xl px-3 py-2.5 hover:bg-ink/5">{{ _('Organizer dashboard') }}</a>{% endif %}
+            {% if is_gate_staff() %}<a href="{{ url_for('org.scan') }}" class="rounded-xl px-3 py-2.5 hover:bg-ink/5">{{ _('Scan tickets') }}</a>{% endif %}
             {% if is_admin() %}<a href="{{ url_for('admin.home') }}" class="rounded-xl px-3 py-2.5 hover:bg-ink/5">Admin</a>{% endif %}
             <a href="{{ url_for('auth.account') }}" class="rounded-xl px-3 py-2.5 hover:bg-ink/5">{{ _('Profile') }}</a>
             {% else %}

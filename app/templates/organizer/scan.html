@@ -3,7 +3,7 @@
 {% block head %}<meta name="robots" content="noindex">{% endblock %}
 {% block content %}
 <div class="container-site max-w-xl py-6">
-  <a href="{{ url_for('org.dashboard') }}" class="text-sm font-semibold text-rani hover:underline">← Dashboard</a>
+  {% if current_user.organizer_slug %}<a href="{{ url_for('org.dashboard') }}" class="text-sm font-semibold text-rani hover:underline">← Dashboard</a>{% else %}<p class="text-sm font-semibold text-ink-soft">Gate team · {{ g.org.data.name }}</p>{% endif %}
   <h1 class="mt-2 text-3xl font-extrabold">Scan tickets</h1>
   <p class="mt-1 text-sm text-ink-soft">Point the camera at a ticket's QR code. Works for all your events{% if events %}: {{ events|map(attribute='title')|join(', ') }}{% endif %}.</p>
 
