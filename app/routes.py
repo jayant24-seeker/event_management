@@ -249,25 +249,44 @@ def event_ics(slug):
     e = store().get(slug)
     if not e:
         abort(404)
+    return Response(ics_calendar([e]), mimetype="text/calendar",
+                    headers={"Content-Disposition": f'attachment; filename="{e.slug}.ics"'})
+
+
+def ics_calendar(events, name=None):
     fmt = "%Y%m%dT%H%M%S"
-    where = e.venue["name"] if e.is_online else f"{e.venue['name']}, {e.venue['address']}"
 
     def esc(text):
         return text.replace("\\", "\\\\").replace(";", "\\;").replace(",", "\\,").replace("\n", "\\n")
 
-    lines = [
-        "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Eventouse//Events//EN", "BEGIN:VEVENT",
-        f"UID:{e.slug}@eventouse.com",
-        f"DTSTAMP:{now_ist().astimezone(timezone.utc).strftime(fmt)}Z",
-        f"DTSTART:{e.start.astimezone(timezone.utc).strftime(fmt)}Z",
-        f"DTEND:{e.end.astimezone(timezone.utc).strftime(fmt)}Z",
-        f"SUMMARY:{esc(e.title)}",
-        f"LOCATION:{esc(where)}",
-        f"DESCRIPTION:{esc(e.tagline)}\\n{url_for('main.event', slug=e.slug, _external=True)}",
-        "END:VEVENT", "END:VCALENDAR",
-    ]
-    return Response("\r\n".join(lines) + "\r\n", mimetype="text/calendar",
-                    headers={"Content-Disposition": f'attachment; filename="{e.slug}.ics"'})
+    lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Eventouse//Events//EN"]
+    if name:
+        lines += [f"X-WR-CALNAME:{esc(name)}", "REFRESH-INTERVAL;VALUE=DURATION:PT6H", "X-PUBLISHED-TTL:PT6H"]
+    stamp = now_ist().astimezone(timezone.utc).strftime(fmt)
+    for e in events:
+        where = e.venue["name"] if e.is_online else f"{e.venue['name']}, {e.venue['address']}"
+        lines += [
+            "BEGIN:VEVENT", f"UID:{e.slug}@eventouse.com", f"DTSTAMP:{stamp}Z",
+            f"DTSTART:{e.start.astimezone(timezone.utc).strftime(fmt)}Z",
+            f"DTEND:{e.end.astimezone(timezone.utc).strftime(fmt)}Z",
+            f"SUMMARY:{esc(e.title)}", f"LOCATION:{esc(where)}",
+            f"DESCRIPTION:{esc(e.tagline)}\\n{url_for('main.event', slug=e.slug, _external=True)}",
+            f"URL:{url_for('main.event', slug=e.slug, _external=True)}",
+            "END:VEVENT",
+        ]
+    lines.append("END:VCALENDAR")
+    return "\r\n".join(lines) + "\r\n"
+
+
+@bp.route("/organizers/<slug>/calendar.ics")
+def organizer_ics(slug):
+    """Subscribe-able feed of an organizer's upcoming events (calendar apps refresh it)."""
+    s = store()
+    org = s.organizers.get(slug)
+    if not org:
+        abort(404)
+    events = sorted((e for e in s.by_organizer(slug) if not e.is_past()), key=lambda e: e.start)
+    return Response(ics_calendar(events, name=f"{org['name']} on Eventouse"), mimetype="text/calendar")
 
 
 @bp.route("/organizers/<slug>")

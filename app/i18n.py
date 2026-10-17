@@ -288,6 +288,8 @@ HI = {
     "+%d more dates": "+%d और तारीखें",
     "+1 more date": "+1 और तारीख",
     "Photos": "फ़ोटो",
+    "Add to my calendar": "मेरे कैलेंडर में जोड़ें",
+    "Their events appear in your calendar and stay up to date": "उनके इवेंट आपके कैलेंडर में आते रहेंगे",
     # Offline page
     "No internet right now": "अभी इंटरनेट नहीं है",
     "Tickets you've opened on this phone before still work. Show the QR code at the gate.":

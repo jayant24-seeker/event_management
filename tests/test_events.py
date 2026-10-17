@@ -217,3 +217,14 @@ def test_search_typos_do_not_match_everything(store):
     assert store.search("xyzzy", at=TODAY) == []
     assert len(store.search("run", at=TODAY)) < len(store.upcoming(TODAY))
     assert store.suggest("jodpur", at=TODAY)["cities"] == ["Jodhpur"]
+
+
+def test_organizer_calendar_feed():
+    client = create_app({"TESTING": True}).test_client()
+    feed = client.get("/organizers/pink-pace-runners/calendar.ics")
+    body = feed.get_data(as_text=True)
+    assert feed.mimetype == "text/calendar" and "X-WR-CALNAME:Pink Pace Runners Club on Eventouse" in body
+    assert body.count("BEGIN:VEVENT") == 3 and "Jaipur Night Run 2026" in body  # upcoming only
+    assert "webcal://" in client.get("/organizers/pink-pace-runners").get_data(as_text=True)
+    single = client.get("/events/jaipur-night-run-2026.ics").get_data(as_text=True)
+    assert single.count("BEGIN:VEVENT") == 1

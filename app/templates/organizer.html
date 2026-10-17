@@ -18,7 +18,14 @@
           {% if rating %}<span class="flex items-center gap-1.5">· {{ stars(rating.avg) }} <strong>{{ '%.1f'|format(rating.avg) }}</strong> <span class="text-day/70">({{ rating.count }} review{{ 's' if rating.count != 1 }})</span></span>{% endif %}
         </div>
       </div>
-      <div class="sm:ml-auto">{{ follow_button(org.slug) }}</div>
+      <div class="flex flex-wrap gap-2 sm:ml-auto">
+        {{ follow_button(org.slug) }}
+        {% if not config.STATIC_PREVIEW %}
+        {% set feed = url_for('main.organizer_ics', slug=org.slug, _external=True) %}
+        <a href="{{ feed|replace('https://', 'webcal://')|replace('http://', 'webcal://') }}" class="btn border border-day/30 text-day hover:bg-day/10" title="{{ _('Their events appear in your calendar and stay up to date') }}">
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>{{ _('Add to my calendar') }}</a>
+        {% endif %}
+      </div>
     </div>
     <p class="mt-6 max-w-2xl text-lg text-day/80">{{ org.about }}</p>
 
