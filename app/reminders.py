@@ -12,7 +12,7 @@ import click
 from flask import current_app, url_for
 
 from .events import now_ist
-from .models import Booking, db, utcnow
+from .models import Booking, SavedEvent, User, db, utcnow
 from .routes import store
 from .sms import SmsNotConfigured, send_sms
 
@@ -39,8 +39,35 @@ def due_messages(at=None):
     return out
 
 
+def closing_alerts(at=None):
+    """[(saved row, phone, text)] for saved-but-not-booked events whose registration closes within 48 h."""
+    at = at or now_ist()
+    s = store()
+    out = []
+    for row, phone in (db.session.query(SavedEvent, User.phone).join(User, User.id == SavedEvent.user_id)
+                       .filter(SavedEvent.closing_alert_at.is_(None))):
+        e = s.get(row.event_slug)
+        if e is None or not e.registration_open(at):
+            continue
+        hours_left = (e.reg_closes - at).total_seconds() / 3600
+        booked = Booking.query.filter_by(user_id=row.user_id, event_slug=e.slug, status="confirmed").first()
+        if 0 < hours_left <= 48 and not booked:
+            link = url_for("main.event", slug=e.slug, src="saved-alert", _external=True) + "#tickets"
+            out.append((row, phone, f"Registration for {e.title} (you saved it) closes {e.reg_closes.strftime('%a %-I:%M %p')}. "
+                                    f"{e.spots_left} spots left: {link}"))
+    return out
+
+
 def send_due(at=None):
     sent = 0
+    for row, phone, text in closing_alerts(at):
+        try:
+            send_sms(phone, text)
+        except SmsNotConfigured:
+            current_app.logger.exception("Saved-event alert not sent")
+            break
+        row.closing_alert_at = utcnow()
+        sent += 1
     for b, kind, text in due_messages(at):
         try:
             send_sms(b.user.phone, text)
@@ -59,6 +86,6 @@ def send_due(at=None):
 def register_cli(app):
     @app.cli.command("send-reminders")
     def send_reminders():
-        """Text tomorrow's attendees and ask yesterday's for a review."""
+        """Text tomorrow's attendees, ask yesterday's for a review, and warn savers before registration closes."""
         with app.test_request_context(base_url=app.config.get("PUBLIC_URL") or "http://localhost"):
             click.echo(f"Sent {send_due()} message(s).")

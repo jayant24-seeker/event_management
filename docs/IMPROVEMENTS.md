@@ -22,7 +22,7 @@ Every item keeps `pytest` green. Newest at the bottom.
 - [x] Typo-tolerant search
 - [x] Dark mode
 - [x] Self-host fonts (faster on slow mobile networks, works offline, no third-party requests)
-- [ ] Saved events: text when registration is about to close or a sold-out event reopens
+- [x] Saved events: text when registration is about to close (reopening is covered by the waitlist)
 - [x] Optimise uploaded posters (resize + WebP)
 - [ ] Recurring events / series (weekly classes with many dates)
 - [ ] Organizer co-admins (more than one person managing an organizer)
@@ -41,7 +41,7 @@ Every item keeps `pytest` green. Newest at the bottom.
 - [x] Questions & answers on event pages (attendees ask, organizer answers)
 - [x] Dark mode
 - [x] Self-host fonts (faster on slow mobile networks, works offline, no third-party requests)
-- [ ] Saved events: text when registration is about to close or a sold-out event reopens
+- [x] Saved events: text when registration is about to close (reopening is covered by the waitlist)
 - [x] Optimise uploaded posters (resize + WebP)
 - [ ] Recurring events / series (weekly classes with many dates)
 - [ ] Organizer co-admins (more than one person managing an organizer)
@@ -100,3 +100,4 @@ Every item keeps `pytest` green. Newest at the bottom.
 - Printable flyer: "Print a flyer" on the event admin page opens an A4 sheet with the artwork, details and a big QR code to the event page (tagged ?src=flyer so flyer bookings show up in "Where bookings come from").
 - Self-hosted fonts: Bricolage Grotesque, Plus Jakarta Sans and Mukta now load from the site (440 KB total, only the subsets a page needs are fetched, the two main ones preloaded). No requests to Google, faster on slow networks, cached by the offline worker; CSP no longer allows Google Fonts.
 - Uploaded posters are re-encoded on upload: at most 900x1200 (portrait) WebP, rotated per the camera, photo metadata (incl. GPS) removed, unreadable files rejected with a clear message.
+- Saved-event nudges: send-reminders also texts people who saved (but have not booked) an event once, when its registration closes within 48 hours, with spots left and a tagged link.

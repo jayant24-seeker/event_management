@@ -142,3 +142,21 @@ def test_reminders_and_review_requests_go_out_once(app, client, caplog):
         assert send_due(at=e.end + timedelta(hours=6)) == 0
     texts = [r.getMessage() for r in caplog.records if r.getMessage().startswith("SMS to +919876543210")]
     assert "See you tomorrow at Jaipur Night Run 2026" in texts[0] and "How was Jaipur Night Run 2026?" in texts[1]
+
+
+def test_saved_event_closing_alert(app, client, caplog):
+    import logging
+
+    from app.models import SavedEvent
+    from app.reminders import send_due
+
+    sign_in(client)
+    with app.app_context():
+        db.session.add(SavedEvent(user_id=User.query.filter_by(phone="+919876543210").one().id, event_slug="amer-hills-trail-ultra"))
+        db.session.commit()
+    e = EventStore().get("amer-hills-trail-ultra")
+    with app.test_request_context(), caplog.at_level(logging.INFO):
+        assert send_due(at=e.reg_closes - timedelta(days=5)) == 0
+        assert send_due(at=e.reg_closes - timedelta(hours=30)) == 1
+        assert send_due(at=e.reg_closes - timedelta(hours=10)) == 0  # once
+    assert any("you saved it" in r.getMessage() for r in caplog.records)

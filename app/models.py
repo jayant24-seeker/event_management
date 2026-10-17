@@ -118,6 +118,7 @@ class SavedEvent(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False, index=True)
     event_slug = db.Column(db.String(120), db.ForeignKey("event.slug"), nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, default=utcnow)
+    closing_alert_at = db.Column(db.DateTime, nullable=True)  # "registration closes soon" text sent
     __table_args__ = (UniqueConstraint("user_id", "event_slug"),)
 
 
