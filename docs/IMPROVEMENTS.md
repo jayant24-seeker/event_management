@@ -84,3 +84,4 @@ Every item keeps `pytest` green. Newest at the bottom.
 - Honest social proof: event ticket box shows "N booked in the last day" from real bookings, only when there are at least 3.
 - Where bookings come from: organizers copy tagged share links (?src=instagram, whatsapp, partner or any word; utm_source works too); bookings remember the source and the event admin page shows bookings and revenue per source. Copy buttons now work on every page.
 - Automatic texts: `flask send-reminders` (run hourly) sends "see you tomorrow" with the ticket link the day before, and "how was it?" with the review link 2-72 hours after; each once per booking.
+- City pages: "Also within reach" shows upcoming events in nearby cities (within 450 km, nearest first) with "130 km from Jaipur", so small cities never feel empty.

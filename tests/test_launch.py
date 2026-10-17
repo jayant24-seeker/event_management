@@ -93,3 +93,10 @@ def test_phone_tab_bar(client):
     assert 'aria-label="Main"' in home and "Tickets" in home
     # Event and checkout pages have their own bottom bar instead.
     assert 'grid grid-cols-5' not in client.get("/events/jaipur-night-run-2026").get_data(as_text=True)
+
+
+def test_city_page_shows_nearby_cities(client):
+    page = html.unescape(client.get("/events-in-jaipur").get_data(as_text=True))
+    assert "Also within reach" in page and "km from Jaipur" in page
+    # Surat is far from Jaipur (over 450 km), so its events aren't suggested.
+    assert "Surat ·" not in page.split("Also within reach")[1].split("Questions about")[0]

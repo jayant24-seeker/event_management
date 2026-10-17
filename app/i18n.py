@@ -281,6 +281,9 @@ HI = {
     "By continuing you agree to our %(terms)s and %(privacy)s.": "आगे बढ़कर आप हमारी %(terms)s और %(privacy)s से सहमत होते हैं।",
     "Pick up where you left off": "जहाँ छोड़ा था, वहीं से",
     "%d booked in the last day": "पिछले एक दिन में %d बुकिंग",
+    "Also within reach": "आस-पास के शहरों में",
+    "Worth the trip from %s.": "%s से जाने लायक।",
+    "%(km)d km from %(city)s": "%(city)s से %(km)d किमी",
     # Offline page
     "No internet right now": "अभी इंटरनेट नहीं है",
     "Tickets you've opened on this phone before still work. Show the QR code at the gate.":

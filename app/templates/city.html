@@ -55,6 +55,22 @@
     {% endif %}
   </section>
 
+
+  {% if nearby %}
+  <section>
+    <h2 class="text-3xl font-extrabold">{{ _('Also within reach') }}</h2>
+    <p class="mt-1 text-ink-soft">{{ _('Worth the trip from %s.')|format(city) }}</p>
+    <div class="mt-6 grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 md:grid-cols-3 lg:grid-cols-4">
+      {% for e, km in nearby %}
+      <div>
+        {{ event_card(e, morph=False) }}
+        <p class="mt-1 px-1 text-xs font-semibold text-ink-soft">{{ _('%(km)d km from %(city)s')|format(km=km, city=city) }}</p>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
   {% if past %}
   <section>
     <h2 class="text-3xl font-extrabold">{{ _('Recently happened') }}</h2>

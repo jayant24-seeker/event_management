@@ -400,7 +400,28 @@ def city(slug):
     return render_template("city.html", city=name, upcoming=upcoming, weekend=weekend,
                            past=[e for e in s.past() if e.city == name][:4],
                            categories=_category_counts(upcoming),
-                           free=[e for e in upcoming if e.is_free])
+                           free=[e for e in upcoming if e.is_free], nearby=nearby_events(s, name))
+
+
+def km_between(a, b):
+    import math
+
+    (lat1, lng1), (lat2, lng2) = a, b
+    p = math.pi / 180
+    h = math.sin((lat2 - lat1) * p / 2) ** 2 + math.cos(lat1 * p) * math.cos(lat2 * p) * math.sin((lng2 - lng1) * p / 2) ** 2
+    return 12742 * math.asin(math.sqrt(h))
+
+
+def nearby_events(s, city, limit=4, max_km=450):
+    """[(event, km)] in other cities within reach, nearest city first, then soonest."""
+    here = CITY_CENTRES.get(city)
+    if here is None:
+        return []
+    out = [(e, round(km_between(here, CITY_CENTRES[e.city]), -1)) for e in s.upcoming()
+           if e.city != city and e.city in CITY_CENTRES]
+    out = [(e, km) for e, km in out if km <= max_km]
+    out.sort(key=lambda x: (x[1], x[0].start))
+    return out[:limit]
 
 
 @bp.route("/robots.txt")
