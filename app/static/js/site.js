@@ -15,6 +15,13 @@
     if (ev.target.closest("[data-reload]")) location.reload();
   });
 
+  // One-time code: submit as soon as all 6 digits are in (typed, pasted or filled from the SMS).
+  const otp = document.querySelector("[data-otp]");
+  otp?.addEventListener("input", () => {
+    otp.value = otp.value.replace(/\D/g, "").slice(0, 6);
+    if (otp.value.length === 6) otp.form.requestSubmit();
+  });
+
   // Installable app + tickets that open offline. Signed out: forget any saved ticket pages.
   const root = document.body.dataset.root || "";
   if ("serviceWorker" in navigator && !document.body.dataset.preview) navigator.serviceWorker.register(`${root}/sw.js`).catch(() => {});

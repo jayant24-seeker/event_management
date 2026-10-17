@@ -168,6 +168,7 @@ HI = {
     "This weekend": "इस वीकेंड", "This week": "इस हफ़्ते", "This month": "इस महीने",
     "From events that just happened": "हाल ही में हुए इवेंट से",
     "Browse by category": "श्रेणी के अनुसार देखें",
+    "You're booking": "आप बुक कर रहे हैं",
     # Offline page
     "No internet right now": "अभी इंटरनेट नहीं है",
     "Tickets you've opened on this phone before still work. Show the QR code at the gate.":

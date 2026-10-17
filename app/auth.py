@@ -35,6 +35,15 @@ def safe_next(target):
     return target if ok else url_for("main.home")
 
 
+@bp.app_template_global()
+def event_from_next(next_url):
+    """The event someone was about to book, if the sign-in link came from one."""
+    from .routes import store
+
+    m = re.match(r"^/events/([a-z0-9-]+)(/|$)", next_url or "")
+    return store().get(m.group(1)) if m else None
+
+
 def login_required(view):
     @wraps(view)
     def wrapped(*args, **kwargs):

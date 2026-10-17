@@ -110,6 +110,16 @@
     })
   );
 
+  // ---- Phones: hide the bottom "Register" bar while the ticket box itself is on screen.
+  const bar = document.querySelector("[data-mobile-bar]");
+  const box = document.getElementById("tickets");
+  if (bar && box) {
+    new IntersectionObserver(([en]) => {
+      bar.style.transform = en.isIntersecting ? "translateY(110%)" : "";
+    }, { threshold: 0.15 }).observe(box);
+    bar.style.transition = "transform .25s ease";
+  }
+
   // ---- Highlight the section you're reading in the section bar.
   const links = [...document.querySelectorAll("[data-section-link]")];
   const byId = Object.fromEntries(links.map((a) => [a.getAttribute("href").slice(1), a]));

@@ -12,7 +12,7 @@
   <input type="hidden" name="next" value="{{ next }}">
   <label class="block">
     <span class="sr-only">6-digit code</span>
-    <input name="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" required autofocus
+    <input name="code" data-otp inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" required autofocus
            class="input text-center font-mono text-2xl tracking-[0.5em] {{ 'border-rani' if error }}" placeholder="••••••"
            {% if error %}aria-invalid="true" aria-describedby="code-error"{% endif %}>
   </label>
