@@ -110,6 +110,37 @@
     bar.style.transition = "transform .25s ease";
   }
 
+  // ---- Results photos: open in a viewer with arrows, keys and swipe.
+  const viewer = document.querySelector("[data-viewer]");
+  const shots = [...document.querySelectorAll("[data-gallery-item]")];
+  if (viewer && shots.length && viewer.showModal) {
+    const img = viewer.querySelector("[data-viewer-img]");
+    let at = 0;
+    const show = (i) => {
+      at = (i + shots.length) % shots.length;
+      img.src = shots[at].href;
+      img.alt = shots[at].querySelector("img").alt;
+      viewer.querySelector("[data-viewer-count]").textContent = `${at + 1} / ${shots.length}`;
+    };
+    shots.forEach((a, i) => a.addEventListener("click", (ev) => { ev.preventDefault(); show(i); viewer.showModal(); }));
+    viewer.querySelector("[data-viewer-prev]").addEventListener("click", () => show(at - 1));
+    viewer.querySelector("[data-viewer-next]").addEventListener("click", () => show(at + 1));
+    viewer.querySelector("[data-viewer-close]").addEventListener("click", () => viewer.close());
+    viewer.addEventListener("click", (ev) => { if (ev.target === viewer || ev.target.matches(".flex-1")) viewer.close(); });
+    viewer.addEventListener("keydown", (ev) => {
+      if (ev.key === "ArrowLeft") show(at - 1);
+      if (ev.key === "ArrowRight") show(at + 1);
+    });
+    let startX = null;
+    viewer.addEventListener("touchstart", (ev) => { startX = ev.touches[0].clientX; }, { passive: true });
+    viewer.addEventListener("touchend", (ev) => {
+      if (startX === null) return;
+      const dx = ev.changedTouches[0].clientX - startX;
+      if (Math.abs(dx) > 50) show(at + (dx < 0 ? 1 : -1));
+      startX = null;
+    });
+  }
+
   // ---- Highlight the section you're reading in the section bar.
   const links = [...document.querySelectorAll("[data-section-link]")];
   const byId = Object.fromEntries(links.map((a) => [a.getAttribute("href").slice(1), a]));

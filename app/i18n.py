@@ -287,6 +287,7 @@ HI = {
     "Other dates": "दूसरी तारीखें",
     "+%d more dates": "+%d और तारीखें",
     "+1 more date": "+1 और तारीख",
+    "Photos": "फ़ोटो",
     # Offline page
     "No internet right now": "अभी इंटरनेट नहीं है",
     "Tickets you've opened on this phone before still work. Show the QR code at the gate.":
