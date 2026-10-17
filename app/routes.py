@@ -90,7 +90,7 @@ def explore():
         city_options=[(c, c) for c in s.cities()],
         category_options=[(c, c) for c in s.categories()],
         # Chip counts follow the other filters, so a chip never leads to an empty page.
-        categories=_category_counts(s.search(when=when, date=f["date"], q=f["q"], city=f["city"], price=f["price"])),
+        categories=_category_counts(collapse_series(s.search(when=when, date=f["date"], q=f["q"], city=f["city"], price=f["price"]))),
         date_filters=DATE_FILTERS,
         price_filters=PRICE_FILTERS,
         sorts=SORTS,
