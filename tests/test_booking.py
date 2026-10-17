@@ -164,3 +164,21 @@ def test_other_people_cannot_see_your_booking(app, client):
         s["csrf"] = CSRF
     sign_in(client, phone="9123456780", name="Someone Else")
     assert client.get(f"/bookings/{ref}").status_code == 404
+
+
+def test_group_discount_beats_or_yields_to_codes(app, client):
+    from app.models import EventRow
+
+    with app.app_context():
+        row = db.session.get(EventRow, "amer-hills-trail-ultra")
+        row.data = dict(row.data, group_discount={"min": 3, "percent": 15})
+        db.session.commit()
+    sign_in(client)
+    assert "15% off when you book 3 or more" in text(client.get("/events/amer-hills-trail-ultra"))
+    two = text(client.get("/events/amer-hills-trail-ultra/register?t0=2"))
+    assert "Add tickets to 3 or more for 15% off" in two
+    three = text(client.get("/events/amer-hills-trail-ultra/register?t0=3"))
+    assert "Group discount (15% off 3+ tickets)" in three
+    # EARLYBIRD10 saves less than 15%, so the group discount stays.
+    with_code = text(client.get("/events/amer-hills-trail-ultra/register?t0=3&coupon=EARLYBIRD10"))
+    assert "Group discount" in with_code and "isn't needed" in with_code

@@ -124,6 +124,12 @@ def register(slug):
 
     subtotal = sum(t.price * n for _, t, n in picked)
     coupon, discount, coupon_error = find_coupon(e, source.get("coupon"), subtotal)
+    # Group discount and codes don't stack: the bigger saving wins.
+    group = e.group_discount
+    group_off = subtotal * group[1] // 100 if group and sum(n for _, _, n in picked) >= group[0] else 0
+    group_applied = group_off > discount
+    if group_applied:
+        coupon, discount = None, group_off
     errors = []
 
     if request.method == "POST" and request.form.get("action") == "book":
@@ -142,6 +148,7 @@ def register(slug):
 
     return render_template("booking/checkout.html", e=e, picked=picked, fields=fields_for(e), subtotal=subtotal,
                            coupon=coupon, coupon_code=source.get("coupon", ""), coupon_error=coupon_error,
+                           group=group, group_applied=group_applied,
                            discount=discount, errors=errors, form=request.form)
 
 

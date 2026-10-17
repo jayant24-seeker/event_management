@@ -151,3 +151,13 @@ def test_duplicate_event_for_next_year(app, client):
 def test_cannot_duplicate_someone_elses_event(client):
     become_organizer(client)
     assert post(client, "/organizer/events/tricity-half-marathon-2026/duplicate").status_code == 404
+
+
+def test_group_discount_saved_from_form(app, client):
+    become_organizer(client)
+    post(client, "/organizer/events/new", action="draft", group_min="4", group_percent="10", **EVENT)
+    post(client, "/organizer/events/new", action="draft", group_min="1", group_percent="90", **dict(EVENT, title="Kota Winter 5K"))
+    with app.app_context():
+        rows = {r.data["title"]: r.data for r in EventRow.query.filter_by(organizer_slug="kota-runners-club")}
+        assert rows["Kota Monsoon 10K"]["group_discount"] == {"min": 4, "percent": 10}
+        assert "group_discount" not in rows["Kota Winter 5K"]  # out of range: ignored

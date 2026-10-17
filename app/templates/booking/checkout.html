@@ -69,7 +69,9 @@
           {% for i, t, n in picked %}
           <li class="flex justify-between gap-3"><span>{{ n }} × {{ t.name }}</span><span class="font-semibold">{{ (t.price * n)|inr }}</span></li>
           {% endfor %}
-          {% if discount %}<li class="flex justify-between gap-3 text-leaf"><span>Code {{ coupon.code }} ({{ coupon.percent_off }}% off)</span><span class="font-semibold">−{{ discount|inr }}</span></li>{% endif %}
+          {% if group_applied %}<li class="flex justify-between gap-3 text-leaf"><span>Group discount ({{ group[1] }}% off {{ group[0] }}+ tickets)</span><span class="font-semibold">−{{ discount|inr }}</span></li>
+          {% elif discount %}<li class="flex justify-between gap-3 text-leaf"><span>Code {{ coupon.code }} ({{ coupon.percent_off }}% off)</span><span class="font-semibold">−{{ discount|inr }}</span></li>
+          {% elif group %}<li class="text-xs text-ink-soft">Add tickets to {{ group[0] }} or more for {{ group[1] }}% off the booking.</li>{% endif %}
         </ul>
 
         {% if subtotal %}
@@ -80,7 +82,8 @@
           <button name="action" value="apply" class="btn-outline py-2" formnovalidate>Apply</button>
         </div>
         {% if coupon_error %}<p class="mt-2 text-sm font-semibold text-rani">{{ coupon_error }}</p>
-        {% elif coupon %}<p class="mt-2 text-sm font-semibold text-leaf">Code applied.</p>{% endif %}
+        {% elif coupon %}<p class="mt-2 text-sm font-semibold text-leaf">Code applied.</p>
+        {% elif group_applied and coupon_code %}<p class="mt-2 text-sm font-semibold text-ink-soft">Your group discount saves more, so the code isn't needed.</p>{% endif %}
         {% endif %}
 
         <div class="mt-4 flex items-baseline justify-between border-t border-line pt-4">

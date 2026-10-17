@@ -169,8 +169,11 @@ def event_from_form(form, existing=None):
     })
     if "attendee_fields" in raw and "name" not in raw["attendee_fields"]:
         raw["attendee_fields"].insert(0, "name")
-    for key in ("reg_closes", "age_min", "refund_tiers"):
+    for key in ("reg_closes", "age_min", "refund_tiers", "group_discount"):
         raw.pop(key, None)
+    group_min, group_pct = form.get("group_min", "").strip(), form.get("group_percent", "").strip()
+    if group_min.isdigit() and group_pct.isdigit() and int(group_min) >= 2 and 1 <= int(group_pct) <= 50:
+        raw["group_discount"] = {"min": int(group_min), "percent": int(group_pct)}
     tiers = []
     for days, pct in pairs(form.get("refund_tiers")):
         if days.strip().isdigit() and pct.strip().rstrip("%").isdigit():

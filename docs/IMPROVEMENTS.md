@@ -25,7 +25,7 @@ Every item keeps `pytest` green. Newest at the bottom.
 - [ ] Speed: cache the event list per request burst
 - [x] Organizers: message all attendees (SMS announcement, e.g. venue change)
 - [x] Organizers: duplicate an event (next edition in one click)
-- [ ] Group discount (e.g. 10% off 4+ tickets) set by the organizer
+- [x] Group discount (e.g. 10% off 4+ tickets) set by the organizer
 - [ ] Booking confirmation by email (console in development)
 - [ ] "Near me": sort Explore by distance from the visitor
 - [ ] Waitlist position shown to the person waiting
@@ -48,3 +48,4 @@ Every item keeps `pytest` green. Newest at the bottom.
 - Printable tickets: "Print tickets" button; print layout drops header, footer and buttons, keeps colours and QR codes, never splits a ticket across pages.
 - Organizer updates: "Message ticket holders" on the event admin page texts everyone who booked (3 a day max) and pins the update on the event page and on their tickets.
 - Duplicate for next year: one click copies an event as a draft 52 weeks later (same weekday), updates the year in the title, resets sales and drops results. Also checked the site in the iPhone simulator (Safari): homepage, event page, calendar agenda all render well.
+- Group discounts: organizer sets "N+ tickets → X% off" (2+ tickets, up to 50%); event page advertises it, checkout nudges ("add 1 more for 15% off") and applies whichever of group discount or code saves more.

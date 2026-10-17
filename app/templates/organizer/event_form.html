@@ -82,6 +82,12 @@
         <button type="button" class="btn-outline py-2" data-add-ticket>+ Add ticket type</button>
       </div>
       <p class="text-sm text-ink-soft">Price 0 makes a ticket free. Seats already sold can't be removed.</p>
+      {% set gd = raw.group_discount or {} %}
+      <div class="grid gap-3 rounded-2xl bg-ink/5 p-3 sm:grid-cols-[auto_1fr_1fr] sm:items-end">
+        <p class="text-sm font-semibold sm:pb-3">Group discount <span class="font-normal text-ink-soft">(optional)</span></p>
+        {{ field('group_min', 'Tickets in one booking, at least', gd.min, type='number', attrs='min=2 max=50 inputmode=numeric placeholder="e.g. 4"') }}
+        {{ field('group_percent', '% off the whole booking', gd.percent, type='number', attrs='min=1 max=50 inputmode=numeric placeholder="e.g. 10"') }}
+      </div>
       <div class="space-y-3" data-tickets>
         {% set rows = raw.tickets or [] %}
         {% for t in rows + [{}] * (1 if rows else 2) %}

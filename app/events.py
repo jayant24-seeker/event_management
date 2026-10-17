@@ -80,6 +80,12 @@ class Event:
             return sorted(((int(t["hours"]), int(t["percent"])) for t in explicit), reverse=True)
         return parse_refund_tiers(self.raw.get("refund_policy"))
 
+    @property
+    def group_discount(self):
+        """(minimum tickets, percent off) or None."""
+        g = self.raw.get("group_discount") or {}
+        return (int(g["min"]), int(g["percent"])) if g.get("min") and g.get("percent") else None
+
     def refund_percent(self, at=None):
         """Share of the price refunded if someone cancels now (0 once the last cut-off passes)."""
         at = at or now_ist()
