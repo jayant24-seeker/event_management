@@ -5,7 +5,8 @@ import threading
 from datetime import datetime
 
 import segno
-from flask import Blueprint, abort, current_app, flash, g, jsonify, redirect, render_template, request, url_for
+from flask import (Blueprint, abort, current_app, flash, g, jsonify, redirect, render_template, request, session,
+                   url_for)
 
 from .auth import login_required, normalize_phone
 from .events import IST, now_ist
@@ -168,7 +169,8 @@ def create_booking(e, people, subtotal, discount, coupon):
                 db.session.rollback()
                 return None, f"Only {max(left, 0)} {raw_t['name']} ticket(s) left. Please change your selection."
         booking = Booking(user_id=g.user.id, event_slug=e.slug, subtotal=subtotal, discount=discount,
-                          coupon_code=coupon.code if coupon else None)
+                          coupon_code=coupon.code if coupon else None,
+                          source=(session.get("sources") or {}).get(e.slug))
         for t, details in people:
             booking.attendees.append(Attendee(ticket_name=t.name, price=t.price, details=details))
         if booking.total == 0:

@@ -85,6 +85,7 @@ class Booking(db.Model):
     created_at = db.Column(db.DateTime, nullable=False, default=utcnow)
     confirmed_at = db.Column(db.DateTime, nullable=True)
     cancelled_at = db.Column(db.DateTime, nullable=True)
+    source = db.Column(db.String(40), nullable=True)  # where the booker came from (?src= / utm_source)
     refund_amount = db.Column(db.Integer, nullable=True)  # rupees sent back when cancelled
 
     user = db.relationship("User", backref="bookings")

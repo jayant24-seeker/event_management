@@ -69,7 +69,8 @@ def load_demo_sales():
             t = rng.choice(tiers)
             qty = rng.choice([1, 1, 1, 2, 2, 3])
             b = Booking(user=user, event_slug=slug, status="confirmed", subtotal=t["price"] * qty,
-                        created_at=when, confirmed_at=when, payment_ref="DEMO" if t["price"] else None)
+                        created_at=when, confirmed_at=when, payment_ref="DEMO" if t["price"] else None,
+                        source=rng.choice(["instagram", "instagram", "whatsapp", "whatsapp", "whatsapp", None, None, "pinkpace-club"]))
             for _ in range(qty):
                 name = f"{rng.choice(FIRST)} {rng.choice(LAST)}"
                 b.attendees.append(Attendee(ticket_name=t["name"], price=t["price"], details={"name": name},

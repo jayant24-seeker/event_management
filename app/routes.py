@@ -178,6 +178,7 @@ def event(slug):
         abort(404)
     from .booking import questions_context, review_context
 
+    remember_source(slug)
     org_slugs = [x.slug for x in s.by_organizer(e.organizer)]
     return render_template("event.html", e=e, similar=s.similar(e), org_events=len(org_slugs),
                            org_rating=rating_summary(org_slugs), **review_context(e), **questions_context(e))
@@ -189,6 +190,17 @@ def announcements_for(slug, limit=3):
     from .models import Announcement
 
     return Announcement.query.filter_by(event_slug=slug).order_by(Announcement.created_at.desc()).limit(limit).all()
+
+
+def remember_source(slug):
+    """Keep ?src=instagram (or utm_source) from a share link, so the booking can credit it."""
+    from flask import session
+
+    src = (request.args.get("src") or request.args.get("utm_source") or "").strip().lower()
+    src = re.sub(r"[^a-z0-9_-]", "", src)[:40]
+    if src:
+        session.setdefault("sources", {})[slug] = src
+        session.modified = True
 
 
 @bp.app_template_global()

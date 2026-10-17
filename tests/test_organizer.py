@@ -250,3 +250,11 @@ def test_dashboard_needs_attention(app, client):
         db.session.commit()
     page = text(client.get("/organizer/"))
     assert "Needs your attention" in page and "1 question waiting on Little Legs Kids Run" in page
+
+
+def test_booking_source_from_share_link(app, client):
+    sign_in(client)
+    client.get("/events/deepotsav-kavi-sammelan?src=Instagram")
+    post(client, "/events/deepotsav-kavi-sammelan/register", t0="1", action="book", **{"a0-name": "Asha", "a0-age": "30"})
+    with app.app_context():
+        assert Booking.query.filter_by(event_slug="deepotsav-kavi-sammelan").one().source == "instagram"

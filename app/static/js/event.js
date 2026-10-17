@@ -99,16 +99,6 @@
       try { await navigator.share({ title: link.dataset.title, url: link.dataset.url }); } catch {}
     })
   );
-  document.querySelectorAll("[data-copy]").forEach((btn) =>
-    btn.addEventListener("click", async () => {
-      try {
-        await navigator.clipboard.writeText(btn.dataset.copy);
-        const old = btn.textContent;
-        btn.textContent = "Link copied";
-        setTimeout(() => { btn.textContent = old; }, 2000);
-      } catch {}
-    })
-  );
 
   // ---- Phones: hide the bottom "Register" bar while the ticket box itself is on screen.
   const bar = document.querySelector("[data-mobile-bar]");

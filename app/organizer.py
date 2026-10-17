@@ -466,12 +466,15 @@ def event_admin(slug):
     waitlist = WaitlistEntry.query.filter_by(event_slug=slug).order_by(WaitlistEntry.created_at).all()
     keys = field_keys(row.data)
     bookings = Booking.query.filter_by(event_slug=slug, status="confirmed").count()
+    sources = (db.session.query(Booking.source, func.count(Booking.id), func.sum(Booking.subtotal - Booking.discount))
+               .filter(Booking.event_slug == slug, Booking.status == "confirmed")
+               .group_by(Booking.source).order_by(func.count(Booking.id).desc()).all())
     cancelled = Booking.query.filter(Booking.event_slug == slug, Booking.status == "cancelled",
                                      Booking.confirmed_at.isnot(None)).count()
     return render_template("organizer/event_admin.html", row=row, e=e, attendees=attendees, coupons=coupons,
                            used=used, waitlist=waitlist, keys=keys, fields=FIELDS,
                            sales=sales_by_event([slug]).get(slug, (0, 0, 0)), daily=daily_sales(slug),
-                           bookings=bookings, cancelled=cancelled,
+                           bookings=bookings, cancelled=cancelled, sources=sources,
                            announcements=Announcement.query.filter_by(event_slug=slug)
                            .order_by(Announcement.created_at.desc()).all(),
                            open_questions=Question.query.filter_by(event_slug=slug, hidden=False, answered_at=None).count())

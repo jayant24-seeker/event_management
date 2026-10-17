@@ -10,7 +10,16 @@
     const msg = ev.submitter?.dataset.confirm || ev.target.dataset.confirm;
     if (msg && !confirm(msg)) ev.preventDefault();
   });
-  document.addEventListener("click", (ev) => {
+  document.addEventListener("click", async (ev) => {
+    const copy = ev.target.closest("[data-copy]");
+    if (copy) {
+      try {
+        await navigator.clipboard.writeText(copy.dataset.copy);
+        const old = copy.textContent;
+        copy.textContent = "Copied";
+        setTimeout(() => { copy.textContent = old; }, 2000);
+      } catch {}
+    }
     if (ev.target.closest("[data-print]")) window.print();
     if (ev.target.closest("[data-reload]")) location.reload();
   });

@@ -162,6 +162,30 @@
   </section>
 
   <div class="mt-10 grid gap-6 lg:grid-cols-2">
+    {# Share links that remember where bookings came from #}
+    <section id="sources" class="scroll-mt-24 rounded-card border border-line bg-paper-raised p-5">
+      <h2 class="text-xl font-bold">Where bookings come from</h2>
+      <p class="mt-1 text-sm text-ink-soft">Share a tagged link in each place you promote, and see which ones sell.</p>
+      {% set page = url_for('main.event', slug=row.slug, _external=True) %}
+      <ul class="mt-3 space-y-2 text-sm">
+        {% for src in ['instagram', 'whatsapp', 'facebook', 'partner'] %}
+        <li class="flex items-center gap-2">
+          <code class="min-w-0 flex-1 truncate rounded-lg bg-ink/5 px-3 py-2">{{ page }}?src={{ src }}</code>
+          <button type="button" class="btn-outline shrink-0 px-3 py-1.5 text-xs" data-copy="{{ page }}?src={{ src }}">Copy</button>
+        </li>
+        {% endfor %}
+      </ul>
+      <p class="mt-2 text-xs text-ink-soft">Any word works after <code>?src=</code>, e.g. <code>?src=pinkpace-club</code>. Links with <code>utm_source</code> count too.</p>
+      {% if sources %}
+      <table class="mt-4 w-full text-left text-sm">
+        <thead class="text-xs uppercase tracking-wider text-ink-soft"><tr><th class="py-1">Source</th><th class="py-1 text-right">Bookings</th><th class="py-1 text-right">Revenue</th></tr></thead>
+        <tbody class="divide-y divide-line">
+          {% for src, n, revenue in sources %}<tr><td class="py-1.5 font-semibold">{{ src or 'Direct or search' }}</td><td class="py-1.5 text-right">{{ n }}</td><td class="py-1.5 text-right">{{ (revenue or 0)|inr }}</td></tr>{% endfor %}
+        </tbody>
+      </table>
+      {% endif %}
+    </section>
+
     {# Updates to ticket holders #}
     <section id="announce" class="scroll-mt-24 rounded-card border border-line bg-paper-raised p-5">
       <h2 class="text-xl font-bold">Message ticket holders</h2>
