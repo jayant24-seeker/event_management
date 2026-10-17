@@ -1,35 +1,66 @@
 {% extends "base.html" %}
+{% from "components/_macros.html" import event_card %}
 {% block title %}My tickets · {{ site_name }}{% endblock %}
 {% block head %}<meta name="robots" content="noindex">{% endblock %}
+{% macro when(e) -%}
+{%- set d = (e.start.date() - today).days -%}
+{{ _('Today') if d <= 0 else (_('Tomorrow') if d == 1 else _('In %d days')|format(d)) }}
+{%- endmacro %}
 {% macro row(b, e) -%}
+{% set gone = e.is_past() or b.status == 'cancelled' %}
 <a href="{{ url_for('booking.show', ref=b.ref) }}" class="flex items-center gap-4 rounded-card border border-line bg-paper-raised p-3 transition hover:-translate-y-0.5 hover:shadow-poster">
-  <img src="{{ url_for('static', filename=e.poster) }}" alt="" class="h-24 w-[72px] shrink-0 rounded-xl object-cover {{ 'grayscale' if e.is_past() or b.status == 'cancelled' }}">
+  <img src="{{ url_for('static', filename=e.poster) }}" alt="" class="h-24 w-[72px] shrink-0 rounded-xl object-cover {{ 'grayscale' if gone }}" style="background-color: {{ e.tint }}">
   <div class="min-w-0 flex-1">
-    <p class="text-xs font-bold uppercase tracking-wider text-rani">{{ e.start.strftime('%a, %d %b %Y') }}</p>
+    <p class="text-xs font-bold uppercase tracking-wider text-rani-dark">{{ e.start.strftime('%a, %d %b %Y') }}</p>
     <p class="font-display text-lg font-bold leading-snug">{{ e.title }}</p>
     <p class="text-sm text-ink-soft">{{ b.attendees|length }} ticket{{ 's' if b.attendees|length != 1 }} · {{ e.venue.name }}</p>
   </div>
-  <span class="badge {{ {'confirmed': 'badge-free', 'cancelled': 'badge-muted', 'pending': 'badge-hot'}[b.status] }} shrink-0">{{ b.status }}</span>
+  {% if b.status == 'cancelled' %}<span class="badge badge-muted shrink-0">{{ _('Cancelled') }}</span>
+  {% elif not gone %}<span class="shrink-0 rounded-full bg-ink/5 px-3 py-1 text-xs font-bold">{{ when(e) }}</span>{% endif %}
 </a>
 {%- endmacro %}
 {% block content %}
 <div class="container-site max-w-3xl py-10">
-  <h1 class="text-3xl font-extrabold sm:text-4xl">My tickets</h1>
+  <h1 class="text-3xl font-extrabold sm:text-4xl">{{ _('My tickets') }}</h1>
   {% for b, e in pending %}
   <a href="{{ url_for('booking.pay', ref=b.ref) }}" class="mt-6 block rounded-card bg-marigold/20 p-4 font-semibold">Finish paying for {{ e.title }} ({{ b.total|inr }}) →</a>
   {% endfor %}
-  <h2 class="mt-8 text-xl font-bold">Upcoming</h2>
-  <div class="mt-4 space-y-3">
-    {% for b, e in upcoming %}{{ row(b, e) }}{% else %}
-    <div class="rounded-card border border-dashed border-line p-8 text-center">
-      <p class="font-semibold">No upcoming tickets yet.</p>
-      <a href="{{ url_for('main.explore') }}" class="btn-primary mt-4">Find something to do</a>
-    </div>
-    {% endfor %}
+
+  {% if upcoming %}
+  {% set b, e = upcoming[0] %}
+  {# The next thing this person is going to: big, with the tickets one tap away. #}
+  <a href="{{ url_for('booking.show', ref=b.ref) }}" class="group relative isolate mt-6 block overflow-hidden rounded-card p-6 text-paper shadow-poster sm:p-8" style="background-color: {{ e.tint }}">
+    <img src="{{ url_for('static', filename=e.banner) }}" alt="" class="absolute inset-0 -z-20 h-full w-full object-cover transition duration-700 group-hover:scale-105">
+    <span class="absolute inset-0 -z-10 bg-gradient-to-t from-ink via-ink/70 to-ink/20"></span>
+    <span class="inline-flex rounded-full bg-marigold px-3 py-1 text-xs font-bold text-ink">{{ _('Next up') }} · {{ when(e) }}</span>
+    <p class="mt-16 font-display text-3xl font-extrabold leading-tight sm:mt-24 sm:text-4xl">{{ e.title }}</p>
+    <p class="mt-1 text-paper/85">{{ e.start.strftime('%a, %d %b · %-I:%M %p') }} · {{ e.venue.name }}</p>
+    <span class="btn mt-5 bg-paper text-ink group-hover:bg-white">{{ _('Show tickets') }} ({{ b.attendees|length }})</span>
+  </a>
+  {% if upcoming|length > 1 %}
+  <h2 class="mt-10 text-xl font-bold">{{ _('Also coming up') }}</h2>
+  <div class="mt-4 space-y-3">{% for b, e in upcoming[1:] %}{{ row(b, e) }}{% endfor %}</div>
+  {% endif %}
+  {% else %}
+  <div class="mt-6 rounded-card border border-dashed border-line p-8 text-center">
+    <p class="font-display text-xl font-bold">{{ _('No upcoming tickets yet') }}</p>
+    <p class="mt-1 text-ink-soft">{{ _('When you book, your QR tickets show up here, and work offline at the gate.') }}</p>
+    <a href="{{ url_for('main.explore') }}" class="btn-primary mt-5">{{ _('Find something to do') }}</a>
   </div>
+  {% endif %}
+
   {% if past %}
-  <h2 class="mt-10 text-xl font-bold">Past and cancelled</h2>
+  <h2 class="mt-10 text-xl font-bold">{{ _('Past and cancelled') }}</h2>
   <div class="mt-4 space-y-3">{% for b, e in past %}{{ row(b, e) }}{% endfor %}</div>
   {% endif %}
 </div>
+
+{% if suggestions %}
+<section class="container-site mt-6">
+  <h2 class="text-2xl font-extrabold">{{ _('You might like') }}</h2>
+  <div class="mt-5 grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 md:grid-cols-4">
+    {% for e in suggestions %}{{ event_card(e) }}{% endfor %}
+  </div>
+</section>
+{% endif %}
 {% endblock %}

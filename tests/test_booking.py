@@ -231,3 +231,14 @@ def test_questions_and_answers(app, client, caplog):
     assert post(client, "/events/jaipur-night-run-2026/questions/1", action="hide").status_code == 404
     with app.app_context():
         assert not db.session.get(Question, 1).hidden
+
+
+def test_my_tickets_next_up_and_suggestions(app, client):
+    sign_in(client)
+    empty = text(client.get("/tickets"))
+    assert "No upcoming tickets yet" in empty and "You might like" in empty
+    post(client, "/events/deepotsav-kavi-sammelan/register", t0="1", action="book", **{"a0-name": "Asha", "a0-age": "30"})
+    page = text(client.get("/tickets"))
+    assert "Next up" in page and "Show tickets (1)" in page
+    # Suggestions skip what's already booked.
+    assert page.split("You might like")[1].count("दीपोत्सव कवि सम्मेलन") == 0

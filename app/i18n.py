@@ -171,6 +171,17 @@ HI = {
     "You're booking": "आप बुक कर रहे हैं",
     "Secure checkout": "सुरक्षित चेकआउट",
     "Help": "मदद",
+    "Tomorrow": "कल",
+    "In %d days": "%d दिन में",
+    "Next up": "अगला",
+    "Show tickets": "टिकट दिखाएँ",
+    "Also coming up": "और भी आने वाले",
+    "No upcoming tickets yet": "अभी कोई आने वाला टिकट नहीं",
+    "When you book, your QR tickets show up here, and work offline at the gate.": "बुक करने पर आपके QR टिकट यहाँ दिखेंगे, और गेट पर बिना इंटरनेट भी चलेंगे।",
+    "Find something to do": "कुछ करने को खोजें",
+    "Past and cancelled": "पिछले और रद्द",
+    "Cancelled": "रद्द",
+    "You might like": "आपको पसंद आ सकते हैं",
     # Offline page
     "No internet right now": "अभी इंटरनेट नहीं है",
     "Tickets you've opened on this phone before still work. Show the QR code at the gate.":

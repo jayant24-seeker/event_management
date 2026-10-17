@@ -334,7 +334,19 @@ def tickets():
     upcoming = sorted([(b, e) for b, e in items if not e.is_past() and b.status == "confirmed"], key=lambda x: x[1].start)
     past = [(b, e) for b, e in items if e.is_past() or b.status == "cancelled"]
     return render_template("booking/tickets.html", upcoming=upcoming, past=past,
-                           pending=[(b, s.get(b.event_slug)) for b in pending if s.get(b.event_slug)])
+                           pending=[(b, s.get(b.event_slug)) for b in pending if s.get(b.event_slug)],
+                           suggestions=suggest_for(s, [e for _, e in items]), today=now_ist().date())
+
+
+def suggest_for(s, booked, limit=4):
+    """Upcoming events like the ones this person booked (same category first, then city)."""
+    if not booked:
+        return s.featured()[:limit] or s.upcoming()[:limit]
+    taken = {e.slug for e in booked}
+    cats, cities = {e.category for e in booked}, {e.city for e in booked}
+    pool = [e for e in s.upcoming() if e.slug not in taken and e.registration_open()]
+    pool.sort(key=lambda e: (e.category not in cats, e.city not in cities, e.start))
+    return pool[:limit]
 
 
 @bp.route("/t/<code>")
