@@ -404,6 +404,21 @@ def sitemap():
     return Response("\n".join(xml), mimetype="application/xml")
 
 
+@bp.route("/healthz")
+def healthz():
+    """For the host's health checks and uptime monitors: 200 when the app and database answer."""
+    from sqlalchemy import text
+
+    from .models import db
+
+    try:
+        db.session.execute(text("SELECT 1"))
+    except Exception:  # noqa: BLE001  any database failure means "unhealthy"
+        current_app.logger.exception("Health check: database unreachable")
+        return jsonify(status="error", database="unreachable"), 503
+    return jsonify(status="ok"), 200, {"Cache-Control": "no-store"}
+
+
 # ---------- Installable app (PWA) ----------
 @bp.route("/manifest.webmanifest")
 def manifest():

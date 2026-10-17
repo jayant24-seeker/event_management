@@ -81,3 +81,8 @@ def test_near_me_button_data(client):
     cities = json.loads(html.unescape(raw))
     assert cities["Jaipur"][2] == "/events-in-jaipur" and "Online" not in cities
     assert "geolocation=(self)" in client.get("/").headers["Permissions-Policy"]
+
+
+def test_health_check(client):
+    res = client.get("/healthz")
+    assert res.status_code == 200 and res.json == {"status": "ok"}

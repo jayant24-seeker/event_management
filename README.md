@@ -32,7 +32,7 @@ pip install -r requirements.txt
 SECRET_KEY=... DATABASE_URL=... flask --app run seed   # once, on a new database
 SECRET_KEY=... DATABASE_URL=... gunicorn --workers 3 --bind 0.0.0.0:8000 run:app
 ```
-Put it behind HTTPS (Nginx, Render, Railway or similar). `.env.example` lists the settings. Static files are versioned (`app.css?v=...`) and cached for a year.
+Put it behind HTTPS (Nginx, Render, Railway or similar) and point the health check at `/healthz`. `.env.example` lists the settings. Static files are versioned (`app.css?v=...`) and cached for a year.
 
 ### SEO built in
 Unique titles and descriptions, Open Graph tags, Event JSON-LD on event pages, FAQ JSON-LD on city pages, `/sitemap.xml`, `/robots.txt`, and city pages like `/events-in-jaipur`. Filtered Explore pages are `noindex`.
