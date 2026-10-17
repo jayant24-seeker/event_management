@@ -351,8 +351,7 @@ def check_ticket(code):
 @bp.route("/events/<slug>/notify", methods=["GET", "POST"])
 def notify(slug):
     e = get_event_or_404(slug)
-    done = False
-    error = None
+    done, error, position = False, None, None
     name = request.form.get("name", g.user.name if g.user else "")
     phone_raw = request.form.get("phone", g.user.phone[3:] if g.user else "")
     if request.method == "POST":
@@ -362,11 +361,15 @@ def notify(slug):
         elif not hit("waitlist"):
             error = "Too many sign-ups from your connection. Please try again later."
         else:
-            if not WaitlistEntry.query.filter_by(event_slug=slug, phone=phone).first():
-                db.session.add(WaitlistEntry(event_slug=slug, phone=phone, name=name.strip()[:120]))
+            entry = WaitlistEntry.query.filter_by(event_slug=slug, phone=phone).first()
+            if entry is None:
+                entry = WaitlistEntry(event_slug=slug, phone=phone, name=name.strip()[:120])
+                db.session.add(entry)
                 db.session.commit()
+            position = WaitlistEntry.query.filter(WaitlistEntry.event_slug == slug, WaitlistEntry.id <= entry.id).count()
             done = True
-    return render_template("booking/notify.html", e=e, done=done, error=error, name=name, phone=phone_raw)
+    return render_template("booking/notify.html", e=e, done=done, error=error, name=name, phone=phone_raw,
+                           position=position if done else None)
 
 
 def notify_waitlist(e, seats):

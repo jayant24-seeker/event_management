@@ -194,3 +194,12 @@ def test_confirmation_is_texted_and_emailed(app, client, caplog):
     assert any(m.startswith("SMS to +919876543210: You're booked for") for m in logs)
     email = next(m for m in logs if m.startswith("Email to asha@example.com"))
     assert "/pass/" in email and "/bookings/" in email and "Asha" in email
+
+
+def test_waitlist_shows_place_in_line(app, client):
+    first = post(client, "/events/jaipur-night-run-2026/notify", name="A", phone="9800000001")
+    assert "#1" in text(first)
+    second = text(post(client, "/events/jaipur-night-run-2026/notify", name="B", phone="9800000002"))
+    assert "#2" in second
+    again = text(post(client, "/events/jaipur-night-run-2026/notify", name="A", phone="9800000001"))
+    assert "#1" in again  # joining twice keeps your place
