@@ -161,3 +161,20 @@ def test_group_discount_saved_from_form(app, client):
         rows = {r.data["title"]: r.data for r in EventRow.query.filter_by(organizer_slug="kota-runners-club")}
         assert rows["Kota Monsoon 10K"]["group_discount"] == {"min": 4, "percent": 10}
         assert "group_discount" not in rows["Kota Winter 5K"]  # out of range: ignored
+
+
+def test_attendee_list_does_not_query_per_attendee(tmp_path):
+    from sqlalchemy import event
+
+    from app import create_app
+
+    demo = create_app({"TESTING": True, "DEMO_SALES": True, "MEDIA_ROOT": str(tmp_path)})
+    c = demo.test_client()
+    with c.session_transaction() as s:
+        s["csrf"] = CSRF
+    sign_in(c, phone="9999999999")
+    queries = []
+    with demo.app_context():
+        event.listen(db.engine, "before_cursor_execute", lambda *a, **k: queries.append(1))
+    page = c.get("/organizer/events/jaipur-night-run-2026")
+    assert page.status_code == 200 and len(queries) < 30  # 70+ attendees; was ~100 queries

@@ -22,7 +22,7 @@ Every item keeps `pytest` green. Newest at the bottom.
 - [x] Typo-tolerant search
 - [ ] Dark mode
 - [x] Accessibility audit and fixes
-- [ ] Speed: cache the event list per request burst
+- [x] Speed: measured every main page (3-8 queries, under 40 ms); fixed the one N+1
 - [x] Organizers: message all attendees (SMS announcement, e.g. venue change)
 - [x] Organizers: duplicate an event (next edition in one click)
 - [x] Group discount (e.g. 10% off 4+ tickets) set by the organizer
@@ -52,3 +52,4 @@ Every item keeps `pytest` green. Newest at the bottom.
 - Booking confirmations: SMS plus a plain-text email (when, where, one link per ticket, refund policy) as soon as a booking is confirmed; console in development, SMTP via MAIL_* settings in production; never blocks a booking if mail is down.
 - Waitlist place: joining shows "#N in line" (joining again keeps your place).
 - "Near me" on the homepage and Explore: the browser finds the closest city with events and opens its page. The location is used only on the device (never sent to the server or put in a URL). Permissions-Policy now allows geolocation for this site only.
+- Speed: profiled query counts per page; public pages run 3-8 queries. The organizer attendee list ran one query per attendee (~100); now 14, with a test guarding it. Caching the event list is not needed at this size.

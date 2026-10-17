@@ -11,6 +11,7 @@ from pathlib import Path
 from flask import (Blueprint, Response, abort, current_app, flash, g, redirect, render_template, request,
                    url_for)
 from sqlalchemy import func
+from sqlalchemy.orm import contains_eager
 
 from .auth import login_required
 from .booking import FIELDS, field_keys
@@ -358,7 +359,9 @@ def after_save(row, issues):
 
 # ---------- Attendees, coupons, waitlist ----------
 def attendee_rows(slug):
+    # Load each attendee's booking and buyer in the same query (the list shows the buyer's phone).
     return (Attendee.query.join(Booking).filter(Booking.event_slug == slug, Booking.status == "confirmed")
+            .options(contains_eager(Attendee.booking).joinedload(Booking.user))
             .order_by(Booking.confirmed_at.desc(), Attendee.id).all())
 
 
