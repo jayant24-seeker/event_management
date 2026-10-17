@@ -30,6 +30,10 @@ Every item keeps `pytest` green. Newest at the bottom.
 - [x] "Near me": sort Explore by distance from the visitor
 - [x] Waitlist position shown to the person waiting
 - [x] README refresh for everything added overnight
+- [x] Gate scanner page (camera QR scanning on phones)
+- [ ] Check-in staff: organizer adds volunteer phone numbers who can scan tickets
+- [ ] Questions & answers on event pages (attendees ask, organizer answers)
+- [ ] Dark mode
 
 ## Done
 - Security: per-IP limits on sign-in codes, waitlist and contact form; blocked `/\host` open redirect; bad coupon expiry no longer crashes. Ownership checks reviewed (all OK).
@@ -54,3 +58,4 @@ Every item keeps `pytest` green. Newest at the bottom.
 - "Near me" on the homepage and Explore: the browser finds the closest city with events and opens its page. The location is used only on the device (never sent to the server or put in a URL). Permissions-Policy now allows geolocation for this site only.
 - Speed: profiled query counts per page; public pages run 3-8 queries. The organizer attendee list ran one query per attendee (~100); now 14, with a test guarding it. Caching the event list is not needed at this size.
 - README: new settings (mail, admin, proxy, refunds), new modules and routes, demo admin login.
+- Gate scanner (/organizer/scan, "Scan with camera" on the dashboard): live camera QR scanning with big green/amber/red results, vibration, running "X of Y checked in", manual code entry. Uses the browser's BarcodeDetector where available and bundled jsQR (Apache-2.0) on iPhone; decoding verified against a real ticket QR.

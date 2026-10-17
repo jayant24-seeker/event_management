@@ -4,11 +4,11 @@ import csv
 import io
 import re
 import secrets
-from datetime import datetime
+from datetime import datetime, timedelta
 from functools import wraps
 from pathlib import Path
 
-from flask import (Blueprint, Response, abort, current_app, flash, g, redirect, render_template, request,
+from flask import (Blueprint, Response, abort, current_app, flash, g, jsonify, redirect, render_template, request,
                    url_for)
 from sqlalchemy import func
 from sqlalchemy.orm import contains_eager
@@ -320,7 +320,6 @@ def edit_event(slug):
 @organizer_required
 def duplicate_event(slug):
     """Start the next edition: same details as a draft, a year later (same weekday), no sales."""
-    from datetime import timedelta
 
     row = own_event_or_404(slug)
     raw = {k: v for k, v in row.data.items() if k not in ("results", "featured")}
@@ -489,7 +488,6 @@ MAX_ANNOUNCEMENTS_PER_DAY = 3
 @organizer_required
 def announce(slug):
     """Text every ticket holder (the person who booked) and pin the update on the event page."""
-    from datetime import timedelta
 
     from .sms import SmsNotConfigured, send_sms
 
@@ -522,24 +520,66 @@ def announce(slug):
 
 
 # ---------- Check-in ----------
+def ticket_code(text):
+    """The code from what was typed or scanned: a bare code, or the /t/<code> link in the QR."""
+    text = (text or "").strip()
+    return text.rstrip("/").rsplit("/t/", 1)[-1].split("?")[0].strip().upper()[:16]
+
+
+def check_in_code(code):
+    """(status, attendee): ok | already | invalid (cancelled/unpaid) | unknown (not ours)."""
+    a = Attendee.query.filter_by(code=code).first() if code else None
+    if a is None or db.session.get(EventRow, a.booking.event_slug).organizer_slug != g.org.slug:
+        return "unknown", None
+    if a.booking.status != "confirmed":
+        return "invalid", a
+    if a.checked_in_at:
+        return "already", a
+    a.checked_in_at = utcnow()
+    db.session.commit()
+    return "ok", a
+
+
 @bp.route("/check-in", methods=["POST"])
 @organizer_required
 def check_in():
     """Mark a ticket as used. Only the event's own organizer can do this."""
-    code = request.form.get("code", "").strip().upper()
-    a = Attendee.query.filter_by(code=code).first()
-    if a is None or db.session.get(EventRow, a.booking.event_slug).organizer_slug != g.org.slug:
+    code = ticket_code(request.form.get("code"))
+    status, a = check_in_code(code)
+    if status == "unknown":
         flash("No ticket with that code for your events.")
         return redirect(request.referrer or url_for("org.dashboard"))
-    if a.booking.status != "confirmed":
-        flash("This ticket is not valid (cancelled or unpaid).")
-    elif a.checked_in_at:
-        flash(f"Already checked in: {a.name}.")
-    else:
-        a.checked_in_at = utcnow()
-        db.session.commit()
-        flash(f"Checked in: {a.name} ({a.ticket_name}).")
+    flash({"invalid": "This ticket is not valid (cancelled or unpaid).",
+           "already": f"Already checked in: {a.name}.",
+           "ok": f"Checked in: {a.name} ({a.ticket_name})."}[status])
     return redirect(url_for("booking.check_ticket", code=code))
+
+
+@bp.route("/scan")
+@organizer_required
+def scan():
+    """Gate scanner: point the phone camera at tickets; results show instantly."""
+    now = now_ist()
+    rows = EventRow.query.filter_by(organizer_slug=g.org.slug, status="published").all()
+    events = sorted((e for _, e in wrap(rows) if e and not e.is_past(now - timedelta(days=1))), key=lambda e: e.start)
+    return render_template("organizer/scan.html", events=events)
+
+
+@bp.route("/check-in.json", methods=["POST"])
+@organizer_required
+def check_in_json():
+    data = request.get_json(silent=True) or {}
+    status, a = check_in_code(ticket_code(data.get("code")))
+    out = {"status": status}
+    if a is not None:
+        e = store().get(a.booking.event_slug)
+        total, checked = (db.session.query(func.count(Attendee.id), func.count(Attendee.checked_in_at))
+                          .join(Booking).filter(Booking.event_slug == a.booking.event_slug,
+                                                Booking.status == "confirmed").one())
+        out.update(name=a.name, ticket=a.ticket_name, event=e.title if e else a.booking.event_slug,
+                   at=current_app.jinja_env.filters["ist"](a.checked_in_at, "%-I:%M %p"),
+                   counts={"checked": checked, "total": total})
+    return jsonify(out)
 
 
 @bp.app_template_global()

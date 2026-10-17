@@ -48,6 +48,7 @@
   <form method="post" action="{{ url_for('org.check_in') }}" class="mt-6 flex flex-wrap items-center gap-2 rounded-card border border-line bg-paper-raised p-4">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <p class="mr-2 font-semibold">Gate check-in</p>
+    <a href="{{ url_for('org.scan') }}" class="btn-primary py-2">Scan with camera</a>
     <input name="code" class="input max-w-xs py-2 font-mono uppercase" placeholder="Ticket code" required autocomplete="off">
     <button class="btn-dark py-2">Check in</button>
     <p class="w-full text-xs text-ink-soft sm:w-auto">Or scan the ticket's QR with your phone camera while signed in.</p>

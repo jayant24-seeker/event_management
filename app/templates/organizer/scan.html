@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% block title %}Scan tickets · {{ g.org.data.name }} · {{ site_name }}{% endblock %}
+{% block head %}<meta name="robots" content="noindex">{% endblock %}
+{% block content %}
+<div class="container-site max-w-xl py-6">
+  <a href="{{ url_for('org.dashboard') }}" class="text-sm font-semibold text-rani hover:underline">← Dashboard</a>
+  <h1 class="mt-2 text-3xl font-extrabold">Scan tickets</h1>
+  <p class="mt-1 text-sm text-ink-soft">Point the camera at a ticket's QR code. Works for all your events{% if events %}: {{ events|map(attribute='title')|join(', ') }}{% endif %}.</p>
+
+  <div class="relative mt-5 aspect-square overflow-hidden rounded-card bg-ink" data-scanner>
+    <video class="h-full w-full object-cover" playsinline muted data-video></video>
+    <div class="pointer-events-none absolute inset-[18%] rounded-3xl border-4 border-white/70" aria-hidden="true"></div>
+    <div class="absolute inset-0 grid place-items-center p-6 text-center text-paper" data-camera-message>
+      <div>
+        <p class="font-semibold">Camera is off</p>
+        <button type="button" class="btn-primary mt-3" data-start>Start scanning</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-4 hidden rounded-card p-5 text-white" role="status" aria-live="assertive" data-result>
+    <p class="font-display text-2xl font-extrabold" data-result-title></p>
+    <p class="mt-1 text-lg font-semibold" data-result-name></p>
+    <p class="text-sm text-white/90" data-result-detail></p>
+  </div>
+  <p class="mt-3 text-sm font-semibold text-ink-soft" data-counts></p>
+
+  <form class="mt-5 flex gap-2" data-manual>
+    <label for="manual-code" class="sr-only">Ticket code</label>
+    <input id="manual-code" class="input py-2 font-mono uppercase placeholder:font-sans placeholder:normal-case" placeholder="Or type the ticket code" autocomplete="off" required>
+    <button class="btn-dark shrink-0 whitespace-nowrap py-2">Check in</button>
+  </form>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+(function () {
+  const video = document.querySelector("[data-video]");
+  const message = document.querySelector("[data-camera-message]");
+  const box = document.querySelector("[data-result]");
+  const csrf = document.querySelector('meta[name="csrf-token"]').content;
+  const STYLES = {
+    ok: ["bg-leaf", "Checked in"], already: ["bg-marigold !text-ink", "Already checked in"],
+    invalid: ["bg-rani", "Not valid"], unknown: ["bg-rani", "Not one of your tickets"], error: ["bg-ink", "No connection"],
+  };
+  let busy = false, lastCode = "", lastAt = 0;
+
+  async function checkIn(code) {
+    if (busy || (code === lastCode && Date.now() - lastAt < 4000)) return;  // same QR held in view
+    busy = true; lastCode = code; lastAt = Date.now();
+    let data;
+    try {
+      const res = await fetch("{{ url_for('org.check_in_json') }}", {
+        method: "POST", headers: { "Content-Type": "application/json", "X-CSRF-Token": csrf },
+        body: JSON.stringify({ code }),
+      });
+      data = await res.json();
+    } catch { data = { status: "error" }; }
+    const [cls, title] = STYLES[data.status] || STYLES.error;
+    box.className = `mt-4 rounded-card p-5 text-white ${cls}`;
+    box.querySelector("[data-result-title]").textContent = title;
+    box.querySelector("[data-result-name]").textContent = data.name ? `${data.name} · ${data.ticket}` : code;
+    box.querySelector("[data-result-detail]").textContent =
+      data.status === "already" ? `Scanned at ${data.at} · ${data.event}` : (data.event || "");
+    if (data.counts) document.querySelector("[data-counts]").textContent = `${data.counts.checked} of ${data.counts.total} checked in for ${data.event}`;
+    if (navigator.vibrate) navigator.vibrate(data.status === "ok" ? 80 : [80, 60, 80]);
+    setTimeout(() => { busy = false; }, 1200);
+  }
+
+  document.querySelector("[data-manual]").addEventListener("submit", (ev) => {
+    ev.preventDefault();
+    const input = ev.target.querySelector("input");
+    lastCode = ""; checkIn(input.value.trim().toUpperCase()); input.value = "";
+  });
+
+  // Decoder: the browser's own where it has one (Chrome on Android), else jsQR (iPhone Safari).
+  async function decoder() {
+    if ("BarcodeDetector" in window) {
+      const d = new BarcodeDetector({ formats: ["qr_code"] });
+      return async (source) => (await d.detect(source))[0]?.rawValue;
+    }
+    await new Promise((ok, fail) => {
+      const s = document.createElement("script");
+      s.src = "{{ url_for('static', filename='vendor/jsQR-1.4.0.js') }}"; s.onload = ok; s.onerror = fail;
+      document.head.append(s);
+    });
+    const canvas = document.createElement("canvas"), ctx = canvas.getContext("2d", { willReadFrequently: true });
+    return async (source) => {
+      const w = 480, h = Math.round(480 * source.videoHeight / source.videoWidth) || 480;
+      canvas.width = w; canvas.height = h; ctx.drawImage(source, 0, 0, w, h);
+      return jsQR(ctx.getImageData(0, 0, w, h).data, w, h, { inversionAttempts: "dontInvert" })?.data;
+    };
+  }
+
+  document.querySelector("[data-start]").addEventListener("click", async () => {
+    try {
+      video.srcObject = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }, audio: false });
+      await video.play();
+      message.hidden = true;
+      const read = await decoder();
+      const tick = async () => {
+        if (video.readyState >= 2 && !busy) {
+          const text = await read(video).catch(() => null);
+          if (text) checkIn(text);
+        }
+        requestAnimationFrame(tick);
+      };
+      tick();
+    } catch {
+      message.querySelector("p").textContent = "Camera not available. Allow camera access, or type codes below.";
+    }
+  });
+})();
+</script>
+{% endblock %}

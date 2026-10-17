@@ -178,3 +178,30 @@ def test_attendee_list_does_not_query_per_attendee(tmp_path):
         event.listen(db.engine, "before_cursor_execute", lambda *a, **k: queries.append(1))
     page = c.get("/organizer/events/jaipur-night-run-2026")
     assert page.status_code == 200 and len(queries) < 30  # 70+ attendees; was ~100 queries
+
+
+def test_scanner_check_in_api(app, client):
+    from app.organizer import ticket_code
+
+    assert ticket_code("https://eventouse.com/t/ab3cd5efgh") == "AB3CD5EFGH"
+    assert ticket_code(" ab3cd5efgh ") == "AB3CD5EFGH"
+    # A booking on the demo organizer's event.
+    sign_in(client)
+    with app.app_context():
+        from app.models import User
+        u = User.query.filter_by(phone="+919876543210").one()
+        b = Booking(user_id=u.id, event_slug="jaipur-night-run-2026", status="confirmed")
+        b.attendees.append(Attendee(ticket_name="5K Fun Run", price=0, details={"name": "Asha Verma"}))
+        db.session.add(b)
+        db.session.commit()
+        code = b.attendees[0].code
+    with client.session_transaction() as s:
+        s.pop("uid")
+    sign_in(client, phone="9999999999")
+    assert client.get("/organizer/scan").status_code == 200
+    call = lambda c: client.post("/organizer/check-in.json", json={"code": c}, headers={"X-CSRF-Token": CSRF}).json  # noqa: E731
+    first = call(f"http://localhost/t/{code}")
+    assert first["status"] == "ok" and first["name"] == "Asha Verma" and first["counts"] == {"checked": 1, "total": 1}
+    assert call(code)["status"] == "already"
+    assert call("NOSUCHCODE")["status"] == "unknown"
+    assert client.post("/organizer/check-in.json", json={"code": code}).status_code == 400  # CSRF still required
