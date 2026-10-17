@@ -124,3 +124,21 @@ def test_organizer_update_is_texted_and_shown(app, client, caplog):
     assert post(client, "/organizer/events/jaipur-night-run-2026/announce", text="Hijacked message here").status_code == 302
     with app.app_context():
         assert Announcement.query.count() == 3
+
+
+def test_reminders_and_review_requests_go_out_once(app, client, caplog):
+    import logging
+
+    from app.reminders import send_due
+
+    sign_in(client)
+    ref = paid_booking(app, "jaipur-night-run-2026")
+    e = EventStore().get("jaipur-night-run-2026")
+    with app.test_request_context(), caplog.at_level(logging.INFO):
+        assert send_due(at=e.start - timedelta(days=3)) == 0          # too early
+        assert send_due(at=e.start - timedelta(hours=20)) == 1        # day before
+        assert send_due(at=e.start - timedelta(hours=10)) == 0        # only once
+        assert send_due(at=e.end + timedelta(hours=5)) == 1           # review request
+        assert send_due(at=e.end + timedelta(hours=6)) == 0
+    texts = [r.getMessage() for r in caplog.records if r.getMessage().startswith("SMS to +919876543210")]
+    assert "See you tomorrow at Jaipur Night Run 2026" in texts[0] and "How was Jaipur Night Run 2026?" in texts[1]

@@ -34,6 +34,8 @@ def create_app(config=None):
         MAIL_FROM=os.environ.get("MAIL_FROM", "Eventouse <tickets@eventouse.com>"),
         # Eventouse staff who can open /admin: comma-separated +91 numbers.
         ADMIN_PHONES=os.environ.get("ADMIN_PHONES", ""),
+        # Full site address for links in texts sent outside a web request (reminders).
+        PUBLIC_URL=os.environ.get("PUBLIC_URL", ""),
     )
     # Where organizer uploads are written. Files are served from /static/uploads/.
     app.config["MEDIA_ROOT"] = app.static_folder
@@ -58,6 +60,8 @@ def create_app(config=None):
 
     from .seed import register_cli
     register_cli(app)
+    from .reminders import register_cli as register_reminders
+    register_reminders(app)
 
     @app.template_filter("num")
     def num(amount):
