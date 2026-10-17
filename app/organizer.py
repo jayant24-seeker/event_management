@@ -312,6 +312,36 @@ def edit_event(slug):
     return render_template("organizer/event_form.html", **form_context(row.data, None, row))
 
 
+@bp.route("/events/<slug>/duplicate", methods=["POST"])
+@organizer_required
+def duplicate_event(slug):
+    """Start the next edition: same details as a draft, a year later (same weekday), no sales."""
+    from datetime import timedelta
+
+    row = own_event_or_404(slug)
+    raw = {k: v for k, v in row.data.items() if k not in ("results", "featured")}
+    shift = timedelta(days=364)  # 52 weeks keeps the weekday
+    for key in ("start", "end", "reg_closes"):
+        if raw.get(key):
+            try:
+                raw[key] = (datetime.fromisoformat(raw[key]) + shift).strftime("%Y-%m-%dT%H:%M")
+            except ValueError:
+                pass  # left as is; the publish checks will ask for a valid date
+    old_year, new_year = row.data.get("start", "")[:4], raw.get("start", "")[:4]
+    if old_year.isdigit() and old_year in raw.get("title", ""):
+        raw["title"] = raw["title"].replace(old_year, new_year)
+    raw["tickets"] = [dict(t, sold=0) for t in raw.get("tickets", [])]
+    if raw.get("poster", "").startswith("uploads/art/"):
+        raw.pop("poster", None)  # the generated poster shows the old date; a new one is drawn on save
+        raw.pop("banner", None)
+    year = raw.get("start", "")[:4]
+    raw["slug"] = unique_slug(EventRow, slugify(raw["title"] if year in raw["title"] else f"{raw['title']} {year}"))
+    db.session.add(EventRow(slug=raw["slug"], organizer_slug=g.org.slug, status="draft", data=raw))
+    db.session.commit()
+    flash("Copied as a draft for next year. Check the dates and prices, then publish.")
+    return redirect(url_for("org.edit_event", slug=raw["slug"]))
+
+
 def after_save(row, issues):
     if issues:
         flash("Saved as a draft. Fix the items below to publish.")

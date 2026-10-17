@@ -132,3 +132,22 @@ def test_sales_chart_with_demo_sales(tmp_path):
 def test_sales_chart_empty_state(client):
     sign_in(client, phone="9999999999")
     assert "No bookings on Eventouse yet" in text(client.get("/organizer/events/jaipur-night-run-2026"))
+
+
+def test_duplicate_event_for_next_year(app, client):
+    sign_in(client, phone="9999999999")
+    res = post(client, "/organizer/events/tricity-half-marathon-2026/duplicate")
+    assert res.status_code == 302 and "/organizer/events/tricity-half-marathon-2027/edit" in res.headers["Location"]
+    with app.app_context():
+        row = db.session.get(EventRow, "tricity-half-marathon-2027")
+        old = db.session.get(EventRow, "tricity-half-marathon-2026")
+        assert row.status == "draft" and row.data["title"] == "Tricity Half Marathon 2027"
+        assert row.data["start"][:4] == "2027" and "results" not in row.data
+        assert all(t["sold"] == 0 for t in row.data["tickets"])
+        assert old.data["title"] == "Tricity Half Marathon 2026"  # original untouched
+    assert client.get("/events/tricity-half-marathon-2027").status_code == 404  # draft, not public
+
+
+def test_cannot_duplicate_someone_elses_event(client):
+    become_organizer(client)
+    assert post(client, "/organizer/events/tricity-half-marathon-2026/duplicate").status_code == 404

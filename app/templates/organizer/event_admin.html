@@ -12,6 +12,10 @@
     <div class="flex flex-wrap gap-2">
       {% if row.status == 'published' %}<a href="{{ url_for('main.event', slug=row.slug) }}" class="btn-outline">View page</a>{% endif %}
       <a href="{{ url_for('org.edit_event', slug=row.slug) }}" class="btn-outline">Edit event</a>
+      <form method="post" action="{{ url_for('org.duplicate_event', slug=row.slug) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button class="btn-outline">Duplicate for next year</button>
+      </form>
       <a href="{{ url_for('org.attendees_csv', slug=row.slug) }}" class="btn-dark">Download CSV</a>
     </div>
   </div>

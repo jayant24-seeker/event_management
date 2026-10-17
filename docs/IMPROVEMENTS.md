@@ -24,7 +24,7 @@ Every item keeps `pytest` green. Newest at the bottom.
 - [x] Accessibility audit and fixes
 - [ ] Speed: cache the event list per request burst
 - [x] Organizers: message all attendees (SMS announcement, e.g. venue change)
-- [ ] Organizers: duplicate an event (next edition in one click)
+- [x] Organizers: duplicate an event (next edition in one click)
 - [ ] Group discount (e.g. 10% off 4+ tickets) set by the organizer
 - [ ] Booking confirmation by email (console in development)
 - [ ] "Near me": sort Explore by distance from the visitor
@@ -47,3 +47,4 @@ Every item keeps `pytest` green. Newest at the bottom.
 - Accessibility: ran axe-core on 17 pages (desktop, phone, signed in/out) and fixed every violation: green "Free"/success colour darkened to 5:1 contrast, low-contrast urgency and CTA text, invalid role on hero slides, skipped heading level on Explore, unlabeled admin column, calendar contrast. All pages now report zero violations.
 - Printable tickets: "Print tickets" button; print layout drops header, footer and buttons, keeps colours and QR codes, never splits a ticket across pages.
 - Organizer updates: "Message ticket holders" on the event admin page texts everyone who booked (3 a day max) and pins the update on the event page and on their tickets.
+- Duplicate for next year: one click copies an event as a draft 52 weeks later (same weekday), updates the year in the title, resets sales and drops results. Also checked the site in the iPhone simulator (Safari): homepage, event page, calendar agenda all render well.
