@@ -133,7 +133,7 @@ def create_app(config=None):
         if response.mimetype == "text/html" and not app.debug:
             response.headers.setdefault("Content-Security-Policy", "; ".join([
                 "default-src 'self'", f"script-src 'self' 'nonce-{csp_nonce()}'",
-                "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com", "font-src 'self' https://fonts.gstatic.com",
+                "style-src 'self' 'unsafe-inline'", "font-src 'self'",
                 "img-src 'self' data: blob:", "frame-src https://www.google.com", "connect-src 'self'", "worker-src 'self'",
                 "manifest-src 'self'", "object-src 'none'", "base-uri 'self'", "form-action 'self'", "frame-ancestors 'self'",
             ]))

@@ -1,6 +1,6 @@
 // Service worker: makes the site installable and keeps tickets readable with no signal
 // (at the gate, in a crowd). Pages are always fetched fresh when online.
-const VERSION = "v3";
+const VERSION = "v4";
 const SHELL = `eventouse-shell-${VERSION}`;
 const PAGES = "eventouse-pages"; // account ticket pages the person opened; cleared on sign-out (site.js)
 const PASSES = "eventouse-passes"; // single tickets sent to someone (/pass/...); no account, so kept

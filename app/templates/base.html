@@ -11,9 +11,9 @@
   <link rel="icon" href="{{ url_for('static', filename='favicon.svg') }}" type="image/svg+xml">
   {% if not config.STATIC_PREVIEW %}<link rel="manifest" href="{{ url_for('main.manifest') }}">{% endif %}
   <link rel="apple-touch-icon" href="{{ url_for('static', filename='icons/apple-touch-icon.png') }}">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Mukta:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  {# Fonts are served from this site (static/fonts); preload the two every page uses first. #}
+  <link rel="preload" href="{{ request.script_root }}/static/fonts/bricolage-grotesque-latin-3b58e8.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="{{ request.script_root }}/static/fonts/plus-jakarta-sans-latin-e2e017.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
   <meta name="csrf-token" content="{{ csrf_token() }}">
   {% block og %}

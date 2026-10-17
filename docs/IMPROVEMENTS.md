@@ -21,7 +21,7 @@ Every item keeps `pytest` green. Newest at the bottom.
 - [x] Social share image per event (Open Graph)
 - [x] Typo-tolerant search
 - [x] Dark mode
-- [ ] Self-host fonts (faster on slow mobile networks, works offline, no third-party requests)
+- [x] Self-host fonts (faster on slow mobile networks, works offline, no third-party requests)
 - [ ] Saved events: text when registration is about to close or a sold-out event reopens
 - [ ] Optimise uploaded posters (resize + WebP, responsive srcset)
 - [ ] Recurring events / series (weekly classes with many dates)
@@ -40,7 +40,7 @@ Every item keeps `pytest` green. Newest at the bottom.
 - [x] Check-in staff: organizer adds volunteer phone numbers who can scan tickets
 - [x] Questions & answers on event pages (attendees ask, organizer answers)
 - [x] Dark mode
-- [ ] Self-host fonts (faster on slow mobile networks, works offline, no third-party requests)
+- [x] Self-host fonts (faster on slow mobile networks, works offline, no third-party requests)
 - [ ] Saved events: text when registration is about to close or a sold-out event reopens
 - [ ] Optimise uploaded posters (resize + WebP, responsive srcset)
 - [ ] Recurring events / series (weekly classes with many dates)
@@ -98,3 +98,4 @@ Every item keeps `pytest` green. Newest at the bottom.
 - Automatic texts: `flask send-reminders` (run hourly) sends "see you tomorrow" with the ticket link the day before, and "how was it?" with the review link 2-72 hours after; each once per booking.
 - City pages: "Also within reach" shows upcoming events in nearby cities (within 450 km, nearest first) with "130 km from Jaipur", so small cities never feel empty.
 - Printable flyer: "Print a flyer" on the event admin page opens an A4 sheet with the artwork, details and a big QR code to the event page (tagged ?src=flyer so flyer bookings show up in "Where bookings come from").
+- Self-hosted fonts: Bricolage Grotesque, Plus Jakarta Sans and Mukta now load from the site (440 KB total, only the subsets a page needs are fetched, the two main ones preloaded). No requests to Google, faster on slow networks, cached by the offline worker; CSP no longer allows Google Fonts.
