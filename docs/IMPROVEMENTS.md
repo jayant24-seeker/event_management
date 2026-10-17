@@ -25,7 +25,7 @@ Every item keeps `pytest` green. Newest at the bottom.
 - [x] Saved events: text when registration is about to close (reopening is covered by the waitlist)
 - [x] Optimise uploaded posters (resize + WebP)
 - [x] Recurring events / series (weekly classes with many dates)
-- [ ] Organizer co-admins (more than one person managing an organizer)
+- [x] Organizer co-admins (more than one person managing an organizer)
 - [x] Razorpay integration path behind settings (replace test payment page)
 - [x] Accessibility audit and fixes
 - [x] Speed: measured every main page (3-8 queries, under 40 ms); fixed the one N+1
@@ -44,7 +44,7 @@ Every item keeps `pytest` green. Newest at the bottom.
 - [x] Saved events: text when registration is about to close (reopening is covered by the waitlist)
 - [x] Optimise uploaded posters (resize + WebP)
 - [x] Recurring events / series (weekly classes with many dates)
-- [ ] Organizer co-admins (more than one person managing an organizer)
+- [x] Organizer co-admins (more than one person managing an organizer)
 - [x] Razorpay integration path behind settings (replace test payment page)
 
 ## Done
@@ -104,3 +104,4 @@ Every item keeps `pytest` green. Newest at the bottom.
 - Razorpay payments (switch on with PAYMENT_PROVIDER=razorpay and keys): order per booking, Razorpay Checkout on the pay page, server-side signature check, signed webhook as a backup (idempotent), automatic refunds on cancellation, CSP opened for Razorpay only when enabled. Test mode stays the default. Covered by tests with the API mocked; needs real test keys for a live trial.
 - About page: live numbers (events, cities, people registered, organizers) and a tilted strip of current event posters linking to each event.
 - Repeating events: "Add more dates" (every week / 2 weeks / 4 weeks, up to 12) creates linked copies with their own tickets and freshly drawn posters; the event page shows "Other dates" chips; listings show a series once with "+N more dates".
+- Organizer team roles: add people as Gate staff (scan only) or Co-admin (full dashboard: events, attendees, payouts view). Co-admins are linked as soon as they sign in; removing them takes access away; numbers that already run another organizer cannot be added as co-admins.

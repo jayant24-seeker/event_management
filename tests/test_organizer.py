@@ -315,3 +315,23 @@ def test_series_shows_once_in_listings(client):
     home = text(client.get("/"))
     assert home.split("Don't miss these")[1].count("Race-Day Nutrition Masterclass</h3>") == 1
     assert "+2 more dates" in text(client.get("/events"))
+
+
+def test_co_admin_gets_full_access_and_can_be_removed(app, client):
+    from app.models import GateStaff, User
+
+    sign_in(client, phone="9999999999")
+    post(client, "/organizer/staff", name="Neha Partner", phone="9822233344", role="admin")
+    with client.session_transaction() as s:
+        s.pop("uid")
+    sign_in(client, phone="9822233344", name="Neha Partner")
+    assert "Pink Pace Runners Club" in text(client.get("/organizer/"))
+    assert client.get("/organizer/events/jaipur-night-run-2026").status_code == 200
+    with client.session_transaction() as s:
+        s.pop("uid")
+    sign_in(client, phone="9999999999")
+    with app.app_context():
+        member_id = GateStaff.query.filter_by(phone="+919822233344").one().id
+    post(client, "/organizer/staff", remove=str(member_id))
+    with app.app_context():
+        assert User.query.filter_by(phone="+919822233344").one().organizer_slug is None

@@ -41,10 +41,29 @@ def unique_slug(model, base):
     return slug
 
 
+def claim_co_admin(user):
+    """Someone an organizer added as co-admin becomes part of that organizer on their first visit."""
+    from .models import GateStaff
+
+    if user.organizer_slug:
+        return
+    row = GateStaff.query.filter_by(phone=user.phone, role="admin").order_by(GateStaff.created_at).first()
+    if row:
+        user.organizer_slug = row.organizer_slug
+        db.session.commit()
+
+
+@bp.before_app_request
+def link_co_admins():
+    if g.get("user") is not None and not g.user.organizer_slug:
+        claim_co_admin(g.user)
+
+
 def organizer_required(view):
     @wraps(view)
     @login_required
     def wrapped(*args, **kwargs):
+        claim_co_admin(g.user)
         if not g.user.organizer_slug:
             return redirect(url_for("org.start"))
         g.org = db.session.get(Organizer, g.user.organizer_slug)
@@ -648,9 +667,13 @@ def staff():
 
     if request.form.get("remove"):
         row = GateStaff.query.filter_by(id=request.form.get("remove", type=int), organizer_slug=g.org.slug).first_or_404()
+        if row.role == "admin":
+            member = User.query.filter_by(phone=row.phone, organizer_slug=g.org.slug).first()
+            if member is not None and member.id != g.user.id:
+                member.organizer_slug = None
         db.session.delete(row)
         db.session.commit()
-        flash(f"{row.name or row.phone} can no longer scan tickets.")
+        flash(f"{row.name or row.phone} no longer has access.")
     else:
         phone = normalize_phone(request.form.get("phone"))
         if not phone:
@@ -658,11 +681,18 @@ def staff():
         elif phone == g.user.phone:
             flash("That's you. You can already scan tickets.")
         elif GateStaff.query.filter_by(organizer_slug=g.org.slug, phone=phone).first():
-            flash("They're already on your gate team.")
+            flash("They're already on your team.")
         else:
-            db.session.add(GateStaff(organizer_slug=g.org.slug, phone=phone, name=request.form.get("name", "").strip()[:120]))
+            role = "admin" if request.form.get("role") == "admin" else "gate"
+            other = User.query.filter_by(phone=phone).first()
+            if role == "admin" and other is not None and other.organizer_slug and other.organizer_slug != g.org.slug:
+                flash("That number already runs another organizer profile, so it can't be added as a co-admin.")
+                return redirect(url_for("org.dashboard") + "#staff")
+            db.session.add(GateStaff(organizer_slug=g.org.slug, phone=phone, role=role,
+                                     name=request.form.get("name", "").strip()[:120]))
             db.session.commit()
-            flash("Added. They sign in with that number and open Scan tickets from the menu.")
+            flash("Added. They sign in with that number and find " +
+                  ("the Organizer dashboard in their menu." if role == "admin" else "Scan tickets in their menu."))
     return redirect(url_for("org.dashboard") + "#staff")
 
 

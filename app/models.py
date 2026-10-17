@@ -168,12 +168,13 @@ class Announcement(db.Model):
 
 
 class GateStaff(db.Model):
-    """Volunteers an organizer lets scan tickets (and nothing else)."""
+    """People an organizer adds: gate staff scan tickets only; co-admins manage everything."""
     id = db.Column(db.Integer, primary_key=True)
     organizer_slug = db.Column(db.String(80), db.ForeignKey("organizer.slug"), nullable=False, index=True)
     phone = db.Column(db.String(15), nullable=False, index=True)
     name = db.Column(db.String(120), nullable=False, default="")
     created_at = db.Column(db.DateTime, nullable=False, default=utcnow)
+    role = db.Column(db.String(10), nullable=True)  # None/"gate": scan only; "admin": full organizer access
     __table_args__ = (UniqueConstraint("organizer_slug", "phone"),)
 
 
