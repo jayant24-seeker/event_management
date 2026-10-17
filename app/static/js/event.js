@@ -71,7 +71,7 @@
     const paint = () => {
       btn.setAttribute("aria-pressed", on);
       btn.querySelector("svg").setAttribute("fill", on ? "currentColor" : "none");
-      btn.querySelector("[data-save-label]").textContent = on ? "Saved" : "Save";
+      btn.querySelector("[data-save-label]").textContent = on ? (btn.dataset.labelOn || "Saved") : (btn.dataset.labelOff || "Save");
     };
     btn.addEventListener("click", async () => {
       on = !on;

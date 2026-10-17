@@ -42,7 +42,7 @@
   <div class="container-site pb-10 pt-6 sm:pb-14">
     <nav class="text-sm text-paper/70" aria-label="Breadcrumb">
       <ol class="flex flex-wrap items-center gap-1.5">
-        <li><a href="{{ url_for('main.home') }}" class="hover:text-paper">Home</a></li>
+        <li><a href="{{ url_for('main.home') }}" class="hover:text-paper">{{ _('Home') }}</a></li>
         <li aria-hidden="true">/</li>
         <li><a href="{{ city_url(e.city) }}" class="hover:text-paper">{{ e.city }}</a></li>
         <li aria-hidden="true">/</li>
@@ -68,10 +68,10 @@
         <div class="mt-6 flex flex-wrap items-center gap-3 text-sm">
           <a href="{{ url_for('main.organizer', slug=e.organizer) }}" class="flex items-center gap-2 rounded-full bg-paper/10 py-1 pl-1 pr-4 backdrop-blur hover:bg-paper/20">
             <span class="grid h-8 w-8 place-items-center rounded-full bg-marigold font-bold text-ink">{{ e.org.name[:1] }}</span>
-            <span>By <strong>{{ e.org.name }}</strong></span>
+            <span>{{ _('By') }} <strong>{{ e.org.name }}</strong></span>
             {% if e.org.verified %}<svg class="h-4 w-4 text-marigold" viewBox="0 0 24 24" fill="currentColor" aria-label="Verified organizer"><path d="M12 2l2.4 2.1 3.2-.3.9 3.1 2.8 1.6-1.2 3 1.2 3-2.8 1.6-.9 3.1-3.2-.3L12 22l-2.4-2.1-3.2.3-.9-3.1-2.8-1.6 1.2-3-1.2-3 2.8-1.6.9-3.1 3.2.3z"/><path d="M8.5 12l2.5 2.5 4.5-5" fill="none" stroke="#1A1423" stroke-width="2"/></svg>{% endif %}
           </a>
-          <button type="button" class="flex items-center gap-2 rounded-full border border-paper/30 px-4 py-2 font-semibold hover:bg-paper/10" data-save="{{ e.slug }}" data-saved="{{ '1' if e.slug in saved_slugs() else '0' }}" aria-pressed="false">
+          <button type="button" class="flex items-center gap-2 rounded-full border border-paper/30 px-4 py-2 font-semibold hover:bg-paper/10" data-save="{{ e.slug }}" data-label-on="{{ _('Saved') }}" data-label-off="{{ _('Save') }}" data-saved="{{ '1' if e.slug in saved_slugs() else '0' }}" aria-pressed="false">
             <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>
             <span data-save-label>{{ _('Save') }}</span>
           </button>
@@ -287,11 +287,11 @@
       <h2 class="text-3xl font-extrabold">{{ _('The course') }}</h2>
       <div class="mt-6 grid gap-4 sm:grid-cols-2">
         <div class="rounded-card border border-line bg-paper-raised p-5">
-          <p class="text-xs font-bold uppercase tracking-wider text-ink-soft">Start</p>
+          <p class="text-xs font-bold uppercase tracking-wider text-ink-soft">{{ _('Start') }}</p>
           <p class="mt-1 text-lg font-bold">{{ e.route.start }}</p>
         </div>
         <div class="rounded-card border border-line bg-paper-raised p-5">
-          <p class="text-xs font-bold uppercase tracking-wider text-ink-soft">Finish</p>
+          <p class="text-xs font-bold uppercase tracking-wider text-ink-soft">{{ _('Finish') }}</p>
           <p class="mt-1 text-lg font-bold">{{ e.route.finish }}</p>
         </div>
       </div>
@@ -342,7 +342,7 @@
 
     {% if e.raw.prizes %}
     <section id="prizes" class="scroll-mt-32">
-      <h2 class="text-3xl font-extrabold">What's up for grabs</h2>
+      <h2 class="text-3xl font-extrabold">{{ _("What's up for grabs") }}</h2>
       <ul class="mt-6 space-y-3">
         {% for p in e.prizes %}
         <li class="flex items-start gap-3 rounded-xl border border-marigold/50 bg-marigold/10 p-4 font-semibold">
@@ -424,9 +424,9 @@
         <span class="grid h-14 w-14 place-items-center rounded-2xl bg-marigold font-display text-2xl font-extrabold text-ink">{{ e.org.name[:1] }}</span>
         <div class="min-w-0 flex-1">
           <p class="text-xs font-bold uppercase tracking-wider text-paper/60">{{ _('Organised by') }}</p>
-          <p class="font-display text-xl font-extrabold">{{ e.org.name }}{% if e.org.verified %} <span class="ml-1 rounded-full bg-marigold px-2 py-0.5 align-middle font-sans text-[11px] font-bold uppercase tracking-wider text-ink">Verified</span>{% endif %}</p>
-          <p class="text-sm text-paper/70">{{ e.org.city }} · hosting since {{ e.org.since }} · {{ org_events }} event{{ 's' if org_events != 1 }} on {{ site_name }}</p>
-          {% if org_rating %}<p class="mt-1 flex items-center gap-2 text-sm">{{ stars(org_rating.avg) }} <strong>{{ '%.1f'|format(org_rating.avg) }}</strong> <span class="text-paper/70">from {{ org_rating.count }} review{{ 's' if org_rating.count != 1 }} of past events</span></p>{% endif %}
+          <p class="font-display text-xl font-extrabold">{{ e.org.name }}{% if e.org.verified %} <span class="ml-1 rounded-full bg-marigold px-2 py-0.5 align-middle font-sans text-[11px] font-bold uppercase tracking-wider text-ink">{{ _('Verified') }}</span>{% endif %}</p>
+          <p class="text-sm text-paper/70">{{ e.org.city }} · {{ _('hosting since %s')|format(e.org.since) }} · {{ _('%(n)d events on %(site)s')|format(n=org_events, site=site_name) if org_events != 1 else _('1 event on %(site)s')|format(site=site_name) }}</p>
+          {% if org_rating %}<p class="mt-1 flex items-center gap-2 text-sm">{{ stars(org_rating.avg) }} <strong>{{ '%.1f'|format(org_rating.avg) }}</strong> <span class="text-paper/70">{{ _('from %d reviews of past events')|format(org_rating.count) if org_rating.count != 1 else _('from 1 review of past events') }}</span></p>{% endif %}
         </div>
         <div class="flex w-full gap-2 sm:w-auto">
           {{ follow_button(e.organizer) }}
@@ -465,7 +465,7 @@
         </div>
         <div class="mt-3 grid grid-cols-4 gap-2 text-center" data-countdown="{{ e.start.isoformat() }}" aria-label="Time until the event starts">
           {% for unit in ['days', 'hrs', 'min', 'sec'] %}
-          <div class="rounded-xl bg-ink py-2 text-paper"><p class="font-display text-xl font-extrabold tabular-nums" data-unit="{{ unit }}">--</p><p class="text-[10px] uppercase tracking-wider text-paper/60">{{ unit }}</p></div>
+          <div class="rounded-xl bg-ink py-2 text-paper"><p class="font-display text-xl font-extrabold tabular-nums" data-unit="{{ unit }}">--</p><p class="text-[10px] uppercase tracking-wider text-paper/60">{{ _(unit) }}</p></div>
           {% endfor %}
         </div>
 
