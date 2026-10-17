@@ -279,10 +279,24 @@ def save_upload(file, slug):
         ext = "webp"
     if ext is None:
         return None, "Upload the poster as a JPG, PNG or WebP image."
-    rel = f"uploads/posters/{slug}-{secrets.token_hex(4)}.{ext}"
+    # Re-encode: at most 1200 px tall WebP (a few hundred KB instead of megabytes on mobile data),
+    # and the photo's hidden metadata (camera, GPS location) is dropped.
+    from PIL import Image, ImageOps, UnidentifiedImageError
+
+    try:
+        img = Image.open(io.BytesIO(data))
+        img = ImageOps.exif_transpose(img)
+        img.thumbnail((900, 1200) if img.height >= img.width else (1600, 1200))
+        if img.mode not in ("RGB", "RGBA"):
+            img = img.convert("RGBA" if "transparency" in img.info else "RGB")
+        out = io.BytesIO()
+        img.save(out, "WEBP", quality=82, method=6)
+    except (UnidentifiedImageError, OSError, Image.DecompressionBombError):
+        return None, "That image couldn't be read. Try exporting it again as JPG or PNG."
+    rel = f"uploads/posters/{slug}-{secrets.token_hex(4)}.webp"
     path = Path(current_app.config["MEDIA_ROOT"]) / rel
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_bytes(data)
+    path.write_bytes(out.getvalue())
     return rel, None
 
 

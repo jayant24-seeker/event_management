@@ -1,4 +1,5 @@
 import html
+from pathlib import Path
 
 from app.models import Attendee, Booking, ContactMessage, EventRow, Organizer, db
 from test_booking import CSRF, app, client, post, sign_in, text  # noqa: F401  (fixtures)
@@ -266,3 +267,29 @@ def test_printable_flyer(client):
     assert "Scan to book" in page and "<svg" in page and "Jaipur Night Run 2026" in page
     become = client.get("/organizer/events/kota-campus-beats/flyer")
     assert become.status_code == 404  # not this organizer's event
+
+
+def test_uploaded_poster_is_resized_to_webp(app, client, tmp_path):
+    import io as _io
+
+    from PIL import Image
+
+    become_organizer(client)
+    big = Image.new("RGB", (2400, 3200), (214, 36, 110))
+    buf = _io.BytesIO()
+    big.save(buf, "JPEG", quality=95)
+    buf.seek(0)
+    res = client.post("/organizer/events/new", data=dict(EVENT, action="draft", csrf_token=CSRF,
+                                                          poster=(buf, "poster.jpg")), content_type="multipart/form-data")
+    assert res.status_code in (200, 302)
+    with app.app_context():
+        row = EventRow.query.filter_by(organizer_slug="kota-runners-club").one()
+        assert row.data["poster"].endswith(".webp")
+        saved = Image.open(Path(app.config["MEDIA_ROOT"]) / row.data["poster"])
+        assert saved.format == "WEBP" and saved.size == (900, 1200)
+
+    # Not an image at all: a clear message, nothing saved.
+    junk = client.post("/organizer/events/new", data=dict(EVENT, title="Junk Upload Run", action="draft", csrf_token=CSRF,
+                                                           poster=(_io.BytesIO(b"\x89PNG not really"), "x.png")),
+                       content_type="multipart/form-data")
+    assert "couldn't be read" in text(junk)
