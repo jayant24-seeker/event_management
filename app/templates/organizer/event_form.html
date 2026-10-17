@@ -20,7 +20,7 @@
 {% block content %}
 {% set route = raw.route or {} %}
 {% set venue = raw.venue or {} %}
-<div class="container-site max-w-4xl py-10">
+<div class="container-site max-w-6xl py-10">
   <a href="{{ url_for('org.dashboard') }}" class="text-sm font-semibold text-rani hover:underline">← Dashboard</a>
   <div class="mt-2 flex flex-wrap items-center gap-3">
     <h1 class="text-3xl font-extrabold sm:text-4xl">{{ 'Edit event' if row else 'Create an event' }}</h1>
@@ -35,8 +35,9 @@
   </div>
   {% endif %}
 
-  <form method="post" enctype="multipart/form-data" class="mt-8 space-y-8" data-event-form>
+  <form method="post" enctype="multipart/form-data" class="mt-8 grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_300px]" data-event-form>
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="space-y-8">
 
     <section class="space-y-4 rounded-card border border-line bg-paper-raised p-5 sm:p-6">
       <h2 class="text-xl font-bold">Basics</h2>
@@ -82,12 +83,6 @@
         <button type="button" class="btn-outline py-2" data-add-ticket>+ Add ticket type</button>
       </div>
       <p class="text-sm text-ink-soft">Price 0 makes a ticket free. Seats already sold can't be removed.</p>
-      {% set gd = raw.group_discount or {} %}
-      <div class="grid gap-3 rounded-2xl bg-ink/5 p-3 sm:grid-cols-[auto_1fr_1fr] sm:items-end">
-        <p class="text-sm font-semibold sm:pb-3">Group discount <span class="font-normal text-ink-soft">(optional)</span></p>
-        {{ field('group_min', 'Tickets in one booking, at least', gd.min, type='number', attrs='min=2 max=50 inputmode=numeric placeholder="e.g. 4"') }}
-        {{ field('group_percent', '% off the whole booking', gd.percent, type='number', attrs='min=1 max=50 inputmode=numeric placeholder="e.g. 10"') }}
-      </div>
       <div class="space-y-3" data-tickets>
         {% set rows = raw.tickets or [] %}
         {% for t in rows + [{}] * (1 if rows else 2) %}
@@ -99,6 +94,12 @@
           {% if t.sold %}<p class="text-xs text-ink-soft sm:col-span-3">{{ t.sold }} sold</p>{% endif %}
         </div>
         {% endfor %}
+      </div>
+      {% set gd = raw.group_discount or {} %}
+      <div class="grid gap-3 rounded-2xl bg-ink/5 p-3 sm:grid-cols-[auto_1fr_1fr] sm:items-end">
+        <p class="text-sm font-semibold sm:pb-3">Group discount <span class="font-normal text-ink-soft">(optional)</span></p>
+        {{ field('group_min', 'Tickets in one booking, at least', gd.min, type='number', attrs='min=2 max=50 inputmode=numeric placeholder="e.g. 4"') }}
+        {{ field('group_percent', '% off the whole booking', gd.percent, type='number', attrs='min=1 max=50 inputmode=numeric placeholder="e.g. 10"') }}
       </div>
     </section>
 
@@ -156,6 +157,32 @@
       <button name="action" value="draft" class="btn-outline btn-lg" formnovalidate>Save draft</button>
       {% endif %}
     </div>
+    </div>
+
+    {# Live preview: how the event card will look on Explore, updated as you type. #}
+    <aside class="hidden lg:sticky lg:top-24 lg:block" aria-label="Preview" data-preview>
+      <p class="text-sm font-semibold text-ink-soft">How it looks on {{ site_name }}</p>
+      <div class="mt-3">
+        <div class="relative aspect-[3/4] overflow-hidden rounded-card bg-gradient-to-br from-ink via-rani-dark to-rani shadow-poster">
+          <img alt="" class="absolute inset-0 h-full w-full object-cover {{ '' if raw.poster else 'hidden' }}" src="{{ url_for('static', filename=raw.poster) if raw.poster else '' }}" data-pv-img>
+          <div class="absolute inset-x-0 bottom-0 p-5 text-paper {{ 'hidden' if raw.poster }}" data-pv-art>
+            <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-marigold" data-pv-cat2>{{ raw.category or 'Category' }}</p>
+            <p class="mt-1 font-display text-2xl font-extrabold uppercase leading-none" data-pv-title2>{{ raw.title or 'Your event' }}</p>
+          </div>
+          <span class="absolute left-3 top-3 flex w-14 flex-col items-center rounded-xl bg-paper-raised py-1.5 leading-none text-ink shadow-sm">
+            <span class="font-display text-xl font-extrabold" data-pv-day>--</span>
+            <span class="mt-0.5 text-[10px] font-bold uppercase tracking-widest text-rani" data-pv-mon>---</span>
+          </span>
+        </div>
+        <div class="mt-3 px-1">
+          <p class="text-xs font-bold uppercase tracking-wider text-rani" data-pv-cat>{{ raw.category or 'Category' }}</p>
+          <p class="mt-1 text-lg font-bold leading-snug" data-pv-title>{{ raw.title or 'Your event' }}</p>
+          <p class="mt-1 text-sm text-ink-soft" data-pv-where>{{ raw.city or 'City' }}</p>
+          <p class="mt-1.5 text-sm font-semibold" data-pv-price>Add a ticket</p>
+        </div>
+      </div>
+      <p class="mt-4 text-xs text-ink-soft">No poster? We make one from your title, date and city when you save.</p>
+    </aside>
   </form>
 </div>
 {% endblock %}
@@ -180,6 +207,39 @@
     const sync = () => venueOnly.classList.toggle("hidden", form.querySelector("[data-mode]:checked").value === "online");
     form.querySelectorAll("[data-mode]").forEach((r) => r.addEventListener("change", sync));
     sync();
+
+    // Live preview card.
+    const pv = (k) => form.querySelector(`[data-pv-${k}]`);
+    const val = (n) => (form.querySelector(`[name="${n}"]`) || {}).value || "";
+    const inr = (n) => "₹" + Number(n).toLocaleString("en-IN");
+    const render = () => {
+      const title = val("title").trim() || "Your event";
+      const category = (cat.value === "Other" ? val("category_other") : cat.value) || "Category";
+      const online = (form.querySelector("[data-mode]:checked") || {}).value === "online";
+      const city = online ? "Online" : (val("city").trim() || "City");
+      const venue = val("venue_name").trim();
+      pv("title").textContent = pv("title2").textContent = title;
+      pv("cat").textContent = pv("cat2").textContent = category;
+      pv("where").textContent = venue && !online ? `${city} · ${venue}` : city;
+      const start = val("start") ? new Date(val("start")) : null;
+      pv("day").textContent = start ? String(start.getDate()).padStart(2, "0") : "--";
+      pv("mon").textContent = start ? start.toLocaleString("en", { month: "short" }) : "---";
+      const prices = [...form.querySelectorAll("[data-ticket-row]")]
+        .filter((r) => r.querySelector('[name="ticket_name"]').value.trim())
+        .map((r) => r.querySelector('[name="ticket_price"]').value).filter((v) => v !== "").map(Number);
+      pv("price").textContent = !prices.length ? "Add a ticket" : prices.every((p) => p === 0) ? "Free"
+        : (prices.length > 1 ? "From " : "") + inr(Math.min(...prices.filter((p) => p > 0)));
+    };
+    form.addEventListener("input", render);
+    form.addEventListener("change", render);
+    render();
+    form.querySelector('[name="poster"]')?.addEventListener("change", (ev) => {
+      const file = ev.target.files[0];
+      if (!file) return;
+      pv("img").src = URL.createObjectURL(file);
+      pv("img").classList.remove("hidden");
+      pv("art").classList.add("hidden");
+    });
   })();
 </script>
 {% endblock %}

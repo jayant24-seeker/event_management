@@ -130,7 +130,7 @@ def create_app(config=None):
             response.headers.setdefault("Content-Security-Policy", "; ".join([
                 "default-src 'self'", f"script-src 'self' 'nonce-{csp_nonce()}'",
                 "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com", "font-src 'self' https://fonts.gstatic.com",
-                "img-src 'self' data:", "frame-src https://www.google.com", "connect-src 'self'", "worker-src 'self'",
+                "img-src 'self' data: blob:", "frame-src https://www.google.com", "connect-src 'self'", "worker-src 'self'",
                 "manifest-src 'self'", "object-src 'none'", "base-uri 'self'", "form-action 'self'", "frame-ancestors 'self'",
             ]))
         response.headers.setdefault("Permissions-Policy", "camera=(self), microphone=(), geolocation=(self)")
