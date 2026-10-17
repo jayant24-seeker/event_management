@@ -13,7 +13,7 @@
   <div class="no-scrollbar flex snap-x snap-mandatory overflow-x-auto scroll-smooth" data-hero-track>
     {% for e in featured %}
     {% set url = url_for('main.event', slug=e.slug) %}
-    <article class="relative isolate flex h-[calc(100svh-4rem)] max-h-[860px] min-h-[540px] w-full shrink-0 snap-start overflow-hidden"
+    <div class="relative isolate flex h-[calc(100svh-4rem)] max-h-[860px] min-h-[540px] w-full shrink-0 snap-start overflow-hidden"
              role="group" aria-roledescription="slide" aria-label="{{ loop.index }} of {{ featured|length }}: {{ e.title }}" data-hero-slide>
       <img src="{{ url_for('static', filename=e.banner) }}" alt="" class="absolute inset-0 -z-20 h-full w-full object-cover"
            {% if loop.first %}fetchpriority="high"{% else %}loading="lazy"{% endif %}>
@@ -62,7 +62,7 @@
           </a>
         </div>
       </div>
-    </article>
+    </div>
     {% endfor %}
   </div>
 

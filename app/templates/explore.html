@@ -115,7 +115,7 @@
       <div class="grid grid-cols-7 gap-px">
         {% for week in c.weeks %}{% for d, evs in week %}
         {% set other = d.month != c.first.month %}
-        <div class="min-h-[120px] bg-paper-raised p-2 {{ 'bg-paper text-ink-soft/50' if other or d < c.today }}">
+        <div class="min-h-[120px] p-2 {{ 'bg-paper text-ink-soft' if other or d < c.today else 'bg-paper-raised' }}" {% if other %}aria-hidden="true"{% endif %}>
           <p class="text-right text-sm font-semibold">
             {% if d == c.today %}<span class="inline-grid h-7 w-7 place-items-center rounded-full bg-rani text-white">{{ d.day }}</span>{% else %}{{ d.day }}{% endif %}
           </p>
@@ -123,7 +123,7 @@
           <ul class="mt-1 space-y-1">
             {% for e in evs[:3] %}
             <li><a href="{{ url_for('main.event', slug=e.slug) }}" class="group block truncate rounded-md bg-rani/10 px-1.5 py-1 text-xs font-semibold text-ink hover:bg-rani hover:text-white" title="{{ e.title }} · {{ e.start.strftime('%-I:%M %p') }} · {{ e.city }}">
-              {% if e.start.date() == d %}<span class="font-bold text-rani group-hover:text-white">{{ e.start.strftime('%-I%p')|lower }}</span> {% endif %}{{ e.title }}</a></li>
+              {% if e.start.date() == d %}<span class="font-bold text-rani-dark group-hover:text-white">{{ e.start.strftime('%-I%p')|lower }}</span> {% endif %}{{ e.title }}</a></li>
             {% endfor %}
             {% if evs|length > 3 %}<li class="px-1.5 text-xs font-semibold text-ink-soft">+{{ evs|length - 3 }} more</li>{% endif %}
           </ul>
@@ -156,6 +156,7 @@
     </ol>
   </section>
   {% elif results %}
+  <h2 class="sr-only">{{ _('Results') }}</h2>
   <div class="mt-6 grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 md:grid-cols-3 lg:grid-cols-4">
     {% for e in results %}{{ event_card(e) }}{% endfor %}
   </div>

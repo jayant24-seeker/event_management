@@ -13,7 +13,7 @@
     --rani: 214 36 110;       /* rani pink: primary action */
     --rani-dark: 168 20 82;
     --marigold: 255 182 39;   /* accent: dates, highlights */
-    --leaf: 22 143 94;        /* free / success */
+    --leaf: 16 122 79;        /* free / success (5:1 with white text) */
   }
   html { -webkit-tap-highlight-color: transparent; }
   /* Devanagari letters join up; wide letter spacing breaks them. */

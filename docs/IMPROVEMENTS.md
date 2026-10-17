@@ -21,7 +21,7 @@ Every item keeps `pytest` green. Newest at the bottom.
 - [x] Social share image per event (Open Graph)
 - [x] Typo-tolerant search
 - [ ] Dark mode
-- [ ] Accessibility audit and fixes
+- [x] Accessibility audit and fixes
 - [ ] Speed: cache the event list per request burst
 
 ## Done
@@ -37,3 +37,4 @@ Every item keeps `pytest` green. Newest at the bottom.
 - Link previews: WhatsApp/Facebook ignore SVG, so each event now has a 1200x630 PNG card (its colours, title, date, price) drawn with Pillow and cached; a site-wide card for every other page. Bundled the Mukta font (OFL). Hindi titles fall back to "<category> in <city>" until the server has libraqm for Devanagari shaping.
 - Explore calendar: Grid/Calendar toggle; month grid on tablet+ (times, +N more), day-by-day agenda with posters on phones; filters still apply; multi-day events on each day; months limited to the next two years and marked nofollow.
 - Search forgives typos ("jaipr", "marathn", "jodpur") and understands everyday words (marathon→running, navratri→garba, poetry→kavi sammelan, standup→comedy) in Explore and the live suggestions.
+- Accessibility: ran axe-core on 17 pages (desktop, phone, signed in/out) and fixed every violation: green "Free"/success colour darkened to 5:1 contrast, low-contrast urgency and CTA text, invalid role on hero slides, skipped heading level on Explore, unlabeled admin column, calendar contrast. All pages now report zero violations.

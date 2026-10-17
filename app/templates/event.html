@@ -419,7 +419,7 @@
                   <p class="font-semibold leading-snug">{{ t.name }}</p>
                   <p class="text-sm font-bold text-rani">{{ 'Free' if t.price == 0 else t.price|inr }}</p>
                   {% if t.sold_out %}<p class="text-xs font-semibold text-ink-soft">Sold out</p>
-                  {% elif t.left <= 50 %}<p class="text-xs font-semibold text-marigold">Only {{ t.left }} left</p>{% endif %}
+                  {% elif t.left <= 50 %}<p class="text-xs font-semibold text-rani">Only {{ t.left }} left</p>{% endif %}
                 </div>
                 {% if not t.sold_out %}
                 <div class="flex items-center gap-1" role="group" aria-label="Number of {{ t.name }} tickets">
