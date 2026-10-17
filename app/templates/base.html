@@ -30,7 +30,7 @@
 <body class="min-h-screen" data-auth="{{ '1' if current_user else '0' }}">
   <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 btn-dark">Skip to content</a>
 
-  <header class="sticky top-0 z-40 border-b border-line/70 bg-paper/85 backdrop-blur">
+  <header class="sticky top-0 z-40 print:hidden border-b border-line/70 bg-paper/85 backdrop-blur">
     <div class="container-site flex h-16 items-center gap-3">
       <a href="{{ url_for('main.home') }}" class="flex items-center gap-2 font-display text-xl font-extrabold">
         <span class="grid h-8 w-8 place-items-center rounded-lg bg-rani text-white">e</span>{{ site_name|lower }}
@@ -91,14 +91,14 @@
   </header>
 
   {% with messages = get_flashed_messages() %}{% if messages %}
-  <div class="container-site mt-4" role="status">
+  <div class="container-site mt-4 print:hidden" role="status">
     {% for m in messages %}<p class="rounded-xl bg-ink px-4 py-3 text-sm font-semibold text-paper">{{ m }}</p>{% endfor %}
   </div>
   {% endif %}{% endwith %}
 
   <main id="main">{% block content %}{% endblock %}</main>
 
-  <footer class="mt-24 bg-ink text-paper/80">
+  <footer class="mt-24 bg-ink text-paper/80 print:hidden">
     <div class="container-site grid gap-8 py-12 text-sm sm:grid-cols-2 lg:grid-cols-4">
       <div>
         <p class="font-display text-lg font-extrabold text-paper">{{ site_name|lower }}</p>

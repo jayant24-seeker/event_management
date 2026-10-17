@@ -10,8 +10,9 @@
     <h1 class="mt-1 text-3xl font-extrabold sm:text-4xl">You're going to {{ e.title }}!</h1>
     <p class="mt-2 text-white/90">{{ e.start.strftime('%a, %d %b %Y · %-I:%M %p') }} · {{ e.venue.name }}</p>
     <div class="mt-5 flex flex-wrap gap-2">
-      <a href="{{ url_for('main.event_ics', slug=e.slug) }}" class="btn bg-white text-ink hover:bg-white/90">Add to calendar</a>
-      <a href="https://wa.me/?text={{ ('I\'m going to ' ~ e.title ~ ' on ' ~ e.start.strftime('%d %b') ~ '! Join me: ' ~ page_url)|urlencode }}" target="_blank" rel="noopener" class="btn border border-white/50 text-white hover:bg-white/10">Tell friends on WhatsApp</a>
+      <a href="{{ url_for('main.event_ics', slug=e.slug) }}" class="btn bg-white text-ink hover:bg-white/90 print:hidden">Add to calendar</a>
+      <button type="button" onclick="window.print()" class="btn border border-white/50 text-white hover:bg-white/10 print:hidden">Print tickets</button>
+      <a href="https://wa.me/?text={{ ('I\'m going to ' ~ e.title ~ ' on ' ~ e.start.strftime('%d %b') ~ '! Join me: ' ~ page_url)|urlencode }}" target="_blank" rel="noopener" class="btn border border-white/50 text-white hover:bg-white/10 print:hidden">Tell friends on WhatsApp</a>
     </div>
   </div>
   {% elif b.status == 'cancelled' %}
@@ -27,7 +28,7 @@
   <p class="mt-1 text-sm text-ink-soft">Show the QR code at the entry. A screenshot works too.</p>
   <div class="mt-5 space-y-4">
     {% for a in b.attendees %}
-    <article id="ticket-{{ a.id }}" class="grid scroll-mt-24 overflow-hidden rounded-card border border-line bg-paper-raised sm:grid-cols-[1fr_auto]">
+    <article id="ticket-{{ a.id }}" class="grid scroll-mt-24 overflow-hidden rounded-card border border-line bg-paper-raised sm:grid-cols-[1fr_auto] print:break-inside-avoid print:grid-cols-[1fr_auto]">
       <div class="p-5">
         <p class="text-xs font-bold uppercase tracking-wider text-rani">{{ a.ticket_name }}</p>
         <p class="mt-1 font-display text-2xl font-extrabold">{{ a.name }}</p>
@@ -40,7 +41,7 @@
         {% if e.is_online and b.status == 'confirmed' %}<p class="mt-3 rounded-xl bg-ink/5 p-3 text-sm">Joining link: shared by the organizer by SMS 1 hour before the start.</p>{% endif %}
         {% if b.status == 'confirmed' and not e.is_past() %}
         {% set pass_url = url_for('booking.ticket_pass', code=a.code, _external=True) %}
-        <div class="mt-4 flex flex-wrap items-center gap-2 text-sm">
+        <div class="mt-4 flex flex-wrap items-center gap-2 text-sm print:hidden">
           <a href="https://wa.me/?text={{ ('Your ticket for ' ~ e.title ~ ' (' ~ e.start.strftime('%d %b') ~ '): ' ~ pass_url)|urlencode }}" target="_blank" rel="noopener" class="btn-outline py-1.5">Send to {{ a.name.split(' ')[0] if loop.index > 1 else 'someone' }} on WhatsApp</a>
           {% if can_transfer and not a.checked_in_at %}
           <details class="group">
@@ -72,7 +73,7 @@
   </dl>
   <p class="mt-4 text-sm text-ink-soft">Refunds: {{ e.refund_policy }}</p>
 
-  <div class="mt-6 flex flex-wrap gap-2">
+  <div class="mt-6 flex flex-wrap gap-2 print:hidden">
     <a href="{{ url_for('booking.tickets') }}" class="btn-outline">All my tickets</a>
     <a href="{{ url_for('main.event', slug=e.slug) }}" class="btn-outline">Event page</a>
     {% if b.status == 'confirmed' and b.total == 0 and not e.is_past() %}
@@ -84,7 +85,7 @@
   </div>
 
   {% if b.status == 'confirmed' and b.total > 0 and not e.is_past() %}
-  <div class="mt-6 rounded-card border border-line bg-paper-raised p-5">
+  <div class="mt-6 rounded-card border border-line bg-paper-raised p-5 print:hidden">
     <p class="font-semibold">Can't make it?</p>
     {% if refund_percent %}
     <p class="mt-1 text-sm text-ink-soft">Cancel now and get {{ refund_amount|inr }} back ({{ refund_percent }}% of {{ b.total|inr }}). {{ 'The ticket is cancelled.' if b.attendees|length == 1 else 'All %d tickets in this booking are cancelled.'|format(b.attendees|length) }}</p>

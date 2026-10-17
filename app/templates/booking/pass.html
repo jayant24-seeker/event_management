@@ -20,7 +20,7 @@
       {% endif %}
     </div>
   </article>
-  <div class="mt-6 flex flex-wrap justify-center gap-2">
+  <div class="mt-6 flex flex-wrap justify-center gap-2 print:hidden">
     <a href="{{ url_for('main.event_ics', slug=e.slug) }}" class="btn-outline">Add to calendar</a>
     <a href="{{ url_for('main.event', slug=e.slug) }}" class="btn-outline">Event details</a>
   </div>

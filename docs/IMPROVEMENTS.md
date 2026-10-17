@@ -17,12 +17,19 @@ Every item keeps `pytest` green. Newest at the bottom.
 - [x] Calendar (month) view on Explore
 - [x] Organizer analytics: sales over time chart, ticket mix, check-in rate
 - [x] Site admin: review events, read contact messages
-- [ ] Printable / downloadable ticket
+- [x] Printable / downloadable ticket
 - [x] Social share image per event (Open Graph)
 - [x] Typo-tolerant search
 - [ ] Dark mode
 - [x] Accessibility audit and fixes
 - [ ] Speed: cache the event list per request burst
+- [ ] Organizers: message all attendees (SMS announcement, e.g. venue change)
+- [ ] Organizers: duplicate an event (next edition in one click)
+- [ ] Group discount (e.g. 10% off 4+ tickets) set by the organizer
+- [ ] Booking confirmation by email (console in development)
+- [ ] "Near me": sort Explore by distance from the visitor
+- [ ] Waitlist position shown to the person waiting
+- [ ] README refresh for everything added overnight
 
 ## Done
 - Security: per-IP limits on sign-in codes, waitlist and contact form; blocked `/\host` open redirect; bad coupon expiry no longer crashes. Ownership checks reviewed (all OK).
@@ -38,3 +45,4 @@ Every item keeps `pytest` green. Newest at the bottom.
 - Explore calendar: Grid/Calendar toggle; month grid on tablet+ (times, +N more), day-by-day agenda with posters on phones; filters still apply; multi-day events on each day; months limited to the next two years and marked nofollow.
 - Search forgives typos ("jaipr", "marathn", "jodpur") and understands everyday words (marathon→running, navratri→garba, poetry→kavi sammelan, standup→comedy) in Explore and the live suggestions.
 - Accessibility: ran axe-core on 17 pages (desktop, phone, signed in/out) and fixed every violation: green "Free"/success colour darkened to 5:1 contrast, low-contrast urgency and CTA text, invalid role on hero slides, skipped heading level on Explore, unlabeled admin column, calendar contrast. All pages now report zero violations.
+- Printable tickets: "Print tickets" button; print layout drops header, footer and buttons, keeps colours and QR codes, never splits a ticket across pages.
