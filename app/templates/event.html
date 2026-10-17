@@ -124,8 +124,7 @@
     {% if past and e.raw.results %}
     {% set r = e.raw.results %}
     <section id="results" class="scroll-mt-32">
-      <p class="eyebrow">Results</p>
-      <h2 class="mt-1 text-3xl font-extrabold">{{ _('How it went') }}</h2>
+      <h2 class="text-3xl font-extrabold">{{ _('How it went') }}</h2>
       <p class="mt-3 text-lg leading-relaxed">{{ r.summary }}</p>
       {% if r.finishers %}
       <div class="mt-6 rounded-card border border-line bg-paper-raised p-4 sm:p-6" data-results>
@@ -172,8 +171,7 @@
 
     {% if past %}
     <section id="reviews" class="scroll-mt-32">
-      <p class="eyebrow">{{ _('Reviews') }}</p>
-      <h2 class="mt-1 text-3xl font-extrabold">{{ _('What people said') }}</h2>
+      <h2 class="text-3xl font-extrabold">{{ _('What people said') }}</h2>
       {% if rating %}
       <div class="mt-6 grid items-center gap-6 rounded-card border border-line bg-paper-raised p-5 sm:grid-cols-[auto_1fr] sm:p-6">
         <div class="text-center sm:pr-6">
@@ -232,8 +230,7 @@
     {% endif %}
 
     <section id="about" class="scroll-mt-32">
-      <p class="eyebrow">About</p>
-      <h2 class="mt-1 text-3xl font-extrabold">{{ _('About this event') }}</h2>
+      <h2 class="text-3xl font-extrabold">{{ _('About this event') }}</h2>
       <p class="mt-4 text-lg leading-relaxed text-ink/90" {% if e.language == 'Hindi' %}lang="hi"{% endif %}>{{ e.about }}</p>
       {% if e.raw.highlights %}
       <ul class="mt-6 grid gap-3 sm:grid-cols-2">
@@ -265,8 +262,7 @@
 
     {% if e.raw.schedule %}
     <section id="schedule" class="scroll-mt-32">
-      <p class="eyebrow">Schedule</p>
-      <h2 class="mt-1 text-3xl font-extrabold">{{ _('How the day runs') }}</h2>
+      <h2 class="text-3xl font-extrabold">{{ _('How the day runs') }}</h2>
       <ol class="relative mt-6 space-y-5 border-l-2 border-line pl-6">
         {% for item in e.schedule %}
         <li class="relative">
@@ -281,8 +277,7 @@
 
     {% if e.raw.route %}
     <section id="route" class="scroll-mt-32">
-      <p class="eyebrow">Route</p>
-      <h2 class="mt-1 text-3xl font-extrabold">{{ _('The course') }}</h2>
+      <h2 class="text-3xl font-extrabold">{{ _('The course') }}</h2>
       <div class="mt-6 grid gap-4 sm:grid-cols-2">
         <div class="rounded-card border border-line bg-paper-raised p-5">
           <p class="text-xs font-bold uppercase tracking-wider text-ink-soft">Start</p>
@@ -303,13 +298,18 @@
     {% endif %}
 
     <section id="venue" class="scroll-mt-32">
-      <p class="eyebrow">{{ 'Online' if e.is_online else 'Venue' }}</p>
+      <p class="text-sm font-semibold text-rani-dark">{{ _('Online') if e.is_online else _('Venue') }}</p>
       <h2 class="mt-1 text-3xl font-extrabold">{{ e.venue.name }}</h2>
       <p class="mt-2 text-ink-soft">{{ e.venue.address }}</p>
       {% if not e.is_online %}
-      <div class="mt-5 overflow-hidden rounded-card border border-line bg-line">
+      <div class="relative mt-5 overflow-hidden rounded-card border border-line bg-paper-raised">
+        {# Shown until (or if) the map loads, so the box is never blank. #}
+        <div class="absolute inset-0 grid place-items-center text-center text-ink-soft" aria-hidden="true">
+          <div><svg class="mx-auto h-8 w-8 text-rani" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-6.2-7-11.5a7 7 0 1 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>
+          <p class="mt-2 font-semibold text-ink">{{ e.venue.name }}</p><p class="text-sm">{{ e.city }}</p></div>
+        </div>
         <iframe title="Map of {{ e.venue.name }}" src="https://www.google.com/maps?q={{ (e.venue.map_query or e.venue.address)|urlencode }}&output=embed"
-                class="h-72 w-full" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                class="relative h-72 w-full" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
       </div>
       <a href="https://www.google.com/maps/dir/?api=1&destination={{ (e.venue.map_query or e.venue.address)|urlencode }}" target="_blank" rel="noopener" class="btn-outline mt-4">
         <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 11l18-8-8 18-2-8z"/></svg>
@@ -322,12 +322,11 @@
 
     {% if e.raw.kit %}
     <section id="kit" class="scroll-mt-32">
-      <p class="eyebrow">What you get</p>
-      <h2 class="mt-1 text-3xl font-extrabold">{{ _('Kit and facilities') }}</h2>
+      <h2 class="text-3xl font-extrabold">{{ _('Kit and facilities') }}</h2>
       <ul class="mt-6 grid gap-2 sm:grid-cols-2">
         {% for item in e.kit %}
         <li class="flex items-center gap-3 rounded-xl bg-paper-raised px-4 py-3">
-          <span class="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-marigold/30 text-xs font-bold">{{ loop.index }}</span>{{ item }}
+          <svg class="h-5 w-5 shrink-0 text-leaf" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>{{ item }}
         </li>
         {% endfor %}
       </ul>
@@ -336,8 +335,7 @@
 
     {% if e.raw.prizes %}
     <section id="prizes" class="scroll-mt-32">
-      <p class="eyebrow">Prizes</p>
-      <h2 class="mt-1 text-3xl font-extrabold">What's up for grabs</h2>
+      <h2 class="text-3xl font-extrabold">What's up for grabs</h2>
       <ul class="mt-6 space-y-3">
         {% for p in e.prizes %}
         <li class="flex items-start gap-3 rounded-xl border border-marigold/50 bg-marigold/10 p-4 font-semibold">
@@ -349,8 +347,7 @@
     {% endif %}
 
     <section id="faqs" class="scroll-mt-32">
-      <p class="eyebrow">FAQs</p>
-      <h2 class="mt-1 text-3xl font-extrabold">{{ _('Good to know') }}</h2>
+      <h2 class="text-3xl font-extrabold">{{ _('Good to know') }}</h2>
       <div class="mt-6 divide-y divide-line rounded-card border border-line bg-paper-raised">
         {% for faq in e.faqs %}
         <details class="group p-5" {% if loop.first %}open{% endif %}>
@@ -371,8 +368,7 @@
 
     {# Questions and answers #}
     <section id="questions" class="scroll-mt-32">
-      <p class="eyebrow">{{ _('Questions') }}</p>
-      <h2 class="mt-1 text-3xl font-extrabold">{{ _('Ask the organizer') }}</h2>
+      <h2 class="text-3xl font-extrabold">{{ _('Ask the organizer') }}</h2>
       {% if not past %}
       {% if current_user %}
       <form method="post" action="{{ url_for('booking.ask', slug=e.slug) }}" class="mt-5 flex flex-col gap-2 sm:flex-row">
@@ -425,7 +421,7 @@
           <p class="text-sm text-paper/70">{{ e.org.city }} · hosting since {{ e.org.since }} · {{ org_events }} event{{ 's' if org_events != 1 }} on {{ site_name }}</p>
           {% if org_rating %}<p class="mt-1 flex items-center gap-2 text-sm">{{ stars(org_rating.avg) }} <strong>{{ '%.1f'|format(org_rating.avg) }}</strong> <span class="text-paper/70">from {{ org_rating.count }} review{{ 's' if org_rating.count != 1 }} of past events</span></p>{% endif %}
         </div>
-        <div class="flex gap-2">
+        <div class="flex w-full gap-2 sm:w-auto">
           {{ follow_button(e.organizer) }}
           <a href="{{ url_for('main.organizer', slug=e.organizer) }}" class="btn border border-paper/30 text-paper hover:bg-paper/10">{{ _('View profile') }}</a>
         </div>
