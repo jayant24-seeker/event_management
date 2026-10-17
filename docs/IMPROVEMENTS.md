@@ -21,6 +21,12 @@ Every item keeps `pytest` green. Newest at the bottom.
 - [x] Social share image per event (Open Graph)
 - [x] Typo-tolerant search
 - [x] Dark mode
+- [ ] Self-host fonts (faster on slow mobile networks, works offline, no third-party requests)
+- [ ] Saved events: text when registration is about to close or a sold-out event reopens
+- [ ] Optimise uploaded posters (resize + WebP, responsive srcset)
+- [ ] Recurring events / series (weekly classes with many dates)
+- [ ] Organizer co-admins (more than one person managing an organizer)
+- [ ] Razorpay integration path behind settings (replace test payment page)
 - [x] Accessibility audit and fixes
 - [x] Speed: measured every main page (3-8 queries, under 40 ms); fixed the one N+1
 - [x] Organizers: message all attendees (SMS announcement, e.g. venue change)
@@ -34,6 +40,12 @@ Every item keeps `pytest` green. Newest at the bottom.
 - [x] Check-in staff: organizer adds volunteer phone numbers who can scan tickets
 - [x] Questions & answers on event pages (attendees ask, organizer answers)
 - [x] Dark mode
+- [ ] Self-host fonts (faster on slow mobile networks, works offline, no third-party requests)
+- [ ] Saved events: text when registration is about to close or a sold-out event reopens
+- [ ] Optimise uploaded posters (resize + WebP, responsive srcset)
+- [ ] Recurring events / series (weekly classes with many dates)
+- [ ] Organizer co-admins (more than one person managing an organizer)
+- [ ] Razorpay integration path behind settings (replace test payment page)
 
 ## Done
 - Security: per-IP limits on sign-in codes, waitlist and contact form; blocked `/\host` open redirect; bad coupon expiry no longer crashes. Ownership checks reviewed (all OK).
