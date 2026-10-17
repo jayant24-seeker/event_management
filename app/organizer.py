@@ -793,6 +793,38 @@ def can_check_in(attendee):
     return row is not None and row.organizer_slug == slug
 
 
+# Field names organizers see, and where each lives in the form.
+FIELD_LABELS = {
+    "title": ("Event title", "title"), "tagline": ("Tagline", "tagline"), "category": ("Category", "category"),
+    "city": ("City", "city"), "start": ("Start date and time", "start"), "end": ("End date and time", "end"),
+    "about": ("About the event", "about"), "refund_policy": ("Refund policy", "refund_policy"),
+    "poster": ("Poster", "poster"), "highlights": ("Highlights", "highlights"), "schedule": ("Schedule", "schedule"),
+    "faqs": ("FAQs", "faqs"), "kit": ("What attendees get", "kit"), "prizes": ("Prizes", "prizes"),
+    "language": ("Language", "language"), "route": ("Route", "route_start"),
+}
+
+
+@bp.app_template_global()
+def friendly_issue(issue):
+    """('Add a refund policy.', 'refund_policy'): publish problems in plain words, with the field to jump to."""
+    m = re.match(r"^'([a-z_]+)(?:[\[.][^']*)?' is required$", issue)
+    if m and m.group(1) in FIELD_LABELS:
+        label, field = FIELD_LABELS[m.group(1)]
+        return f"Add the {label.lower()}.", field
+    m = re.match(r"^venue '(name|address)' is required$", issue)
+    if m:
+        return ("Add the venue name." if m.group(1) == "name" else "Add the full address."), f"venue_{m.group(1)}"
+    m = re.match(r"^'([a-z_]+)[^']*' looks like placeholder text: (.*)$", issue)
+    if m:
+        label, field = FIELD_LABELS.get(m.group(1), (m.group(1), m.group(1)))
+        return f"{label} still has placeholder text ({m.group(2)}). Replace it with the real details.", field
+    if issue.startswith("ticket ") or issue.startswith("at least one ticket") or issue.startswith("each ticket"):
+        return issue[:1].upper() + issue[1:] + ".", "tickets"
+    if "date" in issue or "start" in issue:
+        return issue[:1].upper() + issue[1:] + ".", "start"
+    return issue[:1].upper() + issue[1:] + ".", None
+
+
 @bp.app_template_global()
 def schedule_text(raw):
     return "\n".join(f"{item['time']} | {item['title']}" for item in raw.get("schedule") or [])

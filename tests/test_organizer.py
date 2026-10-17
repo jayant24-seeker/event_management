@@ -33,7 +33,7 @@ def test_create_draft_publish_and_see_it_live(app, client):
     # Publishing with blanks and placeholder text is blocked, but the draft is kept.
     res = client.post("/organizer/events/new", data=dict(EVENT, about="TBD", venue_address="", action="publish", csrf_token=CSRF))
     page = text(res)
-    assert "looks like placeholder text" in page and "Venue 'address' is required" in page
+    assert "still has placeholder text" in page and "Add the full address." in page
     with app.app_context():
         row = EventRow.query.filter_by(organizer_slug="kota-runners-club").one()
         assert row.status == "draft" and row.slug == "kota-monsoon-10k-2026"
@@ -343,3 +343,14 @@ def test_payout_summary(app):
     with app.app_context():
         assert payout_summary(10000) == (10000, 300, 200, 9500)
         assert payout_summary(0) == (0, 0, 0, 0)
+
+
+def test_publish_problems_are_plain_and_linked(client):
+    from app.organizer import friendly_issue
+
+    assert friendly_issue("'refund_policy' is required") == ("Add the refund policy.", "refund_policy")
+    assert friendly_issue("venue 'address' is required") == ("Add the full address.", "venue_address")
+    assert friendly_issue("'faqs[0].q' looks like placeholder text: 'TBD'")[1] == "faqs"
+    become_organizer(client)
+    page = text(post(client, "/organizer/events/new", action="publish", **dict(EVENT, refund_policy="")))
+    assert 'href="#f-refund_policy"' in page and "Add the refund policy." in page

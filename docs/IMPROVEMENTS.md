@@ -121,3 +121,4 @@ Every item keeps `pytest` green. Newest at the bottom.
 - Organizer calendar feed: "Add to my calendar" on organizer profiles subscribes Google/Apple/Outlook to their upcoming events (webcal feed that refreshes every 6 hours).
 - Homepage greets signed-in people who have a ticket coming up: a slim green bar with the event, "In N days" and "Show tickets".
 - New organizers: an empty dashboard shows only a "Let's get your first event live" guide (create, publish, share with tagged links or a flyer, check people in) instead of zeros and tools they cannot use yet.
+- Publish problems in plain words ("Add the refund policy.", "About the event still has placeholder text…"), each linking to its field, which scrolls into view and gets the cursor.
