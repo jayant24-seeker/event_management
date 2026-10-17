@@ -72,10 +72,10 @@ def test_counts_and_suggest(store):
 def test_home_and_search_pages():
     client = create_app().test_client()
     home = html.unescape(client.get("/").get_data(as_text=True))
-    assert "data-hero-slide" in home and "Find something to do" in home
-    # Past events only appear in the "Recently happened" strip, never in the upcoming grid.
-    upcoming_grid = home.split("Don't miss these")[1].split("Recently happened")[0]
-    assert "Kota Stand-up Night" not in upcoming_grid and "Recently happened" in home
+    assert "data-hero-slide" in home and "Find your next plan" in home
+    # Past events only appear in the results strip, never in the upcoming grid.
+    upcoming_grid = home.split("Don't miss these")[1].split("Results, photos and memories")[0]
+    assert "Kota Stand-up Night" not in upcoming_grid and "Results, photos and memories" in home
     page = client.get("/events?q=comedy&when=past").get_data(as_text=True)
     assert "Kota Stand-up Night" in page
     data = client.get("/api/suggest?q=surat").get_json()

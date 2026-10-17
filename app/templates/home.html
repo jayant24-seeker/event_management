@@ -14,13 +14,13 @@
   <div class="no-scrollbar flex snap-x snap-mandatory overflow-x-auto scroll-smooth" data-hero-track>
     {% for e in featured %}
     {% set url = url_for('main.event', slug=e.slug) %}
-    <div class="relative isolate flex h-[calc(100svh-4rem)] max-h-[860px] min-h-[540px] w-full shrink-0 snap-start overflow-hidden"
+    <div class="relative isolate flex h-[min(76svh,640px)] min-h-[520px] sm:h-[calc(100svh-4rem)] sm:max-h-[860px] sm:min-h-[540px] w-full shrink-0 snap-start overflow-hidden"
              role="group" aria-roledescription="slide" aria-label="{{ loop.index }} of {{ featured|length }}: {{ e.title }}" data-hero-slide>
       <img src="{{ url_for('static', filename=e.banner) }}" alt="" class="absolute inset-0 -z-20 h-full w-full object-cover"
            {% if loop.first %}fetchpriority="high"{% else %}loading="lazy"{% endif %}>
       <div class="absolute inset-0 -z-10 bg-gradient-to-t from-ink via-ink/60 to-ink/10 lg:bg-gradient-to-r lg:from-ink lg:via-ink/70 lg:to-transparent"></div>
 
-      <div class="container-site flex items-end pb-36 lg:items-center lg:pb-20">
+      <div class="container-site flex items-end pb-28 sm:pb-36 lg:items-center lg:pb-20">
         <div class="grid w-full items-center gap-10 lg:grid-cols-[1fr_auto]">
           <div class="max-w-2xl">
             <div class="flex flex-wrap items-center gap-2">
@@ -100,8 +100,16 @@
 {# ---------- Search ---------- #}
 <section class="container-site relative z-10 -mt-6">
   <div class="rounded-card bg-paper-raised p-4 shadow-poster sm:p-6">
-    <h1 class="font-display text-xl font-extrabold sm:text-2xl">{{ _('Find something to do this weekend') }}</h1>
+    <h1 class="font-display text-xl font-extrabold sm:text-2xl">{{ _('Find your next plan') }}</h1>
     <div class="mt-3">{{ search_box('home-q', large=True) }}</div>
+    <nav class="no-scrollbar -mx-4 mt-4 flex gap-2 overflow-x-auto px-4 sm:mx-0 sm:px-0" aria-label="{{ _('When are you free?') }}">
+      {% for key, label, n in when_counts + [(None, 'All upcoming', upcoming|length)] if n %}
+      <a href="{{ url_for('main.explore', date=key) }}" class="group flex shrink-0 items-center gap-2 rounded-2xl border border-line px-4 py-2.5 transition hover:border-ink hover:bg-ink hover:text-paper">
+        <span class="font-semibold">{{ _(label) }}</span>
+        <span class="rounded-full bg-rani/10 px-2 py-0.5 text-xs font-bold text-rani-dark group-hover:bg-paper/15 group-hover:text-paper">{{ n }}</span>
+      </a>
+      {% endfor %}
+    </nav>
     <p class="mt-3 flex flex-wrap items-center gap-2 text-sm text-ink-soft">
       {% set near = near_me_cities() %}{% if near %}<button type="button" hidden data-near-me="{{ near|tojson|forceescape }}" data-finding="{{ _('Finding you…') }}" data-denied="{{ _('Location is off') }}" class="chip px-3 py-1 text-xs font-semibold">
         <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 1 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>
@@ -116,16 +124,11 @@
 
 {# ---------- Cities ---------- #}
 <section class="container-site mt-16">
-  <div class="flex items-end justify-between gap-4">
-    <div>
-      <p class="eyebrow">{{ _('Browse by city') }}</p>
-      <h2 class="mt-1 text-3xl font-extrabold">{{ _('What\'s on near you') }}</h2>
-    </div>
-  </div>
-  <div class="no-scrollbar -mx-4 mt-6 flex snap-x gap-4 overflow-x-auto px-4 pb-2 sm:mx-0 sm:grid sm:grid-cols-3 sm:px-0 lg:grid-cols-6">
+  <h2 class="text-3xl font-extrabold">{{ _('What\'s on near you') }}</h2>
+  <div class="no-scrollbar -mx-4 mt-6 flex snap-x gap-4 overflow-x-auto px-4 pb-2 sm:mx-0 sm:grid sm:grid-cols-3 sm:px-0 lg:auto-cols-fr lg:grid-flow-col lg:grid-cols-none">
     {% for city, n, e in cities %}
     <a href="{{ city_url(city) }}"
-       class="group relative isolate flex aspect-[4/5] w-36 shrink-0 snap-start flex-col justify-end overflow-hidden rounded-card p-4 text-paper shadow-poster sm:w-auto">
+       class="group relative isolate flex aspect-[4/5] w-36 shrink-0 snap-start flex-col justify-end overflow-hidden rounded-card p-4 text-paper shadow-poster sm:w-auto" style="background-color: {{ e.tint }}">
       <img src="{{ url_for('static', filename=e.banner) }}" alt="" loading="lazy" class="absolute inset-0 -z-20 h-full w-full object-cover transition duration-500 group-hover:scale-110">
       <span class="absolute inset-0 -z-10 bg-gradient-to-t from-ink/90 via-ink/30 to-transparent"></span>
       <span class="font-display text-xl font-extrabold">{{ city }}</span>
@@ -136,11 +139,11 @@
 </section>
 
 {# ---------- Categories ---------- #}
-<section class="container-site mt-14">
-  <p class="eyebrow">{{ _('Browse by category') }}</p>
-  <div class="mt-4 flex flex-wrap gap-2">
+<section class="container-site mt-12">
+  <h2 class="text-lg font-bold">{{ _('Browse by category') }}</h2>
+  <div class="no-scrollbar -mx-4 mt-3 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:px-0">
     {% for cat, n in category_counts %}
-    <a href="{{ url_for('main.explore', category=cat) }}" class="chip py-2 hover:bg-ink hover:text-paper">
+    <a href="{{ url_for('main.explore', category=cat) }}" class="chip shrink-0 py-2 hover:bg-ink hover:text-paper">
       {{ cat }} <span class="rounded-full bg-ink/5 px-1.5 text-xs text-ink-soft">{{ n }}</span>
     </a>
     {% endfor %}
@@ -150,8 +153,7 @@
 {# ---------- From organizers this person follows ---------- #}
 {% if from_followed %}
 <section class="container-site mt-16">
-  <p class="eyebrow">{{ _('For you') }}</p>
-  <h2 class="mt-1 text-3xl font-extrabold">{{ _('From organizers you follow') }}</h2>
+  <h2 class="text-3xl font-extrabold">{{ _('From organizers you follow') }}</h2>
   <div class="mt-6 grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 md:grid-cols-3 lg:grid-cols-4">
     {% for e in from_followed %}{{ event_card(e) }}{% endfor %}
   </div>
@@ -161,10 +163,7 @@
 {# ---------- Upcoming ---------- #}
 <section class="container-site mt-16">
   <div class="flex items-end justify-between gap-4">
-    <div>
-      <p class="eyebrow">{{ _('Upcoming') }}</p>
-      <h2 class="mt-1 text-3xl font-extrabold">{{ _('Don\'t miss these') }}</h2>
-    </div>
+    <h2 class="text-3xl font-extrabold">{{ _('Don\'t miss these') }}</h2>
     <a href="{{ url_for('main.explore') }}" class="btn-outline shrink-0">{{ _('See all events') }}</a>
   </div>
   {% if upcoming %}
@@ -182,15 +181,15 @@
   <div class="rounded-card bg-ink p-6 text-paper sm:p-10">
     <div class="flex flex-wrap items-end justify-between gap-4">
       <div>
-        <p class="eyebrow text-marigold">{{ _('Recently happened') }}</p>
-        <h2 class="mt-1 text-3xl font-extrabold">{{ _('Results, photos and memories') }}</h2>
+        <h2 class="text-3xl font-extrabold">{{ _('Results, photos and memories') }}</h2>
+        <p class="mt-1 text-paper/70">{{ _('From events that just happened') }}</p>
       </div>
       <a href="{{ url_for('main.explore', when='past') }}" class="btn border border-paper/30 text-paper hover:bg-paper/10">{{ _('All past events') }}</a>
     </div>
     <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
       {% for e in past %}
       <a href="{{ url_for('main.event', slug=e.slug) }}" class="group flex gap-3 rounded-2xl bg-paper/5 p-3 hover:bg-paper/10">
-        <img src="{{ url_for('static', filename=e.poster) }}" alt="" loading="lazy" class="h-24 w-[72px] shrink-0 rounded-lg object-cover grayscale-[40%] group-hover:grayscale-0">
+        <img src="{{ url_for('static', filename=e.poster) }}" alt="" loading="lazy" class="h-24 w-[72px] shrink-0 rounded-lg object-cover grayscale-[40%] group-hover:grayscale-0" style="background-color: {{ e.tint }}">
         <span class="min-w-0">
           <span class="block text-xs font-bold uppercase tracking-wider text-marigold">{{ e.start.strftime('%d %b %Y') }}</span>
           <span class="mt-1 block font-bold leading-snug group-hover:underline">{{ e.title }}</span>

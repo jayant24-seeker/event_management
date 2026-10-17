@@ -162,6 +162,12 @@ HI = {
     "to ask a question.": "करके सवाल पूछें।",
     "Check the FAQs above first.": "पहले ऊपर दिए FAQs देख लें।",
     "Waiting for an answer": "जवाब का इंतज़ार",
+    "When are you free?": "आप कब फ़्री हैं?",
+    "Find your next plan": "अपना अगला प्लान खोजें",
+    "All upcoming": "सभी आने वाले",
+    "This weekend": "इस वीकेंड", "This week": "इस हफ़्ते", "This month": "इस महीने",
+    "From events that just happened": "हाल ही में हुए इवेंट से",
+    "Browse by category": "श्रेणी के अनुसार देखें",
     # Offline page
     "No internet right now": "अभी इंटरनेट नहीं है",
     "Tickets you've opened on this phone before still work. Show the QR code at the gate.":

@@ -33,6 +33,8 @@ def home():
         cities=[(c, n, next(e for e in upcoming if e.city == c)) for c, n in s.counts("city")],
         category_counts=s.counts("category"),
         past=s.past()[:4],
+        # "When are you free?" shortcuts with how many events each one finds.
+        when_counts=[(key, label, len(s.search(date=key))) for key, label in DATE_FILTERS],
     )
 
 

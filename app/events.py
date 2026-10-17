@@ -81,6 +81,13 @@ class Event:
         return parse_refund_tiers(self.raw.get("refund_policy"))
 
     @property
+    def tint(self):
+        """The poster's background colour, shown while the artwork loads."""
+        from .posters import style_for
+
+        return style_for(self.slug)[0]
+
+    @property
     def group_discount(self):
         """(minimum tickets, percent off) or None."""
         g = self.raw.get("group_discount") or {}
