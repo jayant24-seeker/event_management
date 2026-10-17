@@ -7,6 +7,19 @@
     <p class="eyebrow text-marigold">About {{ site_name }}</p>
     <h1 class="mt-3 text-4xl font-extrabold leading-tight sm:text-6xl">It's all about events, and the people who show up.</h1>
     <p class="mt-6 max-w-2xl text-lg text-day/80">We started with running events in Jaipur: marathons, night runs and cyclothons. Today {{ site_name }} lists runs, garba nights, kavi sammelans, workshops and tournaments across Rajasthan, Gujarat and Punjab.</p>
+    <dl class="mt-10 grid grid-cols-2 gap-6 border-t border-day/15 pt-8 sm:grid-cols-4">
+      {% for n, label in numbers %}
+      <div><dt class="sr-only">{{ label }}</dt><dd class="font-display text-4xl font-extrabold">{{ n|num }}{% if loop.index == 3 %}+{% endif %}</dd><dd class="mt-1 text-sm text-day/70">{{ label }}</dd></div>
+      {% endfor %}
+    </dl>
+  </div>
+  {# A strip of what's on right now, straight from the listings. #}
+  <div class="no-scrollbar flex gap-3 overflow-x-auto px-4 pb-10 sm:justify-center">
+    {% for e in posters %}
+    <a href="{{ url_for('main.event', slug=e.slug) }}" class="block w-32 shrink-0 overflow-hidden rounded-xl shadow-poster sm:w-40" style="background-color: {{ e.tint }}; transform: rotate({{ [-3, 2, -1, 3, -2, 1][loop.index0] }}deg)">
+      <img src="{{ url_for('static', filename=e.poster) }}" alt="{{ e.title }}" loading="lazy" class="aspect-[3/4] w-full object-cover">
+    </a>
+    {% endfor %}
   </div>
 </section>
 <div class="container-site max-w-4xl space-y-14 py-14">

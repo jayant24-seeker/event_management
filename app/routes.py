@@ -323,7 +323,13 @@ PAGES = {"about": "About us", "privacy": "Privacy policy", "terms": "Terms of us
 
 @bp.route("/<any(about, privacy, terms, refunds):name>")
 def page(name):
-    return render_template(f"pages/{name}.html", title=PAGES[name])
+    extra = {}
+    if name == "about":
+        s = store()
+        extra = {"numbers": [(len(s.events), "events listed"), (len(s.cities()), "cities"),
+                             (sum(e.registered for e in s.events), "people registered"), (len(s.organizers), "organizers")],
+                 "posters": s.upcoming()[:6]}
+    return render_template(f"pages/{name}.html", title=PAGES[name], **extra)
 
 
 @bp.route("/contact", methods=["GET", "POST"])

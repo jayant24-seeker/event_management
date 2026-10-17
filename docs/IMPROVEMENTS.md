@@ -102,3 +102,4 @@ Every item keeps `pytest` green. Newest at the bottom.
 - Uploaded posters are re-encoded on upload: at most 900x1200 (portrait) WebP, rotated per the camera, photo metadata (incl. GPS) removed, unreadable files rejected with a clear message.
 - Saved-event nudges: send-reminders also texts people who saved (but have not booked) an event once, when its registration closes within 48 hours, with spots left and a tagged link.
 - Razorpay payments (switch on with PAYMENT_PROVIDER=razorpay and keys): order per booking, Razorpay Checkout on the pay page, server-side signature check, signed webhook as a backup (idempotent), automatic refunds on cancellation, CSP opened for Razorpay only when enabled. Test mode stays the default. Covered by tests with the API mocked; needs real test keys for a live trial.
+- About page: live numbers (events, cities, people registered, organizers) and a tilted strip of current event posters linking to each event.
