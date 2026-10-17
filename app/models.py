@@ -160,6 +160,7 @@ class ContactMessage(db.Model):
     topic = db.Column(db.String(30), nullable=False)
     message = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, default=utcnow)
+    handled_at = db.Column(db.DateTime, nullable=True)  # marked done in /admin
 
 
 class WaitlistEntry(db.Model):

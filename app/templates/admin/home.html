@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block title %}Admin · {{ site_name }}{% endblock %}
+{% block head %}<meta name="robots" content="noindex">{% endblock %}
+{% macro post_button(action, label, hidden={}, style='btn-outline', confirm='') -%}
+<form method="post" action="{{ action }}" class="inline"{% if confirm %} onsubmit="return confirm({{ confirm|tojson|forceescape }})"{% endif %}>
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  {% for k, v in hidden.items() %}<input type="hidden" name="{{ k }}" value="{{ v }}">{% endfor %}
+  <button class="{{ style }} px-3 py-1.5 text-xs">{{ label }}</button>
+</form>
+{%- endmacro %}
+{% block content %}
+<div class="container-site py-10">
+  <p class="eyebrow">{{ site_name }} team</p>
+  <h1 class="mt-1 text-3xl font-extrabold sm:text-4xl">Admin</h1>
+
+  <dl class="mt-8 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-6">
+    {% for label, value, note in numbers %}
+    <div class="rounded-card bg-ink p-4 text-paper">
+      <dt class="text-xs uppercase tracking-wider text-paper/60">{{ label }}</dt>
+      <dd class="mt-1 font-display text-2xl font-extrabold">{{ value|inr if note == 'inr' else value|num }}</dd>
+      {% if note != 'inr' %}<dd class="text-xs text-paper/60">{{ note }}</dd>{% endif %}
+    </div>
+    {% endfor %}
+  </dl>
+
+  <nav class="mt-8 flex flex-wrap gap-2 text-sm font-semibold" aria-label="Admin sections">
+    <a href="#events" class="btn-outline py-1.5">Events</a>
+    <a href="#organizers" class="btn-outline py-1.5">Organizers</a>
+    <a href="#inbox" class="btn-outline py-1.5">Inbox</a>
+  </nav>
+
+  <section id="events" class="mt-10 scroll-mt-24">
+    <h2 class="text-xl font-bold">Events ({{ rows|length }})</h2>
+    <div class="mt-4 overflow-x-auto rounded-card border border-line bg-paper-raised">
+      <table class="w-full min-w-[760px] text-left text-sm">
+        <thead class="border-b border-line text-xs uppercase tracking-wider text-ink-soft">
+          <tr><th class="p-3">Event</th><th class="p-3">Organizer</th><th class="p-3">Starts</th><th class="p-3">Status</th><th class="p-3">Updated</th><th class="p-3"></th></tr>
+        </thead>
+        <tbody class="divide-y divide-line">
+          {% for r in rows %}
+          <tr>
+            <td class="p-3 font-semibold">{% if r.status == 'published' %}<a href="{{ url_for('main.event', slug=r.slug) }}" class="hover:text-rani">{{ r.data.title or r.slug }}</a>{% else %}{{ r.data.title or r.slug }}{% endif %}
+              {% if r.data.featured %}<span class="badge badge-hot ml-1">Featured</span>{% endif %}</td>
+            <td class="p-3">{{ orgs[r.organizer_slug].data.name if r.organizer_slug in orgs else r.organizer_slug }}</td>
+            <td class="p-3 text-ink-soft">{{ (r.data.start or '')[:10] }}</td>
+            <td class="p-3"><span class="badge {{ 'badge-free' if r.status == 'published' else 'badge-muted' }}">{{ r.status }}</span></td>
+            <td class="p-3 text-ink-soft">{{ r.updated_at|ist('%d %b') }}</td>
+            <td class="whitespace-nowrap p-3 text-right">
+              {% set act = url_for('admin.event_action', slug=r.slug) %}
+              {% if r.status == 'published' %}
+              {{ post_button(act, 'Unfeature' if r.data.featured else 'Feature', {'action': 'unfeature' if r.data.featured else 'feature'}) }}
+              {{ post_button(act, 'Hide', {'action': 'hide'}, 'btn-ghost text-rani', 'Take "' ~ (r.data.title or r.slug) ~ '" off the site? It goes back to the organizer\'s drafts.') }}
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="organizers" class="mt-10 scroll-mt-24">
+    <h2 class="text-xl font-bold">Organizers ({{ orgs|length }})</h2>
+    <div class="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      {% for slug, o in orgs.items() %}
+      <div class="flex items-center justify-between gap-3 rounded-card border border-line bg-paper-raised p-4">
+        <div class="min-w-0">
+          <p class="truncate font-semibold"><a href="{{ url_for('main.organizer', slug=slug) }}" class="hover:text-rani">{{ o.data.name }}</a></p>
+          <p class="text-xs text-ink-soft">{{ o.data.city }} · since {{ o.data.since }}</p>
+        </div>
+        {% if o.data.verified %}
+        {{ post_button(url_for('admin.organizer_action', slug=slug), 'Verified ✓', {'verified': '0'}, 'btn-dark') }}
+        {% else %}
+        {{ post_button(url_for('admin.organizer_action', slug=slug), 'Verify', {'verified': '1'}) }}
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section id="inbox" class="mt-10 scroll-mt-24">
+    <h2 class="text-xl font-bold">Inbox</h2>
+    <div class="mt-4 space-y-3">
+      {% for m in messages %}
+      <article class="rounded-card border border-line bg-paper-raised p-4 {{ 'opacity-60' if m.handled_at }}">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <p class="font-semibold">{{ m.name }} <span class="font-normal text-ink-soft">· {{ m.reply_to }} · {{ m.topic }} · {{ m.created_at|ist('%d %b, %-I:%M %p') }}</span></p>
+          {{ post_button(url_for('admin.message_done', mid=m.id), 'Reopen' if m.handled_at else 'Mark done', {}, 'btn-outline' if m.handled_at else 'btn-dark') }}
+        </div>
+        <p class="mt-2 whitespace-pre-line text-sm">{{ m.message }}</p>
+      </article>
+      {% else %}
+      <p class="rounded-card border border-dashed border-line p-6 text-center text-ink-soft">No messages yet.</p>
+      {% endfor %}
+    </div>
+  </section>
+</div>
+{% endblock %}

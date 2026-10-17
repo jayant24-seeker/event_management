@@ -23,7 +23,7 @@ The first run creates `instance/eventouse.db` (SQLite) and loads the demo events
 flask --app run seed --reset
 ```
 
-**Signing in locally:** enter any 10-digit mobile number. No SMS is sent in development; the code is shown on the next screen (`SMS_PROVIDER=console`). **Demo organizer:** sign in with `99999 99999` to open the Pink Pace Runners Club dashboard (Organizer dashboard in the account menu). Any other number can become an organizer at `/organizer/start`. Demo discount codes: `EARLYBIRD10` (Amer Hills Trail Ultra), `PINKCITY15` (Jaipur Night Run), `SIBLING20` (Little Legs Kids Run). Payments run in **test mode**.
+**Signing in locally:** enter any 10-digit mobile number. No SMS is sent in development; the code is shown on the next screen (`SMS_PROVIDER=console`). **Demo organizer:** sign in with `99999 99999` to open the Pink Pace Runners Club dashboard (Organizer dashboard in the account menu). Any other number can become an organizer at `/organizer/start`. **Demo admin:** `88888 88888` opens `/admin` (set `ADMIN_PHONES` in production). Demo discount codes: `EARLYBIRD10` (Amer Hills Trail Ultra), `PINKCITY15` (Jaipur Night Run), `SIBLING20` (Little Legs Kids Run). Payments run in **test mode**.
 
 ### Deploy
 

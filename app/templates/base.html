@@ -41,6 +41,7 @@
             <a href="{{ url_for('auth.account') }}" class="block rounded-xl px-3 py-2 hover:bg-ink/5">{{ _('Profile') }}</a>
             <a href="{{ url_for('booking.saved') }}" class="block rounded-xl px-3 py-2 hover:bg-ink/5">{{ _('Saved events') }}</a>
             {% if current_user.organizer_slug %}<a href="{{ url_for('org.dashboard') }}" class="block rounded-xl px-3 py-2 hover:bg-ink/5">{{ _('Organizer dashboard') }}</a>{% endif %}
+            {% if is_admin() %}<a href="{{ url_for('admin.home') }}" class="block rounded-xl px-3 py-2 hover:bg-ink/5">Admin</a>{% endif %}
             <form method="post" action="{{ url_for('auth.logout') }}">
               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
               <button class="w-full rounded-xl px-3 py-2 text-left hover:bg-ink/5">{{ _('Sign out') }}</button>
@@ -68,6 +69,7 @@
             <a href="{{ url_for('booking.tickets') }}" class="rounded-xl px-3 py-2.5 hover:bg-ink/5">{{ _('My tickets') }}</a>
             <a href="{{ url_for('booking.saved') }}" class="rounded-xl px-3 py-2.5 hover:bg-ink/5">{{ _('Saved events') }}</a>
             {% if current_user.organizer_slug %}<a href="{{ url_for('org.dashboard') }}" class="rounded-xl px-3 py-2.5 hover:bg-ink/5">{{ _('Organizer dashboard') }}</a>{% endif %}
+            {% if is_admin() %}<a href="{{ url_for('admin.home') }}" class="rounded-xl px-3 py-2.5 hover:bg-ink/5">Admin</a>{% endif %}
             <a href="{{ url_for('auth.account') }}" class="rounded-xl px-3 py-2.5 hover:bg-ink/5">{{ _('Profile') }}</a>
             {% else %}
             <a href="{{ url_for('auth.login') }}" class="btn-dark mt-2">{{ _('Sign in') }}</a>

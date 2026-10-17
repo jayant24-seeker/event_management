@@ -25,11 +25,15 @@ def create_app(config=None):
         SESSION_COOKIE_SAMESITE="Lax",
         SESSION_COOKIE_SECURE=os.environ.get("SESSION_COOKIE_SECURE") == "1",
         TRUSTED_PROXY=os.environ.get("TRUSTED_PROXY") == "1",
+        # Eventouse staff who can open /admin: comma-separated +91 numbers.
+        ADMIN_PHONES=os.environ.get("ADMIN_PHONES", ""),
     )
     # Where organizer uploads are written. Files are served from /static/uploads/.
     app.config["MEDIA_ROOT"] = app.static_folder
     if config:
         app.config.update(config)
+    if not app.config["ADMIN_PHONES"] and (app.debug or app.testing):
+        app.config["ADMIN_PHONES"] = "+918888888888"  # demo admin: sign in with 88888 88888
     # Demo bookings for the organizer charts. Off in tests, so they start with empty sales.
     app.config.setdefault("DEMO_SALES", not app.config.get("TESTING"))
     if app.config["SECRET_KEY"] == "dev-only-change-me" and not (app.debug or app.testing):
@@ -108,7 +112,7 @@ def create_app(config=None):
         response.headers.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
         response.headers.setdefault("X-Frame-Options", "SAMEORIGIN")
         response.headers.setdefault("Permissions-Policy", "camera=(), microphone=(), geolocation=()")
-        if g.get("user") is not None or request.path.startswith(("/organizer", "/bookings", "/tickets", "/pay", "/account", "/pass/")):
+        if g.get("user") is not None or request.path.startswith(("/organizer", "/bookings", "/tickets", "/pay", "/account", "/pass/", "/admin")):
             response.headers["Cache-Control"] = "private, no-store"  # personal pages never cached
         return response
 
@@ -125,10 +129,12 @@ def create_app(config=None):
 
     from .auth import bp as auth_bp
     from .booking import bp as booking_bp
+    from .admin import bp as admin_bp
     from .organizer import bp as org_bp
     from .routes import bp
     app.register_blueprint(bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(booking_bp)
     app.register_blueprint(org_bp)
+    app.register_blueprint(admin_bp)
     return app

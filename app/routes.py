@@ -298,7 +298,7 @@ def city(slug):
 @bp.route("/robots.txt")
 def robots():
     lines = ["User-agent: *", "Allow: /"]
-    lines += [f"Disallow: {p}" for p in ("/organizer", "/account", "/tickets", "/bookings", "/pay", "/t/", "/pass/", "/login", "/api", "/saved")]
+    lines += [f"Disallow: {p}" for p in ("/organizer", "/account", "/tickets", "/bookings", "/pay", "/t/", "/pass/", "/admin", "/login", "/api", "/saved")]
     lines.append(f"Sitemap: {url_for('main.sitemap', _external=True)}")
     return Response("\n".join(lines) + "\n", mimetype="text/plain")
 

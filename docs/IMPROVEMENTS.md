@@ -16,7 +16,7 @@ Every item keeps `pytest` green. Newest at the bottom.
 - [x] Reviews and ratings on past events
 - [ ] Calendar (month) view on Explore
 - [x] Organizer analytics: sales over time chart, ticket mix, check-in rate
-- [ ] Site admin: review events, read contact messages
+- [x] Site admin: review events, read contact messages
 - [ ] Printable / downloadable ticket
 - [ ] Social share image per event (Open Graph)
 - [ ] Typo-tolerant search
@@ -33,3 +33,4 @@ Every item keeps `pytest` green. Newest at the bottom.
 - Waitlist texts: when a booking on a sold-out event is cancelled, the first people on the waitlist get an SMS; organizers get a "Text the waitlist" button after adding seats; the list shows who was texted.
 - Ticket passes and transfers: every ticket has its own pass page (/pass/<code>) to send on WhatsApp, which also opens offline once viewed; the booker can move a ticket to a new name (new QR, old one stops working) unless the policy says non-transferable. QR codes now scale cleanly.
 - Organizer analytics: tickets-per-day bar chart with hover/tap tooltips and a table view, check-in rate, tickets per booking, average ticket, cancellations. Demo sales seeded for three Pink Pace events so the demo dashboard has data (off in tests). Checked no page scrolls sideways at 390px.
+- Site admin (/admin, numbers in ADMIN_PHONES; demo 88888 88888): site totals, every event with Feature/Hide, organizer verification, contact inbox with mark-done. Invisible (404) to everyone else.
