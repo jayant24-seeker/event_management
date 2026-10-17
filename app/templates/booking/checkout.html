@@ -2,6 +2,8 @@
 {% block title %}Checkout · {{ e.title }} · {{ site_name }}{% endblock %}
 {% block head %}<meta name="robots" content="noindex">{% endblock %}
 
+{% block footer %}{% include "components/_footer_min.html" %}{% endblock %}
+
 {% block content %}
 <div class="container-site py-8 sm:py-12">
   <a href="{{ url_for('main.event', slug=e.slug) }}#tickets" class="text-sm font-semibold text-rani hover:underline">← Change tickets</a>
@@ -33,19 +35,25 @@
             {% for key, spec in fields %}
             {% set fname = 'a' ~ k.i ~ '-' ~ key %}
             {% set value = form.get(fname) or (current_user.name if key == 'name' and k.i == 0 else '') or (current_user.email if key == 'email' and k.i == 0 else '') %}
-            <label class="block {{ 'sm:col-span-2' if key in ('name', 'emergency') }}">
-              <span class="mb-1.5 block text-sm font-semibold">{{ spec.label }}{% if not spec.required %} <span class="font-normal text-ink-soft">(optional)</span>{% endif %}</span>
+            {% set tag = 'div' if spec.type == 'select' else 'label' %}
+            <{{ tag }} class="block {{ 'sm:col-span-2' if key in ('name', 'emergency', 'tshirt') }}">
+              <span id="{{ fname }}-label" class="mb-1.5 block text-sm font-semibold">{{ spec.label }}{% if not spec.required %} <span class="font-normal text-ink-soft">(optional)</span>{% endif %}</span>
               {% if spec.type == 'select' %}
-              <select name="{{ fname }}" class="select" {{ 'required' if spec.required }}>
-                <option value="">Choose</option>
-                {% for opt in spec.options %}<option {{ 'selected' if value == opt }}>{{ opt }}</option>{% endfor %}
-              </select>
+              {# One tap per choice instead of a dropdown. #}
+              <div role="radiogroup" aria-labelledby="{{ fname }}-label" class="flex flex-wrap gap-2">
+                {% for opt in spec.options %}
+                <label class="cursor-pointer">
+                  <input type="radio" name="{{ fname }}" value="{{ opt }}" class="peer sr-only" {{ 'checked' if value == opt }} {{ 'required' if spec.required }}>
+                  <span class="inline-flex min-w-[3.25rem] justify-center rounded-full border border-line bg-paper px-4 py-2.5 text-sm font-semibold transition hover:border-ink/50 peer-checked:border-ink peer-checked:bg-ink peer-checked:text-paper peer-focus-visible:ring-2 peer-focus-visible:ring-rani peer-focus-visible:ring-offset-2">{{ opt }}</span>
+                </label>
+                {% endfor %}
+              </div>
               {% else %}
               <input name="{{ fname }}" type="{{ spec.type }}" value="{{ value }}" class="input" {{ 'required' if spec.required }}
                      {% if key == 'age' %}min="{{ e.raw.age_min or 1 }}" max="100" inputmode="numeric"{% endif %}
                      {% if key == 'name' %}autocomplete="{{ 'name' if k.i == 0 else 'off' }}"{% endif %}>
               {% endif %}
-            </label>
+            </{{ tag }}>
             {% endfor %}
           </div>
         </fieldset>
@@ -77,7 +85,7 @@
         {% if subtotal %}
         <div class="mt-4 flex gap-2">
           <label class="flex-1"><span class="sr-only">Discount code</span>
-            <input name="coupon" value="{{ coupon_code }}" class="input py-2 uppercase" placeholder="Discount code" autocomplete="off">
+            <input name="coupon" value="{{ coupon_code }}" class="input py-2 uppercase placeholder:normal-case" placeholder="Discount code" autocomplete="off">
           </label>
           <button name="action" value="apply" class="btn-outline py-2" formnovalidate>Apply</button>
         </div>

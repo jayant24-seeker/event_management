@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% block title %}Payment · {{ e.title }} · {{ site_name }}{% endblock %}
 {% block head %}<meta name="robots" content="noindex">{% endblock %}
+{% block footer %}{% include "components/_footer_min.html" %}{% endblock %}
+
 {% block content %}
 <div class="container-site max-w-lg py-12">
   {% if expired %}

@@ -103,6 +103,7 @@
 
   <main id="main">{% block content %}{% endblock %}</main>
 
+  {% block footer %}
   <footer class="mt-24 bg-ink text-paper/80 print:hidden">
     <div class="container-site grid gap-8 py-12 text-sm sm:grid-cols-2 lg:grid-cols-4">
       <div>
@@ -130,6 +131,7 @@
       <p class="container-site py-5 text-xs text-paper/50">© 2026 N Square Digital Solutions. Built by Shree Soft Technologies.</p>
     </div>
   </footer>
+  {% endblock %}
   <script src="{{ url_for('static', filename='js/site.js') }}" defer></script>
   <script src="{{ url_for('static', filename='js/search.js') }}" defer></script>
   {% if config.STATIC_PREVIEW %}<script src="{{ url_for('static', filename='js/preview.js') }}" defer></script>{% endif %}
