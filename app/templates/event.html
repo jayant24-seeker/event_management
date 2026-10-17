@@ -24,6 +24,11 @@
 <link rel="canonical" href="{{ page_url }}">
 
 <script type="application/ld+json" nonce="{{ csp_nonce() }}">{{ event_jsonld(e)|tojson }}</script>
+{# The card you tapped grows into the poster (desktop) or the banner (phones). #}
+<style>
+  @media (min-width: 1024px) { [data-morph-poster] { view-transition-name: p-{{ e.slug }}; } }
+  @media (max-width: 1023px) { [data-morph-banner] { view-transition-name: p-{{ e.slug }}; } }
+</style>
 {% endblock %}
 
 {% block tabbar %}{% endblock %}
@@ -32,7 +37,7 @@
 {# ---------- Banner ---------- #}
 <section class="relative isolate overflow-hidden bg-ink text-paper">
   <img src="{{ url_for('static', filename=e.banner) }}" alt="" fetchpriority="high"
-       class="absolute inset-0 -z-20 h-full w-full object-cover {{ 'grayscale-[50%]' if past }}">
+       data-morph-banner class="absolute inset-0 -z-20 h-full w-full object-cover {{ 'grayscale-[50%]' if past }}">
   <div class="absolute inset-0 -z-10 bg-gradient-to-t from-ink via-ink/70 to-ink/20"></div>
   <div class="container-site pb-10 pt-6 sm:pb-14">
     <nav class="text-sm text-paper/70" aria-label="Breadcrumb">
@@ -76,7 +81,7 @@
           </a>
         </div>
       </div>
-      <img src="{{ url_for('static', filename=e.poster) }}" alt="{{ e.title }} poster" class="hidden w-56 rounded-card shadow-poster ring-1 ring-paper/20 lg:block xl:w-64">
+      <img src="{{ url_for('static', filename=e.poster) }}" alt="{{ e.title }} poster" data-morph-poster class="hidden w-56 rounded-card shadow-poster ring-1 ring-paper/20 lg:block xl:w-64">
     </div>
   </div>
 </section>

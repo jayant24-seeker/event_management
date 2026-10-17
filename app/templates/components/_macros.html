@@ -17,10 +17,11 @@
 {%- endmacro %}
 
 {# Large portrait poster card. The whole card is one link. #}
-{% macro event_card(e) -%}
+{% macro event_card(e, morph=True) -%}
 {% set past = e.is_past() %}
 <a href="{{ url_for('main.event', slug=e.slug) }}" class="group block focus-visible:rounded-card">
-  <div class="relative aspect-[3/4] overflow-hidden rounded-card shadow-poster transition duration-300 group-hover:-translate-y-1.5 group-hover:shadow-lift" style="background-color: {{ e.tint }}">
+  {# morph: the poster glides into the event page (View Transitions); off where a card can repeat on a page. #}
+  <div class="relative aspect-[3/4] overflow-hidden rounded-card shadow-poster transition duration-300 group-hover:-translate-y-1.5 group-hover:shadow-lift" style="background-color: {{ e.tint }}{% if morph %}; view-transition-name: p-{{ e.slug }}{% endif %}">
     <img src="{{ url_for('static', filename=e.poster) }}" alt="{{ e.title }} poster" loading="lazy" decoding="async"
          class="h-full w-full object-cover transition duration-500 group-hover:scale-105 {{ 'grayscale-[60%]' if past }}">
     <div class="absolute inset-x-0 top-0 flex items-start justify-between p-3">

@@ -39,7 +39,7 @@
   <section>
     <p class="eyebrow">{{ _('This weekend') }}</p>
     <h2 class="mt-1 text-3xl font-extrabold">{{ _('Happening this weekend') }}</h2>
-    <div class="mt-6 grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 md:grid-cols-3 lg:grid-cols-4">{% for e in weekend %}{{ event_card(e) }}{% endfor %}</div>
+    <div class="mt-6 grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 md:grid-cols-3 lg:grid-cols-4">{% for e in weekend %}{{ event_card(e, morph=False) }}{% endfor %}</div>
   </section>
   {% endif %}
 

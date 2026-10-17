@@ -71,3 +71,4 @@ Every item keeps `pytest` green. Newest at the bottom.
 - Explore: 24 events per page (no lonely single event on page 2), heading without the redundant caps label.
 - My tickets redesign: your next event is a big card with its artwork, an "In N days" countdown and a one-tap "Show tickets"; other upcoming bookings show countdowns instead of a redundant Confirmed badge; a friendly empty state; "You might like" suggestions from the categories and cities you book.
 - Phone tab bar: app-style bottom navigation (Home, Explore, Tickets, Saved, Profile/Sign in) with the current tab highlighted and iPhone safe-area padding; hidden on event, checkout, payment and scanner pages that have their own bottom actions.
+- Smooth navigation: cross-page View Transitions; tapping an event card makes its poster grow into the event page (poster on desktop, banner on phones); off with reduced motion and wherever a card could appear twice on a page.
