@@ -110,3 +110,17 @@ def test_text_responses_are_gzipped(client):
     css = client.get("/static/css/app.css", headers={"Accept-Encoding": "gzip"})
     assert css.headers.get("Content-Encoding") == "gzip"
     assert "Content-Encoding" not in client.get("/").headers  # clients that don't ask get plain
+
+
+def test_light_dark_switch(client):
+    res = client.get("/events")
+    page = res.get_data(as_text=True)
+    assert page.count("data-theme-toggle") == 2  # desktop header and phone header
+    assert 'data-label-dark="Switch to dark mode"' in page
+    # The saved choice is applied by an inline script that the Content-Security-Policy allows.
+    nonce = res.headers["Content-Security-Policy"].split("'nonce-")[1].split("'")[0]
+    assert f'<script nonce="{nonce}">try {{ const t = localStorage.getItem("eventouse:theme")' in page
+    css = client.get("/static/css/app.css").get_data(as_text=True)
+    assert ":root[data-theme=dark]" in css and ":root:not([data-theme=light])" in css
+    client.get("/lang/hi")
+    assert "डार्क मोड चालू करें" in client.get("/events").get_data(as_text=True)

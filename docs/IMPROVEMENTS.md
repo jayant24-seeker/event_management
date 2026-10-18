@@ -122,3 +122,4 @@ Every item keeps `pytest` green. Newest at the bottom.
 - Homepage greets signed-in people who have a ticket coming up: a slim green bar with the event, "In N days" and "Show tickets".
 - New organizers: an empty dashboard shows only a "Let's get your first event live" guide (create, publish, share with tagged links or a flyer, check people in) instead of zeros and tools they cannot use yet.
 - Publish problems in plain words ("Add the refund policy.", "About the event still has placeholder text…"), each linking to its field, which scrolls into view and gets the cursor.
+- Light/dark switch: a sun/moon button in the header (desktop and phones) flips the theme; the choice is kept on the device and applied before the page paints. Picking the device's own theme again, or the device switching theme (e.g. macOS going light at sunrise), hands control back to the device setting.

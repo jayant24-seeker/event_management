@@ -20,9 +20,10 @@
     --day: 255 248 240;       /* text on night surfaces */
     color-scheme: light;
   }
-  /* Dark theme follows the phone or computer setting. Night surfaces stay as they are. */
+  /* Dark theme follows the phone or computer setting, unless the light/dark switch in the header
+     picked one (data-theme on <html>, see site.js). Night surfaces stay as they are. */
   @media (prefers-color-scheme: dark) {
-    :root {
+    :root:not([data-theme="light"]) {
       --ink: 243 236 229;
       --ink-soft: 184 173 196;
       --paper: 18 13 24;
@@ -33,6 +34,17 @@
       --night: 36 28 47;
       color-scheme: dark;
     }
+  }
+  :root[data-theme="dark"] {
+    --ink: 243 236 229;
+    --ink-soft: 184 173 196;
+    --paper: 18 13 24;
+    --paper-raised: 31 24 40;
+    --line: 56 46 68;
+    --rani-dark: 244 114 168;  /* pink text on dark: 6:1; buttons keep --rani (white text 4.8:1) */
+    --leaf: 22 135 88;
+    --night: 36 28 47;
+    color-scheme: dark;
   }
   html { -webkit-tap-highlight-color: transparent; }
   /* Devanagari letters join up; wide letter spacing breaks them. */
@@ -145,11 +157,19 @@
   @page { margin: 12mm; }
 }
 
-/* Dark theme: pink text uses the lighter tone; pink buttons darken (not lighten) on hover. */
+/* Dark theme: pink text uses the lighter tone; pink buttons darken (not lighten) on hover.
+   The theme switch shows a moon in light mode and a sun in dark mode. */
+.theme-sun { display: none; }
 @media (prefers-color-scheme: dark) {
-  .text-rani { color: rgb(var(--rani-dark)); }
-  .btn-primary:hover { background-color: rgb(190 28 96); }
+  :root:not([data-theme="light"]) .text-rani { color: rgb(var(--rani-dark)); }
+  :root:not([data-theme="light"]) .btn-primary:hover { background-color: rgb(190 28 96); }
+  :root:not([data-theme="light"]) .theme-sun { display: block; }
+  :root:not([data-theme="light"]) .theme-moon { display: none; }
 }
+:root[data-theme="dark"] .text-rani { color: rgb(var(--rani-dark)); }
+:root[data-theme="dark"] .btn-primary:hover { background-color: rgb(190 28 96); }
+:root[data-theme="dark"] .theme-sun { display: block; }
+:root[data-theme="dark"] .theme-moon { display: none; }
 
 @layer utilities {
   /* Horizontal swipe rows (hero slider, city tiles) without a visible scrollbar. */

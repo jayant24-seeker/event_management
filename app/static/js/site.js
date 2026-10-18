@@ -5,6 +5,39 @@
   document.addEventListener("click", (ev) => menus.forEach((m) => { if (m.open && !m.contains(ev.target)) m.open = false; }));
   document.addEventListener("keydown", (ev) => { if (ev.key === "Escape") menus.forEach((m) => { m.open = false; }); });
 
+  // Light/dark switch. With nothing saved the site follows the phone or computer setting. A choice is
+  // kept on this device; picking the device's own theme again, or the device switching theme, clears it.
+  const THEME = "eventouse:theme";
+  const html = document.documentElement;
+  const deviceDark = matchMedia("(prefers-color-scheme: dark)");
+  const themeMetas = [...document.querySelectorAll('meta[name="theme-color"]')];
+  themeMetas.forEach((m) => { m.dataset.default = m.content; });
+  const deviceTheme = () => (deviceDark.matches ? "dark" : "light");
+  const setTheme = (theme) => {
+    if (theme && theme !== deviceTheme()) {
+      html.dataset.theme = theme;
+      try { localStorage.setItem(THEME, theme); } catch {}
+    } else {
+      delete html.dataset.theme;
+      try { localStorage.removeItem(THEME); } catch {}
+    }
+    const now = html.dataset.theme || deviceTheme();
+    themeMetas.forEach((m) => { m.content = html.dataset.theme ? (now === "dark" ? "#120D18" : "#FFF8F0") : m.dataset.default; });
+    document.querySelectorAll("[data-theme-toggle]").forEach((b) => {
+      b.setAttribute("aria-label", now === "dark" ? b.dataset.labelLight : b.dataset.labelDark);
+      b.title = b.getAttribute("aria-label");
+    });
+  };
+  setTheme(html.dataset.theme);
+  document.addEventListener("click", (ev) => {
+    if (!ev.target.closest("[data-theme-toggle]")) return;
+    const next = (html.dataset.theme || deviceTheme()) === "dark" ? "light" : "dark";
+    const calm = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (document.startViewTransition && !calm) document.startViewTransition(() => setTheme(next));
+    else setTheme(next);
+  });
+  deviceDark.addEventListener("change", () => setTheme(null));
+
   // Toasts: dismiss on tap, and on their own after 6 seconds (longer messages get a bit more time).
   document.querySelectorAll("[data-toasts] .toast").forEach((t) => {
     const leave = () => { t.classList.add("is-leaving"); setTimeout(() => t.remove(), 260); };
