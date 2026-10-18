@@ -5,12 +5,13 @@
   document.addEventListener("click", (ev) => menus.forEach((m) => { if (m.open && !m.contains(ev.target)) m.open = false; }));
   document.addEventListener("keydown", (ev) => { if (ev.key === "Escape") menus.forEach((m) => { m.open = false; }); });
 
+  const root = document.body.dataset.root || "";
   if (document.body.dataset.auth !== "1") return;
   const KEY = "eventouse:saved";
   let guestSaved = [];
   try { guestSaved = JSON.parse(localStorage.getItem(KEY)) || []; } catch {}
   if (!guestSaved.length) return;
-  fetch("/api/saved", {
+  fetch(`${root}/api/saved`, {
     method: "POST",
     headers: { "Content-Type": "application/json", "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]').content },
     body: JSON.stringify({ slugs: guestSaved, saved: true }),

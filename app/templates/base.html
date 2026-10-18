@@ -15,7 +15,10 @@
   <meta name="csrf-token" content="{{ csrf_token() }}">
   {% block head %}{% endblock %}
 </head>
-<body class="min-h-screen" data-auth="{{ '1' if current_user else '0' }}">
+<body class="min-h-screen" data-auth="{{ '1' if current_user else '0' }}" data-root="{{ request.script_root }}"{% if config.STATIC_PREVIEW %} data-preview="1"{% endif %}>
+  {% if config.STATIC_PREVIEW %}
+  <div class="bg-marigold px-4 py-2 text-center text-xs font-semibold text-ink">Preview of the Eventouse website. Browsing works fully; sign-in, booking and organizer tools need the live app.</div>
+  {% endif %}
   <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 btn-dark">Skip to content</a>
 
   <header class="sticky top-0 z-40 border-b border-line/70 bg-paper/85 backdrop-blur">
@@ -113,6 +116,7 @@
   </footer>
   <script src="{{ url_for('static', filename='js/site.js') }}" defer></script>
   <script src="{{ url_for('static', filename='js/search.js') }}" defer></script>
+  {% if config.STATIC_PREVIEW %}<script src="{{ url_for('static', filename='js/preview.js') }}" defer></script>{% endif %}
   {% block scripts %}{% endblock %}
 </body>
 </html>
