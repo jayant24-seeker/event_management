@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Eventouse previews</title>
+  <meta name="description" content="Two browsable previews of the new Eventouse website: the base app and the improved app.">
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="improved/static/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: 26 20 35; --ink-soft: 92 84 104; --paper: 255 248 240; --raised: 255 255 255;
+      --line: 236 224 214; --rani: 214 36 110; --marigold: 255 182 39; --leaf: 22 143 94;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root { --ink: 243 236 229; --ink-soft: 184 173 196; --paper: 18 13 24; --raised: 31 24 40; --line: 56 46 68; }
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh; background: rgb(var(--paper)); color: rgb(var(--ink));
+      font: 16px/1.6 "Plus Jakarta Sans", system-ui, sans-serif; -webkit-font-smoothing: antialiased;
+    }
+    main { max-width: 64rem; margin: 0 auto; padding: 4rem 1rem 3rem; }
+    .brand { display: flex; align-items: center; gap: .5rem; font: 800 1.25rem "Bricolage Grotesque", sans-serif; }
+    .brand span { display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: .5rem; background: rgb(var(--rani)); color: #fff; }
+    h1 { margin: 2.5rem 0 .75rem; font: 800 clamp(2rem, 6vw, 3.25rem)/1.1 "Bricolage Grotesque", sans-serif; letter-spacing: -.02em; }
+    h1 em { font-style: normal; color: rgb(var(--rani)); }
+    .lede { max-width: 38rem; margin: 0; font-size: 1.125rem; color: rgb(var(--ink-soft)); }
+    .grid { display: grid; gap: 1.25rem; margin-top: 2.75rem; grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr)); }
+    .card {
+      display: flex; flex-direction: column; padding: 1.75rem; border: 1px solid rgb(var(--line)); border-radius: 1.25rem;
+      background: rgb(var(--raised)); color: inherit; text-decoration: none;
+      transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+    }
+    .card:hover, .card:focus-visible { transform: translateY(-3px); border-color: rgb(var(--rani) / .5); box-shadow: 0 28px 60px -24px rgb(var(--rani) / .45); outline: none; }
+    .tag { align-self: flex-start; padding: .2rem .65rem; border-radius: 999px; font-size: .75rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+    .tag.base { background: rgb(var(--ink) / .08); }
+    .tag.improved { background: rgb(var(--marigold) / .3); }
+    .card h2 { margin: 1rem 0 .35rem; font: 700 1.6rem/1.2 "Bricolage Grotesque", sans-serif; }
+    .card p { margin: 0; color: rgb(var(--ink-soft)); }
+    .card ul { margin: 1.1rem 0 1.5rem; padding: 0; list-style: none; display: grid; gap: .4rem; font-size: .95rem; }
+    .card li { display: flex; gap: .55rem; }
+    .card li::before { content: ""; flex: none; width: .45rem; height: .45rem; margin-top: .55rem; border-radius: 50%; background: rgb(var(--leaf)); }
+    .go { margin-top: auto; font-weight: 700; color: rgb(var(--rani)); }
+    .branch { display: block; margin-top: .35rem; font: 500 .8rem ui-monospace, SFMono-Regular, Menlo, monospace; color: rgb(var(--ink-soft)); }
+    footer { margin-top: 3rem; font-size: .875rem; color: rgb(var(--ink-soft)); }
+    @media (prefers-reduced-motion: reduce) { .card { transition: none; } .card:hover { transform: none; } }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="brand"><span>e</span>eventouse</div>
+    <h1>Two versions of the new site, <em>side by side</em></h1>
+    <p class="lede">Both are browsable previews built from the same demo events. Sign-in, booking and organizer tools need the live server, so here they show a short note instead.</p>
+
+    <div class="grid">
+      <a class="card" href="base/">
+        <span class="tag base">Base app</span>
+        <h2>The first full version</h2>
+        <p>Everything from the seven build phases.</p>
+        <ul>
+          <li>Homepage, Explore with filters, event pages</li>
+          <li>Phone sign-in, checkout, QR tickets</li>
+          <li>Organizer dashboard and check-in</li>
+          <li>City pages, Hindi/English toggle</li>
+        </ul>
+        <span class="go">Open the base app →</span>
+        <span class="branch">branch: phase-7-launch-polish</span>
+      </a>
+      <a class="card" href="improved/">
+        <span class="tag improved">Improved app</span>
+        <h2>Base app plus 70 improvements</h2>
+        <p>New features and a lot of polish on top.</p>
+        <ul>
+          <li>Reviews, follow organizers, calendar view</li>
+          <li>Refunds, ticket transfers, offline tickets</li>
+          <li>Sales charts, gate scanner, site admin</li>
+          <li>Dark mode, full Hindi, smoother pages</li>
+        </ul>
+        <span class="go">Open the improved app →</span>
+        <span class="branch">branch: auto-improvements</span>
+      </a>
+    </div>
+
+    <footer>Rebuilt automatically whenever either branch changes on GitHub.</footer>
+  </main>
+</body>
+</html>
