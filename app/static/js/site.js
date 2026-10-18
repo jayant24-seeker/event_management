@@ -5,6 +5,12 @@
   document.addEventListener("click", (ev) => menus.forEach((m) => { if (m.open && !m.contains(ev.target)) m.open = false; }));
   document.addEventListener("keydown", (ev) => { if (ev.key === "Escape") menus.forEach((m) => { m.open = false; }); });
 
+  // Preview notice (GitHub Pages only): the × hides it on every page from now on.
+  document.querySelector("[data-preview-note-close]")?.addEventListener("click", (ev) => {
+    ev.currentTarget.closest("[data-preview-note]").remove();
+    try { localStorage.setItem("eventouse:preview-note", "hidden"); } catch {}
+  });
+
   // Light/dark switch. With nothing saved the site follows the phone or computer setting. A choice is
   // kept on this device; picking the device's own theme again, or the device switching theme, clears it.
   const THEME = "eventouse:theme";
