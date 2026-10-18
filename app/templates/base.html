@@ -17,7 +17,12 @@
 </head>
 <body class="min-h-screen" data-auth="{{ '1' if current_user else '0' }}" data-root="{{ request.script_root }}"{% if config.STATIC_PREVIEW %} data-preview="1"{% endif %}>
   {% if config.STATIC_PREVIEW %}
-  <div class="bg-marigold px-4 py-2 text-center text-xs font-semibold text-ink">Preview of the Eventouse website. Browsing works fully; sign-in, booking and organizer tools need the live app.</div>
+  <div class="relative bg-marigold py-2 pl-4 pr-12 text-center text-xs font-semibold text-ink sm:px-12" data-preview-note>
+    Preview of the Eventouse website. Browsing works fully; sign-in, booking and organizer tools need the live app.
+    <button type="button" class="absolute right-2 top-1/2 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-full text-lg leading-none hover:bg-black/10" aria-label="Hide this notice" title="Hide this notice" data-preview-note-close>&times;</button>
+  </div>
+  {# Once closed it stays closed on this device; removed here, before it paints, so it never flashes. #}
+  <script>try { if (localStorage.getItem("eventouse:preview-note") === "hidden") document.currentScript.previousElementSibling.remove(); } catch (e) {}</script>
   {% endif %}
   <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 btn-dark">Skip to content</a>
 
