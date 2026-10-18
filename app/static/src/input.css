@@ -16,6 +16,8 @@
     --leaf: 22 143 94;        /* free / success */
   }
   html { -webkit-tap-highlight-color: transparent; }
+  /* Devanagari letters join up; wide letter spacing breaks them. */
+  :lang(hi) .eyebrow, :lang(hi) .badge, :lang(hi) .tracking-wider { letter-spacing: 0; }
   body { @apply bg-paper text-ink font-sans antialiased; }
   h1, h2, h3, h4 { @apply font-display tracking-tight; }
   :focus-visible { @apply outline-none ring-2 ring-rani ring-offset-2 ring-offset-paper; }

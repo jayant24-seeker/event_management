@@ -13,3 +13,6 @@ app/static/uploads/
 shots/
 .playwright-mcp/
 .claude/
+
+# Static preview build (tools/build_static.py)
+_site/

@@ -52,3 +52,12 @@ def gcal_dates(e):
     """Start/end in the format Google Calendar's add-event link wants."""
     fmt = "%Y%m%dT%H%M%SZ"
     return f"{e.start.astimezone(timezone.utc).strftime(fmt)}/{e.end.astimezone(timezone.utc).strftime(fmt)}"
+
+
+def faq_jsonld(pairs):
+    """schema.org FAQPage from [(question, answer)]."""
+    return {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in pairs],
+    }

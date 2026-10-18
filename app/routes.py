@@ -1,6 +1,8 @@
+import re
 from datetime import timezone
+from html import escape
 
-from flask import Blueprint, Response, abort, g, jsonify, redirect, render_template, request, url_for
+from flask import Blueprint, Response, abort, current_app, g, jsonify, redirect, render_template, request, url_for
 
 from .events import DATE_FILTERS, PRICE_FILTERS, SORTS, EventStore, now_ist
 
@@ -64,12 +66,13 @@ def explore():
         "upcoming": len(s.search(when="upcoming", **base)),
         "past": len(s.search(when="past", **base)),
     }
+    per_page = 10_000 if current_app.config.get("STATIC_PREVIEW") else PER_PAGE  # no paging in the static preview
     page = max(args.get("page", 1, type=int), 1)
-    pages = max((len(results) + PER_PAGE - 1) // PER_PAGE, 1)
+    pages = max((len(results) + per_page - 1) // per_page, 1)
     page = min(page, pages)
     return render_template(
         "explore.html",
-        results=results[(page - 1) * PER_PAGE: page * PER_PAGE],
+        results=results[(page - 1) * per_page: page * per_page],
         total=len(results),
         page=page,
         pages=pages,
@@ -214,3 +217,68 @@ def for_organizers():
     return render_template("pages/for_organizers.html", title="Host your event",
                            n_events=len(s.events), n_cities=len(s.cities()),
                            n_people=sum(e.registered for e in s.events), sample=s.featured()[:3])
+
+
+# ---------- SEO: city landing pages, sitemap, robots ----------
+def city_slug(city):
+    return re.sub(r"[^a-z0-9]+", "-", city.lower()).strip("-")
+
+
+@bp.app_template_global()
+def city_url(city):
+    """City landing page, or Explore for online events."""
+    if city == "Online":
+        return url_for("main.explore", city="Online")
+    return url_for("main.city", slug=city_slug(city))
+
+
+@bp.route("/events-in-<slug>")
+def city(slug):
+    s = store()
+    name = next((c for c in s.cities() if city_slug(c) == slug and c != "Online"), None)
+    if name is None:
+        abort(404)
+    upcoming = [e for e in s.upcoming() if e.city == name]
+    weekend = s.search(city=name, date="weekend")
+    return render_template("city.html", city=name, upcoming=upcoming, weekend=weekend,
+                           past=[e for e in s.past() if e.city == name][:4],
+                           categories=_category_counts(upcoming),
+                           free=[e for e in upcoming if e.is_free])
+
+
+@bp.route("/robots.txt")
+def robots():
+    lines = ["User-agent: *", "Allow: /"]
+    lines += [f"Disallow: {p}" for p in ("/organizer", "/account", "/tickets", "/bookings", "/pay", "/t/", "/login", "/api", "/saved")]
+    lines.append(f"Sitemap: {url_for('main.sitemap', _external=True)}")
+    return Response("\n".join(lines) + "\n", mimetype="text/plain")
+
+
+@bp.route("/sitemap.xml")
+def sitemap():
+    from .models import EventRow
+
+    s = store()
+    updated = {r.slug: r.updated_at for r in EventRow.query.filter_by(status="published")}
+    urls = [(url_for("main.home", _external=True), None, "daily"),
+            (url_for("main.explore", _external=True), None, "daily"),
+            (url_for("main.explore", when="past", _external=True), None, "weekly")]
+    urls += [(url_for("main.city", slug=city_slug(c), _external=True), None, "daily") for c in s.cities() if c != "Online"]
+    urls += [(url_for("main.event", slug=e.slug, _external=True), updated.get(e.slug), "weekly") for e in s.events]
+    urls += [(url_for("main.organizer", slug=o, _external=True), None, "weekly") for o in s.organizers]
+    urls += [(url_for(endpoint, _external=True, **kw), None, "monthly") for endpoint, kw in
+             [("main.for_organizers", {}), ("main.contact", {})] + [("main.page", {"name": n}) for n in PAGES]]
+    xml = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
+    for loc, lastmod, freq in urls:
+        xml.append(f"  <url><loc>{escape(loc)}</loc>" + (f"<lastmod>{lastmod:%Y-%m-%d}</lastmod>" if lastmod else "")
+                   + f"<changefreq>{freq}</changefreq></url>")
+    xml.append("</urlset>")
+    return Response("\n".join(xml), mimetype="application/xml")
+
+
+@bp.route("/preview-only")
+def preview_only():
+    """Shown in the static GitHub Pages preview in place of pages that need the live server."""
+    if not current_app.config.get("STATIC_PREVIEW"):
+        abort(404)
+    return render_template("preview.html")

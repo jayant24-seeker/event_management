@@ -81,7 +81,7 @@
         write(on ? [...new Set([...list, slug])] : list.filter((s) => s !== slug));
         return;
       }
-      const res = await fetch("/api/saved", {
+      const res = await fetch(`${document.body.dataset.root || ""}/api/saved`, {
         method: "POST",
         headers: { "Content-Type": "application/json", "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]').content },
         body: JSON.stringify({ slugs: [slug], saved: on }),

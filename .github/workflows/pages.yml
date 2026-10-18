@@ -1,0 +1,70 @@
+# Publishes browsable previews of both apps on GitHub Pages, side by side:
+#   /event_management/           landing page (.github/pages-home.html on auto-improvements)
+#   /event_management/base/      base app      (branch phase-7-launch-polish)
+#   /event_management/improved/  improved app  (branch auto-improvements)
+# A push to either branch rebuilds both, so the site always shows the latest of each.
+# The same file lives on both branches; keep them identical.
+# The Flask app renders every public page to static files (tools/build_static.py);
+# sign-in, booking and organizer tools need the live server and show an explainer instead.
+name: Website previews (GitHub Pages)
+
+on:
+  push:
+    branches: [phase-7-launch-polish, auto-improvements]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: phase-7-launch-polish
+          path: base
+      - uses: actions/checkout@v4
+        with:
+          ref: auto-improvements
+          path: improved
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: "*/requirements.txt"
+      - run: pip install -r base/requirements.txt -r improved/requirements.txt
+      - name: Test the base app
+        working-directory: base
+        run: python -m pytest -q
+      - name: Test the improved app
+        working-directory: improved
+        run: python -m pytest -q
+      - name: Render both sites
+        run: |
+          site="/${{ github.event.repository.name }}"
+          host="${{ github.repository_owner }}.github.io"
+          python base/tools/build_static.py --base "$site/base" --host "$host" --out _site/base
+          python improved/tools/build_static.py --base "$site/improved" --host "$host" --out _site/improved
+          cp improved/.github/pages-home.html _site/index.html
+          cp _site/improved/404.html _site/404.html
+          touch _site/.nojekyll
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

@@ -25,6 +25,18 @@ flask --app run seed --reset
 
 **Signing in locally:** enter any 10-digit mobile number. No SMS is sent in development; the code is shown on the next screen (`SMS_PROVIDER=console`). **Demo organizer:** sign in with `99999 99999` to open the Pink Pace Runners Club dashboard (Organizer dashboard in the account menu). Any other number can become an organizer at `/organizer/start`. Demo discount codes: `EARLYBIRD10` (Amer Hills Trail Ultra), `PINKCITY15` (Jaipur Night Run), `SIBLING20` (Little Legs Kids Run). Payments run in **test mode**.
 
+### Deploy
+
+```bash
+pip install -r requirements.txt
+SECRET_KEY=... DATABASE_URL=... flask --app run seed   # once, on a new database
+SECRET_KEY=... DATABASE_URL=... gunicorn --workers 3 --bind 0.0.0.0:8000 run:app
+```
+Put it behind HTTPS (Nginx, Render, Railway or similar). `.env.example` lists the settings. Static files are versioned (`app.css?v=...`) and cached for a year.
+
+### SEO built in
+Unique titles and descriptions, Open Graph tags, Event JSON-LD on event pages, FAQ JSON-LD on city pages, `/sitemap.xml`, `/robots.txt`, and city pages like `/events-in-jaipur`. Filtered Explore pages are `noindex`.
+
 ### Before launch
 | Setting | Why |
 | --- | --- |
@@ -50,7 +62,8 @@ flask --app run seed --reset
 | `app/posters.py` | Original SVG posters/banners for demo events and organizer events without artwork |
 | `app/sms.py` | SMS sending (console in development) |
 | `app/seed.py` | Loads `data/*.json` into an empty database; `flask seed --reset` |
-| `app/seo.py` | Event JSON-LD for Google, calendar helpers |
+| `app/seo.py` | Event and FAQ JSON-LD for Google, calendar helpers |
+| `app/i18n.py` | Hindi/English toggle for the site's own words |
 | `app/templates/components/_macros.html` | Poster card, badge, date chip, price label |
 | `app/static/src/input.css` | Color tokens and component classes |
 | `tailwind.config.js` | Fonts, colors, shadows |
@@ -65,4 +78,4 @@ flask --app run seed --reset
 4. ✅ Event page
 5. ✅ Account and booking
 6. ✅ For Organizers, About, Contact
-7. SEO, speed, mobile testing, launch
+7. ✅ SEO, speed, mobile testing, Hindi/English, launch prep

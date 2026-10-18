@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% from "components/_macros.html" import event_card %}
+{% set hero = upcoming[0] if upcoming else (past[0] if past else none) %}
+{% set kinds = categories|map('first')|map('lower')|list %}
+{% set faq = [
+  ('What events are happening in ' ~ city ~ ' this weekend?',
+   (weekend|map(attribute='title')|join(', ') ~ '.') if weekend else 'Nothing is listed for this weekend yet. ' ~ (upcoming|length) ~ ' events are coming up later.'),
+  ('Are there free events in ' ~ city ~ '?',
+   ('Yes: ' ~ free|map(attribute='title')|join(', ') ~ '.') if free else 'All upcoming events in ' ~ city ~ ' are ticketed right now. Check back for free events.'),
+  ('How do I book tickets for events in ' ~ city ~ '?',
+   'Open an event, pick your tickets and sign in with your mobile number. Your QR ticket arrives instantly.'),
+] %}
+{% block title %}Events in {{ city }}: runs, concerts and things to do · {{ site_name }}{% endblock %}
+{% block description %}{{ upcoming|length }} upcoming events in {{ city }}{% if kinds %}, including {{ kinds[:3]|join(', ') }}{% endif %}. See dates, prices and venues, and book tickets in a minute.{% endblock %}
+{% block head %}
+<link rel="canonical" href="{{ url_for('main.city', slug=request.view_args.slug, _external=True) }}">
+
+<script type="application/ld+json">{{ faq_jsonld(faq)|tojson }}</script>
+{% endblock %}
+
+{% block content %}
+<section class="relative isolate overflow-hidden bg-ink text-paper">
+  {% if hero %}<img src="{{ url_for('static', filename=hero.banner) }}" alt="" class="absolute inset-0 -z-20 h-full w-full object-cover opacity-80">{% endif %}
+  <div class="absolute inset-0 -z-10 bg-gradient-to-r from-ink via-ink/80 to-ink/30"></div>
+  <div class="container-site py-16 sm:py-24">
+    <nav class="text-sm text-paper/70" aria-label="Breadcrumb"><a href="{{ url_for('main.home') }}" class="hover:text-paper">Home</a> / {{ city }}</nav>
+    <h1 class="mt-4 text-4xl font-extrabold sm:text-6xl">{{ _('Events in') }} {{ city }}</h1>
+    <p class="mt-3 max-w-xl text-lg text-paper/80">{{ upcoming|length }} upcoming {{ 'event' if upcoming|length == 1 else 'events' }}{% if kinds %}: {{ kinds|join(', ') }}{% endif %}.</p>
+    <div class="mt-6 flex flex-wrap gap-2">
+      {% for cat, n in categories %}
+      <a href="{{ url_for('main.explore', city=city, category=cat) }}" class="rounded-full bg-paper/10 px-4 py-2 text-sm font-semibold backdrop-blur hover:bg-paper/20">{{ cat }} · {{ n }}</a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<div class="container-site space-y-16 py-12">
+  {% if weekend %}
+  <section>
+    <p class="eyebrow">{{ _('This weekend') }}</p>
+    <h2 class="mt-1 text-3xl font-extrabold">{{ _('Happening this weekend') }}</h2>
+    <div class="mt-6 grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 md:grid-cols-3 lg:grid-cols-4">{% for e in weekend %}{{ event_card(e) }}{% endfor %}</div>
+  </section>
+  {% endif %}
+
+  <section>
+    <div class="flex items-end justify-between gap-4">
+      <h2 class="text-3xl font-extrabold">{{ _('Everything coming up') }}</h2>
+      <a href="{{ url_for('main.explore', city=city) }}" class="btn-outline shrink-0">{{ _('Filters') }}</a>
+    </div>
+    {% if upcoming %}
+    <div class="mt-6 grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 md:grid-cols-3 lg:grid-cols-4">{% for e in upcoming %}{{ event_card(e) }}{% endfor %}</div>
+    {% else %}
+    <p class="mt-6 rounded-card border border-dashed border-line p-8 text-center text-ink-soft">No upcoming events in {{ city }} right now.</p>
+    {% endif %}
+  </section>
+
+  {% if past %}
+  <section>
+    <h2 class="text-3xl font-extrabold">{{ _('Recently happened') }}</h2>
+    <div class="mt-6 grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 md:grid-cols-3 lg:grid-cols-4">{% for e in past %}{{ event_card(e) }}{% endfor %}</div>
+  </section>
+  {% endif %}
+
+  <section class="max-w-3xl">
+    <h2 class="text-2xl font-extrabold">{{ _('Questions about events in') }} {{ city }}</h2>
+    <div class="mt-5 divide-y divide-line rounded-card border border-line bg-paper-raised">
+      {% for q, a in faq %}
+      <details class="group p-5" {% if loop.first %}open{% endif %}>
+        <summary class="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold">{{ q }}
+          <svg class="h-5 w-5 shrink-0 transition group-open:rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <p class="mt-3 text-ink-soft">{{ a }}</p>
+      </details>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="rounded-card bg-ink p-8 text-paper">
+    <h2 class="text-2xl font-extrabold">Organizing something in {{ city }}?</h2>
+    <p class="mt-1 text-paper/80">List it on {{ site_name }} and reach people looking for things to do in {{ city }}.</p>
+    <a href="{{ url_for('main.for_organizers') }}" class="btn-primary mt-5">{{ _('Host your event') }}</a>
+  </section>
+</div>
+{% endblock %}
